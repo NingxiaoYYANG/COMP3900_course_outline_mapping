@@ -13,3 +13,7 @@ packaging==24.0
 python-dotenv==1.0.1
 webargs==8.4.0
 Werkzeug==3.0.3
+openai
+flask_cors
+flask_jwt_extended
+flask_mail
