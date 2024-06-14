@@ -1,0 +1,63 @@
+from pypdf import PdfReader
+import re
+
+def extract_clos(course_outline):
+    '''
+    Extracts CLOs from a generated course outline pdf file.
+
+    Inputs
+    ------
+    course_outline : string containing the path of the course
+        outline file.
+
+    Outputs
+    -------
+    clos : list containing every CLO stored as a string.
+    '''
+    
+    reader = PdfReader(course_outline)
+    num_pages = len(reader.pages)
+
+    clo_pages = []
+    for page_num in range(num_pages):
+        page_text = reader.pages[page_num].extract_text()
+        # We are only interested in pages with
+        # the header "Course Learning Outcomes"
+        if page_text.startswith("Course Learning Outcomes"):
+            clo_pages.append(page_num)
+
+    clo_numbers_found = set([])
+    clos = []
+    for page_num in clo_pages:
+        page_text = reader.pages[page_num].extract_text()
+        
+        # Every CLO starts with "CLOx : ", where x is the CLO number
+        lines = page_text.split("CLO")
+        for line in lines:
+            if re.search("[0-9]+ : ", line):
+                # After splitting the lines by the string "CLO",
+                # the line should start with the CLO number
+                clo_number = line.split()[0]
+                
+                # Ensuring that we only save each CLO once
+                if clo_number not in clo_numbers_found:
+                    clo_numbers_found.add(clo_number)
+                    
+                    # Dot point indicates the end of the CLO text
+                    # as it means a new dot point is starting
+                    clo = line.split("•")[0]
+                    clo = clo.replace('\n', '')
+                    
+                    # Remove number and colon from beginning
+                    clo = " ".join(clo.split()[2:]) 
+                    clos.append(clo)
+
+    return clos
+
+
+if __name__ == "__main__":
+    # Can replace with any pdf file for testing
+    course_outline = "C:/Users/mbmas/Downloads/CO_ACCT3202_1_2024_Term1_T1_InPerson_Standard_Kensington.pdf"
+
+    clos = extract_clos(course_outline)
+    for clo in clos: print(clo)
