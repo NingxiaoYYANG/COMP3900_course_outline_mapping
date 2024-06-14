@@ -22,7 +22,7 @@ def classify_learning_outcome_route():
         return jsonify({'error': 'Missing learning outcome'}), 400
 
     predicted_label = classify_learning_outcome(learning_outcome)
-    print(predicted_label)
+    # print(predicted_label)
     return jsonify({'predicted_label': predicted_label}), 200
 
 if __name__ == '__main__':
