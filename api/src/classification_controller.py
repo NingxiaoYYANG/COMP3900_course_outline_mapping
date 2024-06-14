@@ -1,11 +1,41 @@
 import openai
 
+from extract_helper import extract_verbs, extract_clos_from_pdf
+from blooms_levels import BLOOMS_TAXONOMY
+
 # Set up OpenAI API key
 openai.api_key = 'secret-key'
 
-def classify_learning_outcome(learning_outcome):
+def classify_clos_from_pdf(file):
+    '''
+    Classify clos from client uploaded file.
+    Will checks for the presence of a file in the request and file format.
+
+    Inputs
+    ------
+    file : course outline file uploaded from client
+
+    Returns
+    -------
+    blooms_labels : list of labels from Bloom's six levels that matches the clos in the file
+    '''
+
+    # Extract clos from the PDF
+    extracted_clos = extract_clos_from_pdf(file)
+    # Extract verbs from clos
+    extracted_verbs = extract_verbs(extracted_clos)
+    
+    # Match clo to blooms by dict
+    blooms_count = match_verbs_by_dict(extracted_verbs)
+
+    # TO-DO: in what case do we need to use match_verbs_by_ai
+
+    return blooms_count
+
+# TO-FIX
+def match_verbs_by_ai(learning_outcome):
     # Prompt for GPT-3
-    prompt = f"Classify the learning outcome: '{learning_outcome}' into one of the Bloom's Taxonomy levels: Remember, Understand, Apply, Analyze, Evaluate, Create. Answer in one word"
+    prompt = f"Classify the learning outcome: '{learning_outcome}' into one of the Bloom's Taxonomy levels: Remember, Understand, Apply, Analyse, Evaluate, Create. Answer in one word"
 
     # Call OpenAI's GPT-3 API to generate text based on the prompt
     response = openai.chat.completions.create(
@@ -23,3 +53,37 @@ def classify_learning_outcome(learning_outcome):
     # Extract and return the generated text as the predicted label
     predicted_label = response.choices[0].message.content
     return predicted_label
+
+def match_verbs_by_dict(verbs):
+    '''
+    Matches extracted verbs to Bloom's Taxonomy levels.
+
+    Inputs
+    ------
+    verbs : list of strings representing the extracted verbs.
+
+    Outputs
+    -------
+    bloom_count : dictionary where keys are Bloom's levels and values are counts of matched verbs.
+    '''
+    # Initialise a dictionary to count matches for each Bloom's level
+    bloom_count = {level: 0 for level in BLOOMS_TAXONOMY}
+
+    # Iterate through the verbs
+    for verb in verbs:
+        # Check each Bloom's level
+        for level, keywords in BLOOMS_TAXONOMY.items():
+            # If the verb is in the keywords list, increment the count for the level
+            if verb in keywords:
+                bloom_count[level] += 1
+    
+    return bloom_count
+
+if __name__ == "__main__":
+    # Can replace with any pdf file for testing
+    # course_outline = "C:/Users/mbmas/Downloads/CO_ACCT3202_1_2024_Term1_T1_InPerson_Standard_Kensington.pdf"
+    course_outline_file_path = "C:/Users/20991/Downloads/CO_COMP6771_1_2024_Term2_T2_Multimodal_Standard_Kensington.pdf"
+
+    blooms_count = classify_clos_from_pdf(course_outline_file_path)
+
+    print(blooms_count)

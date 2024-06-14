@@ -1,21 +1,24 @@
 from pypdf import PdfReader
 import re
+import spacy
 
-def extract_clos(course_outline):
+# Load the spaCy English model
+nlp = spacy.load("en_core_web_sm")
+
+def extract_clos_from_pdf(course_outline_file):
     '''
     Extracts CLOs from a generated course outline pdf file.
 
     Inputs
     ------
-    course_outline : string containing the path of the course
-        outline file.
+    course_outline_file : course outline file in pdf form
 
     Outputs
     -------
     clos : list containing every CLO stored as a string.
     '''
     
-    reader = PdfReader(course_outline)
+    reader = PdfReader(course_outline_file)
     num_pages = len(reader.pages)
 
     clo_pages = []
@@ -54,10 +57,43 @@ def extract_clos(course_outline):
 
     return clos
 
+def extract_clos_from_url(url):
+    #TO-DO
+    return
+
+def extract_verbs(clos):
+    '''
+    Extracts verbs from list of course learning outcomes.
+
+    Inputs
+    ------
+    clos : list of strings that represent course learning outcomes.
+
+    Outputs
+    -------
+    verbs : list containing every verb in a clos.
+    '''
+    verbs = set()
+
+    # iterate through each clos to extract verbs
+    for clo in clos:
+        # Process the text with spaCy
+        doc = nlp(clo)
+    
+        # Extract verbs and append to verbs
+        for token in doc:
+            if token.pos_ == "VERB":
+                verbs.add(token.text)
+    
+    return verbs
+
 
 if __name__ == "__main__":
     # Can replace with any pdf file for testing
-    course_outline = "C:/Users/mbmas/Downloads/CO_ACCT3202_1_2024_Term1_T1_InPerson_Standard_Kensington.pdf"
+    # course_outline = "C:/Users/mbmas/Downloads/CO_ACCT3202_1_2024_Term1_T1_InPerson_Standard_Kensington.pdf"
+    course_outline = "C:/Users/20991/Downloads/CO_COMP6771_1_2024_Term2_T2_Multimodal_Standard_Kensington.pdf"
 
-    clos = extract_clos(course_outline)
-    for clo in clos: print(clo)
+    clos = extract_clos_from_pdf(course_outline)
+    verbs = extract_verbs(clos)
+
+    for verb in verbs: print(verb)
