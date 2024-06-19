@@ -3,7 +3,7 @@
 #### View how each stub looks like
 
 Home.js
-![Home page](<Screenshot 2024-06-19 143606.png>)
+![alt text](images/templates/home.png)
 
 UploadCourse.js
 
