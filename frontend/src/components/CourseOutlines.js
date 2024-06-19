@@ -1,6 +1,6 @@
 
 function CourseOutlines() {
-  return (<></>)
+  return (<>outline</>)
 }
 
 export default CourseOutlines;

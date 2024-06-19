@@ -1,6 +1,6 @@
 
 function BuildDegree() {
-  return (<></>)
+  return (<>build</>)
 }
 
 export default BuildDegree;
