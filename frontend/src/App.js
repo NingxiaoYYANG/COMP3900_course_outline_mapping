@@ -24,7 +24,11 @@ function App() {
   return (
     <Router>
       <Navigation />
-      <Routing />
+      <div style={{ minWidth: '100vw', minHeight: '100vh',backgroundColor: '#FCD3CA'}}>
+        <div style={{ paddingTop: '100px' }}>
+          <Routing />
+        </div>
+      </div>
   
     </Router>
   );
