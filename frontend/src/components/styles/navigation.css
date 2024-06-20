@@ -5,6 +5,8 @@
   color: #FCD3CA;
   display: flex;
   flex-direction: row;
+  position: absolute;
+  min-width: 100vw;
 }
 
 .navigation-text-container {
@@ -12,11 +14,13 @@
   align-items: end;
   margin-left: 30px;
   margin-bottom: 17px;
+  position: relative;
 }
 
 .navigation-title {
   padding-right: 15px;
   font-weight: 700;
+  font-size: 14pt
 }
 
 .vertical-line {
@@ -39,8 +43,12 @@
   text-decoration: none;
   color: #FCD3CA;
   padding: 0 5px;
+  text-wrap: nowrap;
 } 
 
+.nav-list-item-hover {
+  border-bottom: 2px solid #FCD3CA;
+}
 .nav-list-item:hover {
   border-bottom: 2px solid #FCD3CA;
 }
