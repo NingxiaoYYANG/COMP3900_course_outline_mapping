@@ -22,11 +22,9 @@ def classify_clos_from_pdf(file):
 
     # Extract clos from the PDF
     extracted_clos = extract_clos_from_pdf(file)
-    # Extract verbs from clos
-    extracted_verbs = extract_verbs(extracted_clos)
     
     # Match clo to blooms by dict
-    blooms_count = match_verbs_by_dict(extracted_verbs)
+    blooms_count = match_clos_by_dict(extracted_clos)
 
     # TO-DO: in what case do we need to use match_verbs_by_ai
 
@@ -54,7 +52,7 @@ def match_verbs_by_ai(learning_outcome):
     predicted_label = response.choices[0].message.content
     return predicted_label
 
-def match_verbs_by_dict(verbs):
+def match_clos_by_dict(clos):
     '''
     Matches extracted verbs to Bloom's Taxonomy levels.
 
@@ -70,13 +68,14 @@ def match_verbs_by_dict(verbs):
     bloom_count = {level: 0 for level in BLOOMS_TAXONOMY}
 
     # Iterate through the verbs
-    for verb in verbs:
-        # Check each Bloom's level
-        for level, keywords in BLOOMS_TAXONOMY.items():
-            # If the verb is in the keywords list, increment the count for the level
-            if verb in keywords:
-                bloom_count[level] += 1
-    
+    for clo in clos:
+        for word in clo:
+            # Check each Bloom's level
+            for level, keywords in BLOOMS_TAXONOMY.items():
+                # If the verb is in the keywords list, increment the count for the level
+                if word in keywords:
+                    bloom_count[level] += 1
+        
     return bloom_count
 
 if __name__ == "__main__":
