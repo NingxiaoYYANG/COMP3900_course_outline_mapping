@@ -73,7 +73,7 @@ def extract_verbs(clos):
     -------
     verbs : list containing every verb in a clos.
     '''
-    verbs = set()
+    verbs = []
 
     # iterate through each clos to extract verbs
     for clo in clos:
@@ -83,7 +83,7 @@ def extract_verbs(clos):
         # Extract verbs and append to verbs
         for token in doc:
             if token.pos_ == "VERB":
-                verbs.add(token.text)
+                verbs.append(token.text)
     
     return verbs
 

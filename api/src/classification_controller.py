@@ -3,6 +3,9 @@ import openai
 from extract_helper import extract_verbs, extract_clos_from_pdf
 from blooms_levels import BLOOMS_TAXONOMY
 
+# import from database.py
+from database import add_clos, get_clos
+
 # Set up OpenAI API key
 openai.api_key = 'secret-key'
 
@@ -28,7 +31,15 @@ def classify_clos_from_pdf(file):
     # Match clo to blooms by dict
     blooms_count = match_verbs_by_dict(extracted_verbs)
 
+    course_code = "COMP1551" # TO-DO fix this with a real function
+
     # TO-DO: in what case do we need to use match_verbs_by_ai
+
+    try:
+        add_clos(course_code, blooms_count["Remember"], blooms_count["Understand"], blooms_count["Apply"], blooms_count["Analyse"], blooms_count["Evaluate"], blooms_count["Create"])
+    except Exception as e:
+        print(e)
+        return False
 
     return blooms_count
 
@@ -82,8 +93,10 @@ def match_verbs_by_dict(verbs):
 if __name__ == "__main__":
     # Can replace with any pdf file for testing
     # course_outline = "C:/Users/mbmas/Downloads/CO_ACCT3202_1_2024_Term1_T1_InPerson_Standard_Kensington.pdf"
-    course_outline_file_path = "C:/Users/20991/Downloads/CO_COMP6771_1_2024_Term2_T2_Multimodal_Standard_Kensington.pdf"
+    course_outline_file_path = "/Users/rbxii3/Downloads/CO_COMP1521_1_2024_Term1_T1_Multimodal_Standard_Kensington.pdf"
 
     blooms_count = classify_clos_from_pdf(course_outline_file_path)
 
-    print(blooms_count)
+    result = get_clos("COMP1551") # TO-DO fix this with a real value
+    print (blooms_count)
+    print(result)
