@@ -1,10 +1,14 @@
 import openai
+import re
 
-from extract_helper import extract_verbs, extract_clos_from_pdf
+from extract_helper import extract_clos_from_pdf
 from blooms_levels import BLOOMS_TAXONOMY
 
 # Set up OpenAI API key
 openai.api_key = 'secret-key'
+
+# Define the regular expression pattern
+pattern = r'[^\w]+'
 
 def classify_clos_from_pdf(file):
     '''
@@ -52,6 +56,15 @@ def match_verbs_by_ai(learning_outcome):
     predicted_label = response.choices[0].message.content
     return predicted_label
 
+def extract_words_from_clo(clo):
+    # Split the sentence using the pattern
+    words = re.split(pattern, clo)
+
+    # Remove empty strings from the result
+    words = [word.lower() for word in words if word]
+
+    return words
+
 def match_clos_by_dict(clos):
     '''
     Matches extracted verbs to Bloom's Taxonomy levels.
@@ -69,12 +82,15 @@ def match_clos_by_dict(clos):
 
     # Iterate through the verbs
     for clo in clos:
-        for word in clo:
+        # split to words
+        words = extract_words_from_clo(clo)
+        for word in words:
             # Check each Bloom's level
             for level, keywords in BLOOMS_TAXONOMY.items():
                 # If the verb is in the keywords list, increment the count for the level
                 if word in keywords:
                     bloom_count[level] += 1
+                    print("LEVEL: " + level + ", WORD: " + word + ", CLO: " + clo)
         
     return bloom_count
 

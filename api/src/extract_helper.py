@@ -1,9 +1,5 @@
 from pypdf import PdfReader
 import re
-import spacy
-
-# Load the spaCy English model
-nlp = spacy.load("en_core_web_sm")
 
 def extract_clos_from_pdf(course_outline_file):
     '''
