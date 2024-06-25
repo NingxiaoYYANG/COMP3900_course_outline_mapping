@@ -94,6 +94,3 @@ if __name__ == "__main__":
     course_outline = "C:/Users/20991/Downloads/CO_COMP6771_1_2024_Term2_T2_Multimodal_Standard_Kensington.pdf"
 
     clos = extract_clos_from_pdf(course_outline)
-    verbs = extract_verbs(clos)
-
-    for verb in verbs: print(verb)
