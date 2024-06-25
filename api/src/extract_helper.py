@@ -45,6 +45,12 @@ def extract_clos_from_pdf(course_outline_file):
                     # Dot point indicates the end of the CLO text
                     # as it means a new dot point is starting
                     clo = line.split("•")[0]
+                    
+                    # Sometimes the CLO has the header of the next table
+                    # which is always "Course Learning Outcomes"
+                    # This shouldn't be part of the CLO text.
+                    clo = clo.split("Course Learning Outcomes")[0]
+                    
                     clo = clo.replace('\n', '')
                     
                     # Remove number and colon from beginning
