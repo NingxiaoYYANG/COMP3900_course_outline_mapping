@@ -1,8 +1,8 @@
 import openai
 import re
 
-from extract_helper import extract_clos_from_pdf
-from blooms_levels import BLOOMS_TAXONOMY
+from src.extract_helper import extract_clos_from_pdf
+from src.blooms_levels import BLOOMS_TAXONOMY
 
 # Set up OpenAI API key
 openai.api_key = 'secret-key'
@@ -90,7 +90,7 @@ def match_clos_by_dict(clos):
                 # If the verb is in the keywords list, increment the count for the level
                 if word in keywords:
                     bloom_count[level] += 1
-                    print("LEVEL: " + level + ", WORD: " + word + ", CLO: " + clo)
+                    # print("LEVEL: " + level + ", WORD: " + word + ", CLO: " + clo)
         
     return bloom_count
 

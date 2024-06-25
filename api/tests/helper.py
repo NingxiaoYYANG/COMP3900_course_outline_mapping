@@ -20,6 +20,15 @@ INVALID_PDFS = [
     "tests/testFiles/invalid.pdf",
 ]
 
+BLOOMS_LEVELS = [
+    "Remember",
+    "Understand",
+    "Apply",
+    "Analyse",
+    "Evaluate",
+    "Create",
+]
+
 
 def extract_test_clos():
     """
