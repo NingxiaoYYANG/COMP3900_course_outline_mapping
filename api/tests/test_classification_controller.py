@@ -1,5 +1,6 @@
 import unittest
-from src import *
+#from src import classification_controller
+from tests.helper import *
 
 class ClassifyCLOsFromPdfTestCase(unittest.TestCase):
     def test(self):
