@@ -6,6 +6,7 @@ from flask_cors import CORS  # Import CORS from flask_cors
 # imported files
 from classification_controller import classify_clos_from_pdf
 from database import upload_pdf, get_pdf
+from blooms_levels import BLOOMS_TAXONOMY
 
 app = APIFlask(__name__, title='Successful Outcomes F11A', version = '0.1')
 CORS(app)  # Apply CORS to your app
@@ -36,18 +37,32 @@ def upload_course_outline_pdf():
     if upload_pdf(course_code, file):
         return 'Success!', 200
 
+# @app.route('/api/classify_clos', methods=['POST'])
+# def classify_learning_outcome_route():
+#     data = request.form
+#     course_code = data.get('course_code')
+
+#     file_data = get_pdf(course_code)
+#     blooms_count = classify_clos_from_pdf(file_data)
+
+#     return jsonify({'blooms_labels': blooms_count})
+
 @app.route('/api/classify_clos', methods=['POST'])
 def classify_learning_outcome_route():
-    # check if url provided
     data = request.form
-    course_code = data.get('course_code')
+    course_codes = data.get('course_codes')
 
-    file_data = get_pdf(course_code)
-    blooms_count = classify_clos_from_pdf(file_data)
+    result = {level: 0 for level in BLOOMS_TAXONOMY}
 
-    return jsonify({'blooms_labels': blooms_count})
+    for course_code in course_codes:
+        file_data = get_pdf(course_code)
+        blooms_count = classify_clos_from_pdf(file_data)
+        
+        # Add blooms_count to result
+        for level, count in blooms_count.items():
+            result[level] += count
 
-    # TO-DO: url part
+    return jsonify({'blooms_count': result})
 
 if __name__ == '__main__':
     app.run(debug=True)

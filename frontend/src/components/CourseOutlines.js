@@ -18,10 +18,10 @@ function CourseOutlines() {
 
     try {
       const formData = new FormData();
-      formData.append('course_code', courseCode);
+      formData.append('course_code', [courseCode]);
 
       const response = await axios.post('http://localhost:5000/api/classify_clos', formData);
-      setBloomsLabels(response.data.blooms_labels);
+      setBloomsLabels(response.data.blooms_count);
       setError('');
     } catch (err) {
       setError('Error fetching Bloom\'s taxonomy counts. Please try again.');
