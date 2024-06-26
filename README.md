@@ -11,7 +11,7 @@
     python -m venv venv
     source venv/Scripts/activate
 
-or
+    or
 
     cd api
     source venv/Scripts/activate
