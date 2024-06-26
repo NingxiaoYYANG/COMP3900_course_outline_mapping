@@ -10,7 +10,9 @@
     cd api
     python -m venv venv
     source venv/Scripts/activate
+
 or
+
     ```sh
     cd api
     source venv/Scripts/activate
