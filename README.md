@@ -23,7 +23,7 @@
     cd ..
     docker-compose up
 
-4. Install node-modules for frontend:
+4. Open another terminal, install node-modules for frontend:
     ```sh
     cd frontend
     npm install
