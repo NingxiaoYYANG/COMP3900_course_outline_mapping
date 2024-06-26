@@ -5,7 +5,7 @@
 
 ### Set up instructions when developing in localhost:
 
-1. Activate/Create venv:
+1. Create/Activate venv:
     ```sh
     cd api
     python -m venv venv
