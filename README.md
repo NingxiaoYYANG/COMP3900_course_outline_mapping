@@ -24,13 +24,16 @@
     docker-compose up
 
 4. Install node-modules for frontend:
+    ```sh
     cd frontend
     npm install
 
 5. Turn on fontend:
+    ```sh
     npm start
 
 6. Open another terminal, turn on backend:
+    ```sh
     cd api
     python src/app.py
 
