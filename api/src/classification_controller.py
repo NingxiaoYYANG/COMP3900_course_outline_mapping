@@ -33,7 +33,7 @@ def classify_clos_from_pdf(file):
     # Match clo to blooms by dict
     blooms_count = match_clos_by_dict(extracted_clos)
 
-    course_code = "COMP1551" # TO-DO fix this with a real function
+    course_code = "COMP1521" # TO-DO fix this with a real function
 
     # TO-DO: in what case do we need to use match_verbs_by_ai
 
@@ -108,10 +108,11 @@ def match_clos_by_dict(clos):
 if __name__ == "__main__":
     # Can replace with any pdf file for testing
     # course_outline = "C:/Users/mbmas/Downloads/CO_ACCT3202_1_2024_Term1_T1_InPerson_Standard_Kensington.pdf"
-    course_outline_file_path = "/Users/rbxii3/Downloads/CO_COMP1521_1_2024_Term1_T1_Multimodal_Standard_Kensington.pdf"
+    # course_outline_file_path = "/Users/rbxii3/Downloads/CO_COMP1521_1_2024_Term1_T1_Multimodal_Standard_Kensington.pdf"
+    # course_outline_file_path = "C:/Users/Justin_Yang/Downloads/CO_COMP1521_1_2024_Term1_T1_Multimodal_Standard_Kensington.pdf"
 
     # blooms_count = classify_clos_from_pdf(course_outline_file_path)
 
-    result = get_clos("COMP1511") # TO-DO fix this with a real value
+    result = get_clos("COMP1521") # TO-DO fix this with a real value
     # print (blooms_count)
     print(result)

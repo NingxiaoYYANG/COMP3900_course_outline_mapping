@@ -1,20 +1,21 @@
 from pypdf import PdfReader
 import re
+from io import BytesIO
 
-def extract_clos_from_pdf(course_outline_file):
+def extract_clos_from_pdf(file_data):
     '''
     Extracts CLOs from a generated course outline pdf file.
 
     Inputs
     ------
-    course_outline_file : course outline file in pdf form
+    file_data : binary data of the course outline file in pdf form
 
     Outputs
     -------
     clos : list containing every CLO stored as a string.
     '''
     
-    reader = PdfReader(course_outline_file)
+    reader = PdfReader(BytesIO(file_data))
     num_pages = len(reader.pages)
 
     clo_pages = []
@@ -59,37 +60,6 @@ def extract_clos_from_pdf(course_outline_file):
 
     return clos
 
-def course_code_from_pdf(course_outline_file):
-    '''
-    Extracts the course code from a generated course outline pdf file.
-
-    Inputs
-    ------
-    course_outline_file : course outline file in pdf form
-
-    Outputs
-    -------
-    course_code : course code stored as a string.
-    '''
-    
-    reader = PdfReader(course_outline_file)
-    num_pages = len(reader.pages)
-
-    # Course details are found on the title page
-    page_text = reader.pages[0].extract_text()
-
-    course_code = re.search("Course Code : .+", page_text)
-    if course_code:
-        # We want to extract the course code by itself.
-        course_code = course_code.group(0)[len("Course Code :"):].strip()
-    else:
-        raise ValueError(f"Could not extract course code from PDF ({course_outline_file})")
-
-    return course_code
-
-def extract_clos_from_url(url):
-    #TO-DO
-    return
 
 if __name__ == "__main__":
     # Can replace with any pdf file for testing

@@ -9,13 +9,15 @@ import Home from './components/Home';
 import CourseOutlines from './components/CourseOutlines';
 import BuildDegree from './components/BuildDegree';
 import Navigation from './components/Navigation';
+import UploadCourse from './components/UploadCourse';
 
 function Routing() {
   return (
     <Routes>
       <Route exact path='/' element={<Home/>}/>
-      <Route path='/coureoutlines' element={<CourseOutlines/>}/>
-      <Route path='/coureoutlines/builddegree' element={<BuildDegree/>} />
+      <Route path='/courseoutlines' element={<CourseOutlines/>}/>
+      <Route path='/courseoutlines/builddegree' element={<BuildDegree/>} />
+      <Route path='/courseoutlines/uploadfile' element={<UploadCourse/>} />
     </Routes>
   )
 }

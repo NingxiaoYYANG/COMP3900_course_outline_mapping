@@ -1,41 +1,51 @@
 #  imported libs
 from apiflask import APIFlask
 from flask import Flask, request, jsonify
-import os
+from flask_cors import CORS  # Import CORS from flask_cors
 
 # imported files
 from classification_controller import classify_clos_from_pdf
+from database import upload_pdf, get_pdf
 
 app = APIFlask(__name__, title='Successful Outcomes F11A', version = '0.1')
-
+CORS(app)  # Apply CORS to your app
 
 @app.get('/')
 def index():
     return {'message': 'hello'}
 
+@app.route('/api/upload_pdf', methods=["POST"])
+def upload_course_outline_pdf():
+    data = request.form
+    course_code = data.get('course_code')
+    
+
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file or url provided'}), 400
+    file = request.files['file']
+    print(file)
+
+    # check if selected
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+
+    #check file format
+    if not (file and file.filename.endswith('.pdf')):
+        return jsonify({'error': 'Invalid file format'}), 400
+    
+    if upload_pdf(course_code, file):
+        return 'Success!', 200
+
 @app.route('/api/classify_clos', methods=['POST'])
 def classify_learning_outcome_route():
     # check if url provided
-    data = request.json
-    url = data.get('url')
-    if not url:
-        # check if file provided
-        if 'file' not in request.files:
-            return jsonify({'error': 'No file or url provided'}), 400
-        
-        file = request.files['file']
+    data = request.form
+    course_code = data.get('course_code')
 
-        # check if selected
-        if file.filename == '':
-            return jsonify({'error': 'No selected file'}), 400
+    file_data = get_pdf(course_code)
+    blooms_count = classify_clos_from_pdf(file_data)
 
-        #check file format
-        if not (file and file.filename.endswith('.pdf')):
-            return jsonify({'error': 'Invalid file format'}), 400
-        
-        blooms_count = classify_clos_from_pdf(file)
-
-        return jsonify({'blooms_labels': blooms_count})
+    return jsonify({'blooms_labels': blooms_count})
 
     # TO-DO: url part
 
