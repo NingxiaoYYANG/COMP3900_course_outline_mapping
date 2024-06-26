@@ -13,7 +13,6 @@
 
 or
 
-    ```sh
     cd api
     source venv/Scripts/activate
 
