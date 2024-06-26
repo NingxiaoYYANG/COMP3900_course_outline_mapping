@@ -1,6 +1,7 @@
 import openai
+import re
 
-from extract_helper import extract_verbs, extract_clos_from_pdf
+from extract_helper import extract_clos_from_pdf
 from blooms_levels import BLOOMS_TAXONOMY
 
 # import from database.py
@@ -8,6 +9,9 @@ from database import add_clos, get_clos
 
 # Set up OpenAI API key
 openai.api_key = 'secret-key'
+
+# Define the regular expression pattern
+pattern = r'[^\w]+'
 
 def classify_clos_from_pdf(file):
     '''
@@ -25,11 +29,9 @@ def classify_clos_from_pdf(file):
 
     # Extract clos from the PDF
     extracted_clos = extract_clos_from_pdf(file)
-    # Extract verbs from clos
-    extracted_verbs = extract_verbs(extracted_clos)
     
     # Match clo to blooms by dict
-    blooms_count = match_verbs_by_dict(extracted_verbs)
+    blooms_count = match_clos_by_dict(extracted_clos)
 
     course_code = "COMP1551" # TO-DO fix this with a real function
 
@@ -65,7 +67,16 @@ def match_verbs_by_ai(learning_outcome):
     predicted_label = response.choices[0].message.content
     return predicted_label
 
-def match_verbs_by_dict(verbs):
+def extract_words_from_clo(clo):
+    # Split the sentence using the pattern
+    words = re.split(pattern, clo)
+
+    # Remove empty strings from the result
+    words = [word.lower() for word in words if word]
+
+    return words
+
+def match_clos_by_dict(clos):
     '''
     Matches extracted verbs to Bloom's Taxonomy levels.
 
@@ -81,13 +92,17 @@ def match_verbs_by_dict(verbs):
     bloom_count = {level: 0 for level in BLOOMS_TAXONOMY}
 
     # Iterate through the verbs
-    for verb in verbs:
-        # Check each Bloom's level
-        for level, keywords in BLOOMS_TAXONOMY.items():
-            # If the verb is in the keywords list, increment the count for the level
-            if verb in keywords:
-                bloom_count[level] += 1
-    
+    for clo in clos:
+        # split to words
+        words = extract_words_from_clo(clo)
+        for word in words:
+            # Check each Bloom's level
+            for level, keywords in BLOOMS_TAXONOMY.items():
+                # If the verb is in the keywords list, increment the count for the level
+                if word in keywords:
+                    bloom_count[level] += 1
+                    # print("LEVEL: " + level + ", WORD: " + word + ", CLO: " + clo)
+        
     return bloom_count
 
 if __name__ == "__main__":
@@ -95,8 +110,8 @@ if __name__ == "__main__":
     # course_outline = "C:/Users/mbmas/Downloads/CO_ACCT3202_1_2024_Term1_T1_InPerson_Standard_Kensington.pdf"
     course_outline_file_path = "/Users/rbxii3/Downloads/CO_COMP1521_1_2024_Term1_T1_Multimodal_Standard_Kensington.pdf"
 
-    blooms_count = classify_clos_from_pdf(course_outline_file_path)
+    # blooms_count = classify_clos_from_pdf(course_outline_file_path)
 
-    result = get_clos("COMP1551") # TO-DO fix this with a real value
-    print (blooms_count)
+    result = get_clos("COMP1511") # TO-DO fix this with a real value
+    # print (blooms_count)
     print(result)

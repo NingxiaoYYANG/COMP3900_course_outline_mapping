@@ -1,9 +1,5 @@
 from pypdf import PdfReader
 import re
-import spacy
-
-# Load the spaCy English model
-nlp = spacy.load("en_core_web_sm")
 
 def extract_clos_from_pdf(course_outline_file):
     '''
@@ -49,6 +45,12 @@ def extract_clos_from_pdf(course_outline_file):
                     # Dot point indicates the end of the CLO text
                     # as it means a new dot point is starting
                     clo = line.split("•")[0]
+                    
+                    # Sometimes the CLO has the header of the next table
+                    # which is always "Course Learning Outcomes"
+                    # This shouldn't be part of the CLO text.
+                    clo = clo.split("Course Learning Outcomes")[0]
+                    
                     clo = clo.replace('\n', '')
                     
                     # Remove number and colon from beginning
@@ -57,36 +59,37 @@ def extract_clos_from_pdf(course_outline_file):
 
     return clos
 
-def extract_clos_from_url(url):
-    #TO-DO
-    return
-
-def extract_verbs(clos):
+def course_code_from_pdf(course_outline_file):
     '''
-    Extracts verbs from list of course learning outcomes.
+    Extracts the course code from a generated course outline pdf file.
 
     Inputs
     ------
-    clos : list of strings that represent course learning outcomes.
+    course_outline_file : course outline file in pdf form
 
     Outputs
     -------
-    verbs : list containing every verb in a clos.
+    course_code : course code stored as a string.
     '''
-    verbs = []
-
-    # iterate through each clos to extract verbs
-    for clo in clos:
-        # Process the text with spaCy
-        doc = nlp(clo)
     
-        # Extract verbs and append to verbs
-        for token in doc:
-            if token.pos_ == "VERB":
-                verbs.append(token.text)
-    
-    return verbs
+    reader = PdfReader(course_outline_file)
+    num_pages = len(reader.pages)
 
+    # Course details are found on the title page
+    page_text = reader.pages[0].extract_text()
+
+    course_code = re.search("Course Code : .+", page_text)
+    if course_code:
+        # We want to extract the course code by itself.
+        course_code = course_code.group(0)[len("Course Code :"):].strip()
+    else:
+        raise ValueError(f"Could not extract course code from PDF ({course_outline_file})")
+
+    return course_code
+
+def extract_clos_from_url(url):
+    #TO-DO
+    return
 
 if __name__ == "__main__":
     # Can replace with any pdf file for testing
@@ -94,6 +97,3 @@ if __name__ == "__main__":
     course_outline = "C:/Users/20991/Downloads/CO_COMP6771_1_2024_Term2_T2_Multimodal_Standard_Kensington.pdf"
 
     clos = extract_clos_from_pdf(course_outline)
-    verbs = extract_verbs(clos)
-
-    for verb in verbs: print(verb)
