@@ -5,8 +5,9 @@ from tests.helper import *
 
 class ClassifyCLOsFromPdfTestCase(unittest.TestCase):
     def testCanClassifyCLOsFromPdf(self):
+        pdf_binaries = get_pdf_binaries()
         for i in range(len(VALID_PDFS)):
-            classification = classify_clos_from_pdf(VALID_PDFS[i])
+            extracted_clos = classify_clos_from_pdf(pdf_binaries[i])
             
             # We can't be for sure what the correct classification is.
             # Just check that the classification is valid and not empty.

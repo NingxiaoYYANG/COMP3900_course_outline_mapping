@@ -41,3 +41,13 @@ def extract_test_clos():
             clo_list.append(clos)
     
     return clo_list
+
+def get_pdf_binaries():
+    """
+    Returns the binary of each test pdf.
+    """
+    pdfs = []
+    for pdf_path in VALID_PDFS:
+        with open(pdf_path, mode='rb') as f:
+            pdfs.append(f.read())
+    return pdfs

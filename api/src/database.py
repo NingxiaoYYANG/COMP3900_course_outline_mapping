@@ -1,4 +1,3 @@
-
 import mysql.connector as database
 import os
 
