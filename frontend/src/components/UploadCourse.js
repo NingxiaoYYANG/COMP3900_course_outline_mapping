@@ -10,7 +10,6 @@ function UploadCourse() {
     setSelection(selection);
   }
 
-  const [courseCode, setCourseCode] = useState('');
   const [file, setFile] = useState(null);
   const [error, setError] = useState('');
 
@@ -33,7 +32,6 @@ function UploadCourse() {
     }
 
     const formData = new FormData();
-    formData.append('course_code', courseCode);
     formData.append('file', file);
 
     try {
@@ -46,7 +44,6 @@ function UploadCourse() {
       if (response.status === 200) {
         alert('PDF file uploaded successfully!');
         // Clear form state
-        setCourseCode('');
         setFile(null);
         setError('');
       } else {
@@ -84,14 +81,6 @@ function UploadCourse() {
           <i className="fas fa-cloud-upload-alt"></i>
           <p>Drop file to upload</p>
           <p>or</p>
-          <label>
-            Course Code:
-            <input
-              type="text"
-              value={courseCode}
-              onChange={(e) => setCourseCode(e.target.value)}
-            />
-          </label>
           <br />
           <input type="file" accept=".pdf" onChange={handleFileChange} />
           <br />

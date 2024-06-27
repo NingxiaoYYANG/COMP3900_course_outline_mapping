@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 function CourseOutlines() {
   const [courseCode, setCourseCode] = useState('');
   const [courseCodes, setCourseCodes] = useState([]);
+  const [courseDetails, setCourseDetails] = useState([]);
   const [bloomsLabels, setBloomsLabels] = useState(null);
   const [error, setError] = useState('');
 
@@ -21,6 +22,17 @@ function CourseOutlines() {
     setCourseCode('');  // Clear the input field
     setError('');
   };
+
+  const fetchCourseDetails = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/courses');
+      console.log(response)
+      setCourseDetails(response.data.course_details);
+    } catch (err) {
+      setError('Error fetching course details. Please try again.');
+      setBloomsLabels(null);
+    }
+  }
 
   const handleFetchBloomsCount = async () => {
     if (courseCodes.length === 0) {
@@ -40,6 +52,11 @@ function CourseOutlines() {
       setBloomsLabels(null);
     }
   };
+
+  useEffect(() => {
+    // This code runs once when the component mounts
+    fetchCourseDetails();
+  }, []); 
 
   return (
     <div>
@@ -65,6 +82,22 @@ function CourseOutlines() {
             ))}
           </ul>
         </div>
+      )}
+
+      {courseDetails.length > 0 && (
+        <div>
+        <h3>Selected Course Codes:</h3>
+        <ul>
+          {courseDetails.map((detail, index) => (
+            <li key={index}>
+              <strong>Course Code:</strong> {detail[0]}<br />
+              <strong>Course Name:</strong> {detail[1]}<br />
+              <strong>Level:</strong> {detail[2]}<br />
+              <strong>Semester:</strong> {detail[3]}
+            </li>
+          ))}
+        </ul>
+      </div>
       )}
 
       {bloomsLabels && (

@@ -80,21 +80,71 @@ def get_clos(course_code):
         cursor.close()
         conn.close()
 
-def get_all_course_info():
+def add_course_detail(course_code, course_name, course_level, course_term):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        statement = "SELECT course_code FROM clos"
+        cursor.execute("CREATE TABLE IF NOT EXISTS course_details (course_code VARCHAR(8) PRIMARY KEY, course_name VARCHAR(30), course_level VARCHAR(2), course_term VARCHAR(4))")
+        conn.commit()
+
+        cursor.execute("SELECT course_code FROM course_details WHERE course_code = %s", (course_code,))
+        existing_course = cursor.fetchone()
+
+        if existing_course:
+            print(f"Course code {course_code} already exists.")
+            return False
+
+        statement = "INSERT INTO course_details (course_code, course_name, course_level, course_term) VALUES (%s, %s, %s, %s)"
+        values = (course_code, course_name, course_level, course_term)
+        cursor.execute(statement, values)
+        conn.commit()
+
+        return True
+    
+    except Exception as e:
+        print(e)
+        return False
+    
+    finally:
+        cursor.close()
+        conn.close()
+
+def get_all_course_details():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        statement = "SELECT * FROM course_details"
         cursor.execute(statement)
         result = cursor.fetchall()
-        
-        course_codes = [row[0] for row in result]
-        return course_codes
+        course_details = [row for row in result]
+        return course_details
     
     except Exception as e:
         print(e)
         return []
+
+    finally:
+        cursor.close()
+        conn.close()
+
+# debug only
+def clear_database():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("DROP TABLE IF EXISTS clos")
+        cursor.execute("DROP TABLE IF EXISTS course_files")
+        cursor.execute("DROP TABLE IF EXISTS course_details")
+        conn.commit()
+
+        return True
+
+    except Exception as e:
+        print(e)
+        return False
 
     finally:
         cursor.close()

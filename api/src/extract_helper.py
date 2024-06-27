@@ -70,21 +70,21 @@ def course_details_from_pdf(file_data):
     -------
     dict in the form of:
     {
-        "courseCode": string,
-        "courseName": string,
-        "courseLevel": string,
-        "courseTerm": int
+        "course_code": string,
+        "course_name": string,
+        "course_level": string,
+        "course_term": string
     }
     '''
 
     course_details = {
-        "courseCode": "",
-        "courseName": "",
-        "courseLevel": "",
-        "courseTerm": 0
+        "course_code": "",
+        "course_name": "",
+        "course_level": "",
+        "course_term": ""
     }
 
-    reader = PdfReader(BytesIO(file_data))
+    reader = PdfReader(file_data)
     num_pages = len(reader.pages)
 
     # Course details are found on the title page
@@ -94,7 +94,7 @@ def course_details_from_pdf(file_data):
     if course_code:
         # We want to extract the course code by itself.
         course_code = course_code.group(0)[len("Course Code :"):].strip()
-        course_details["courseCode"] = course_code
+        course_details["course_code"] = course_code
 
     # The format of the header is as follows:
     # ===
@@ -116,23 +116,23 @@ def course_details_from_pdf(file_data):
         course_name = course_name.split(" Published on the")[0]
         # Remove the hyphen and year at the end.
         course_name = course_name[:-len(" - 2024")]
-        course_details["courseName"] = course_name
+        course_details["course_name"] = course_name
 
     course_level = re.search("Study Level : .+", page_text)
     if course_level:
         course_level = course_level.group(0)[len("Study Level :"):].strip()
         if "Undergraduate" in course_level:
-            course_details["courseLevel"] = "UG"
+            course_details["course_level"] = "UG"
         elif "Postgraduate" in course_level:
-            course_details["courseLevel"] = "PG"
+            course_details["course_level"] = "PG"
 
     term = re.search("Term : .+", page_text)
     if term:
         term = term.group(0)[len("Term :"):].strip()
         # The term number would be the last character of the text.
         if "Term" in term:
-            term = int(term[-1])
-            course_details["courseTerm"] = term
+            term = term[-1]
+            course_details["course_term"] = term
 
     return course_details
 

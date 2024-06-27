@@ -6,8 +6,9 @@ import json
 
 # imported files
 from classification_controller import classify_clos_from_pdf, addBloomsCount
-from database import add_clos, get_clos
+from database import add_clos, get_clos, add_course_detail, get_all_course_details
 from blooms_levels import BLOOMS_TAXONOMY
+from extract_helper import course_details_from_pdf
 
 app = APIFlask(__name__, title='Successful Outcomes F11A', version = '0.1')
 CORS(app)  # Apply CORS to your app
@@ -18,9 +19,6 @@ def index():
 
 @app.route('/api/upload_pdf', methods=["POST"])
 def upload_course_outline_pdf():
-    data = request.form
-    course_code = data.get('course_code')
-    
     if 'file' not in request.files:
         return jsonify({'error': 'No file or url provided'}), 400
     file = request.files['file']
@@ -34,9 +32,11 @@ def upload_course_outline_pdf():
         return jsonify({'error': 'Invalid file format'}), 400
     
     blooms_count = classify_clos_from_pdf(file)
+    course_details = course_details_from_pdf(file)
 
     try:
-        add_clos(course_code, blooms_count["Remember"], blooms_count["Understand"], blooms_count["Apply"], blooms_count["Analyse"], blooms_count["Evaluate"], blooms_count["Create"])
+        add_clos(course_details["course_code"], blooms_count["Remember"], blooms_count["Understand"], blooms_count["Apply"], blooms_count["Analyse"], blooms_count["Evaluate"], blooms_count["Create"])
+        add_course_detail(course_details["course_code"], course_details["course_name"], course_details["course_level"], course_details["course_term"])
         return jsonify({'message': 'Success!'}), 200
     except Exception as e:
         print(e)
@@ -61,13 +61,14 @@ def classify_learning_outcome_route():
 
     return jsonify({'blooms_count': result})
 
-# @app.route('/api/courses', methods=['GET'])
-# def get_courses():
+@app.route('/api/courses', methods=['GET'])
+def get_courses():
+    course_details = get_all_course_details()
+    print(course_details)
 
-#     course_info = 
-#     return jsonify({'course_codes': course_codes})
-
-
+    # course_details format eg: [('COMP1521', 'Computer Systems Fundamentals', 'UG', '1')]
+    return jsonify({'course_details': course_details})
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
