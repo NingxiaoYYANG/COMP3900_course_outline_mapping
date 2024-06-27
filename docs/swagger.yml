@@ -1,0 +1,127 @@
+openapi: 3.1.0
+
+info:
+  title: CourseMapper
+  description: |-
+    Docs for the CourseMapper API.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/
+tags:
+  - name: Importing
+    description: Operations for uploading/importing data
+paths:
+  /v1/course/import:
+    post:
+      tags:
+        - Importing
+      summary: Add a course to the database
+      description: Can only be a PDF upload.
+      operationId: uploadCoursePDF
+      requestBody:
+        content:
+          multipart/form-data: 
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+        required: true
+      responses:
+        '200':
+          description: File imported successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/schemas/GeneralResponse'
+              
+        '400':
+          description: Invalid file supplied
+          content:
+            application/json:
+              schema:
+               $ref: '#/schemas/GeneralResponse'
+        '422':
+          description: Unprocessable entity
+          content:
+            application/json:
+              schema:
+               $ref: '#/schemas/GeneralResponse'
+  
+  /v1/courses:
+    get:
+      description: For the "select courses" page, return, list of course codes and other relevant data.
+      tags:
+        - Importing
+      responses:
+        '200':
+          description: Returns the course code, course name, and other key details about each course as an array of objects.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    courseCode:
+                      type: string
+                    courseName:
+                      type: string
+                    courseLevel:
+                      type: string
+                    courseTerm:
+                      type: integer
+                  required:
+                    - courseCode
+                    - courseName
+                    - courseDescription
+                    - courseLevel
+                    - courseCredit
+                    - courseSemester
+                
+
+  /v1/course/outcomes:
+    get:
+      description: Get the data about Bloom's Taxonomies for a given list of courses
+      tags:
+        - Importing
+      parameters:
+        - in: header
+          name: Courses
+          schema:
+            type: array
+            items:
+              type: string
+      responses: 
+        '200':
+          description: Returns an array of objects for each level
+          content:
+            application/json:
+              schema:
+                $ref: '#/schemas/Levels'
+
+schemas:
+  Levels:
+    type: array
+    items:
+      type: object
+      properties:
+        level:
+          type: integer
+        count:
+          type: integer
+      required:
+        - level
+        - count
+  GeneralResponse:
+    type: object
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    required:
+      - code
+      - message
+      
