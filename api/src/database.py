@@ -1,38 +1,43 @@
 import mysql.connector as database
 import os
+from dotenv import load_dotenv
 
-username = "backend"
-password = "bb11a381f2c1bd26e64a1ba76c32b4ea" # TODO: Make this use .env file
 
-datastore = database.connect(
-    user=username,
-    password=password,
-    host="localhost",
-    database="f11ap16"
-)
+# Load environment variables from .env file
+load_dotenv()
 
-cursor = datastore.cursor()
+username = os.getenv('MARIADB_USER')
+password = os.getenv('MARIADB_PASSWORD')
+host = "localhost"
+database_name = os.getenv('MARIADB_DATABASE')
+
+def get_db_connection():
+    return database.connect(
+        user=username,
+        password=password,
+        host=host,
+        database=database_name
+    )
 
 def add_clos(course_code, remember, understand, apply, analyse, evaluate, create):
     try:
-        # Create table if not exists, course codes are always 4 numbers and 4 letters.
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
         cursor.execute("CREATE TABLE IF NOT EXISTS clos (course_code VARCHAR(8) PRIMARY KEY, remember INT, understand INT, apply INT, analyse INT, evaluate INT, `create` INT)")
-        datastore.commit()
+        conn.commit()
 
-        # Check if course_code already exists
         cursor.execute("SELECT course_code FROM clos WHERE course_code = %s", (course_code,))
         existing_course = cursor.fetchone()
 
         if existing_course:
-            # Course code already exists, handle as needed (update or ignore)
             print(f"Course code {course_code} already exists.")
             return False
 
-        # Insert data
         statement = "INSERT INTO clos (course_code, remember, understand, apply, analyse, evaluate, `create`) VALUES (%s, %s, %s, %s, %s, %s, %s)"
         values = (course_code, remember, understand, apply, analyse, evaluate, create)
         cursor.execute(statement, values)
-        datastore.commit()
+        conn.commit()
 
         return True
     
@@ -40,8 +45,15 @@ def add_clos(course_code, remember, understand, apply, analyse, evaluate, create
         print(e)
         return False
     
+    finally:
+        cursor.close()
+        conn.close()
+
 def get_clos(course_code):
     try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
         statement = "SELECT * FROM clos WHERE course_code = %s"
         values = (course_code,)
         cursor.execute(statement, values)
@@ -60,39 +72,26 @@ def get_clos(course_code):
         print(e)
         return False
 
-def upload_pdf(course_code, file):
+    finally:
+        cursor.close()
+        conn.close()
+
+def get_all_course_info():
     try:
-        # Convert FileStorage object to binary data
-        file_data = file.read()
-
-        # Create table if not exists, course codes are always 4 numbers and 4 letters.
-        cursor.execute("CREATE TABLE IF NOT EXISTS course_files (course_code VARCHAR(8) PRIMARY KEY, file_data LONGBLOB)")
-        datastore.commit()
-
-        # Insert into database
-        statement = "INSERT INTO course_files (course_code, file_data) VALUES (%s, %s)"
-        values = (course_code, file_data)
-        cursor.execute(statement, values)
-        datastore.commit()
-
-        return True
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        statement = "SELECT course_code FROM clos"
+        cursor.execute(statement)
+        result = cursor.fetchall()
+        
+        course_codes = [row[0] for row in result]
+        return course_codes
     
     except Exception as e:
         print(e)
-        return False
-    
-def get_pdf(course_code):
-    try:
-        # Get file from database
-        statement = "SELECT file_data FROM course_files WHERE course_code = %s"
-        cursor.execute(statement, (course_code,))
-        result = cursor.fetchone()
-        print(result)
-        if result:
-            return result[0]
-        else:
-            return None
+        return []
 
-    except Exception as e:
-        print(e)
-        return None
+    finally:
+        cursor.close()
+        conn.close()
