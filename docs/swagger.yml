@@ -20,7 +20,7 @@ paths:
       operationId: uploadCoursePDF
       requestBody:
         content:
-          multipart/form-data:
+          multipart/form-data: 
             schema:
               type: object
               properties:
@@ -29,25 +29,57 @@ paths:
                   format: binary
         required: true
       responses:
-        "200":
+        '200':
           description: File imported successfully
           content:
             application/json:
               schema:
-                $ref: "#/schemas/GeneralResponse"
-
-        "400":
+                $ref: '#/schemas/GeneralResponse'
+              
+        '400':
           description: Invalid file supplied
           content:
             application/json:
               schema:
-                $ref: "#/schemas/GeneralResponse"
-        "422":
+               $ref: '#/schemas/GeneralResponse'
+        '422':
           description: Unprocessable entity
           content:
             application/json:
               schema:
-                $ref: "#/schemas/GeneralResponse"
+               $ref: '#/schemas/GeneralResponse'
+  
+  /v1/courses:
+    get:
+      description: For the "select courses" page, return, list of course codes and other relevant data.
+      tags:
+        - Importing
+      responses:
+        '200':
+          description: Returns the course code, course name, and other key details about each course as an array of objects.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    courseCode:
+                      type: string
+                    courseName:
+                      type: string
+                    courseLevel:
+                      type: string
+                    courseTerm:
+                      type: integer
+                  required:
+                    - courseCode
+                    - courseName
+                    - courseDescription
+                    - courseLevel
+                    - courseCredit
+                    - courseSemester
+                
 
   /v1/course/outcomes:
     get:
@@ -61,13 +93,13 @@ paths:
             type: array
             items:
               type: string
-      responses:
-        "200":
+      responses: 
+        '200':
           description: Returns an array of objects for each level
           content:
             application/json:
               schema:
-                $ref: "#/schemas/Levels"
+                $ref: '#/schemas/Levels'
 
 schemas:
   Levels:
@@ -92,3 +124,4 @@ schemas:
     required:
       - code
       - message
+      
