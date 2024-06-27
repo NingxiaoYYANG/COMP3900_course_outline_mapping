@@ -59,15 +59,19 @@ def get_clos(course_code):
         cursor.execute(statement, values)
         result = cursor.fetchall()
 
-        return {
-            "Remember": result[0][1],
-            "Understand": result[0][2],
-            "Apply": result[0][3],
-            "Analyse": result[0][4],
-            "Evaluate": result[0][5],
-            "Create": result[0][6]
-        }
-    
+        if result:
+            return {
+                "Remember": result[0][1],
+                "Understand": result[0][2],
+                "Apply": result[0][3],
+                "Analyse": result[0][4],
+                "Evaluate": result[0][5],
+                "Create": result[0][6]
+            }
+        else:
+            print("No blooms counts for " + course_code)
+            return False
+        
     except Exception as e:
         print(e)
         return False

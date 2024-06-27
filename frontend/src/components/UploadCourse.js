@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './styles/uploadcourse.css';
+// import './styles/uploadcourse.css';
 
 
 function UploadCourse() {

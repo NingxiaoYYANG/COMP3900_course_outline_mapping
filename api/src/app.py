@@ -47,14 +47,12 @@ def classify_learning_outcome_route():
     data = request.form
     course_codes_raw = data.get('course_codes')
     course_codes = json.loads(course_codes_raw)
-
+    
     result = {level: 0 for level in BLOOMS_TAXONOMY}
 
     for course_code in course_codes:
         blooms_count_additive = get_clos(course_code)
-
         if blooms_count_additive:
-            print(course_code)
             result = addBloomsCount(result, blooms_count_additive)
         else:
             return jsonify({'error': 'No related data, please upload pdf'}), 400
