@@ -3,6 +3,7 @@ import axios from 'axios';
 
 function CourseOutlines() {
   const [courseCode, setCourseCode] = useState('');
+  const [courseCodes, setCourseCodes] = useState([]);
   const [bloomsLabels, setBloomsLabels] = useState(null);
   const [error, setError] = useState('');
 
@@ -10,16 +11,26 @@ function CourseOutlines() {
     setCourseCode(e.target.value);
   };
 
+  const handleAddCourseCode = () => {
+    const codePattern = /^[A-Za-z]{4}\d{4}$/;
+    if (!codePattern.test(courseCode)) {
+      setError('Please enter course code in correct format (e.g., ABCD1234).');
+      return;
+    }
+    setCourseCodes([...courseCodes, courseCode]);
+    setCourseCode('');  // Clear the input field
+    setError('');
+  };
+
   const handleFetchBloomsCount = async () => {
-    if (!courseCode) {
-      setError('Please enter a course code.');
+    if (courseCodes.length === 0) {
+      setError('Please add at least one course code.');
       return;
     }
 
     try {
       const formData = new FormData();
-      const courseCodeArray = [courseCode];
-      formData.append('course_codes', JSON.stringify(courseCodeArray));
+      formData.append('course_codes', JSON.stringify(courseCodes));
 
       const response = await axios.post('http://localhost:5000/api/classify_clos', formData);
       setBloomsLabels(response.data.blooms_count);
@@ -42,7 +53,20 @@ function CourseOutlines() {
           onChange={handleInputChange}
         />
       </label>
+      <button onClick={handleAddCourseCode}>Add Course Code</button>
       <button onClick={handleFetchBloomsCount}>Fetch Bloom's Counts</button>
+
+      {courseCodes.length > 0 && (
+        <div>
+          <h3>Selected Course Codes:</h3>
+          <ul>
+            {courseCodes.map((code, index) => (
+              <li key={index}>{code}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {bloomsLabels && (
         <div>
           <h3>Bloom's Taxonomy Counts</h3>
