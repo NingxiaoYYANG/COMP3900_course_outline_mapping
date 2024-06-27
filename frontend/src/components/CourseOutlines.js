@@ -22,6 +22,7 @@ function CourseOutlines() {
     setError('');
   };
 
+
   const handleFetchBloomsCount = async () => {
     if (courseCodes.length === 0) {
       setError('Please add at least one course code.');

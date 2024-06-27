@@ -35,9 +35,10 @@ function UploadCourse() {
     const formData = new FormData();
     formData.append('course_code', courseCode);
     formData.append('file', file);
+    console.log('Uploading PDF:', formData);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/upload_pdf', formData, {
+      const response = await axios.post('http://127.0.0.1:5000/api/upload_pdf', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -79,6 +80,8 @@ function UploadCourse() {
             Exam Paper
           </button>
         </div>
+
+        
 
         {selection === 'courseOutline' && (<div className="upload_form">
           <i className="fas fa-cloud-upload-alt"></i>
