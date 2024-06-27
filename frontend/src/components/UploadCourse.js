@@ -45,6 +45,7 @@ function UploadCourse() {
         setError('Failed to upload PDF file.');
       }
     } catch (error) {
+      console.log(error)
       console.error('Error uploading PDF:', error);
       setError('Error uploading PDF. Please try again later.');
     }
