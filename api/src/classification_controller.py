@@ -33,16 +33,6 @@ def classify_clos_from_pdf(file):
     # Match clo to blooms by dict
     blooms_count = match_clos_by_dict(extracted_clos)
 
-    course_code = "COMP1521" # TO-DO fix this with a real function
-
-    # TO-DO: in what case do we need to use match_verbs_by_ai
-
-    try:
-        add_clos(course_code, blooms_count["Remember"], blooms_count["Understand"], blooms_count["Apply"], blooms_count["Analyse"], blooms_count["Evaluate"], blooms_count["Create"])
-    except Exception as e:
-        print(e)
-        return False
-
     return blooms_count
 
 # TO-FIX
@@ -104,6 +94,12 @@ def match_clos_by_dict(clos):
                     # print("LEVEL: " + level + ", WORD: " + word + ", CLO: " + clo)
         
     return bloom_count
+
+def addBloomsCount(count1, count2):
+    # Add blooms_count to result
+    for level, count in count2.items():
+        count1[level] += count
+    return count1
 
 if __name__ == "__main__":
     # Can replace with any pdf file for testing
