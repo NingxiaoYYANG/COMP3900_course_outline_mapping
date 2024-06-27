@@ -2,6 +2,7 @@ import mysql.connector as database
 import os
 from dotenv import load_dotenv
 
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -75,47 +76,21 @@ def get_clos(course_code):
         cursor.close()
         conn.close()
 
-def upload_pdf(course_code, file):
+def get_all_course_info():
     try:
-        file_data = file.read()
-
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        cursor.execute("CREATE TABLE IF NOT EXISTS course_files (course_code VARCHAR(8) PRIMARY KEY, file_data LONGBLOB)")
-        conn.commit()
-
-        statement = "INSERT INTO course_files (course_code, file_data) VALUES (%s, %s)"
-        values = (course_code, file_data)
-        cursor.execute(statement, values)
-        conn.commit()
-
-        return True
+        statement = "SELECT course_code FROM clos"
+        cursor.execute(statement)
+        result = cursor.fetchall()
+        
+        course_codes = [row[0] for row in result]
+        return course_codes
     
     except Exception as e:
         print(e)
-        return False
-    
-    finally:
-        cursor.close()
-        conn.close()
-    
-def get_pdf(course_code):
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-
-        statement = "SELECT file_data FROM course_files WHERE course_code = %s"
-        cursor.execute(statement, (course_code,))
-        result = cursor.fetchone()
-        if result:
-            return result[0]
-        else:
-            return None
-
-    except Exception as e:
-        print(e)
-        return None
+        return []
 
     finally:
         cursor.close()

@@ -4,9 +4,6 @@ import re
 from extract_helper import extract_clos_from_pdf
 from blooms_levels import BLOOMS_TAXONOMY
 
-# import from database.py
-from database import add_clos, get_clos
-
 # Set up OpenAI API key
 openai.api_key = 'secret-key'
 
@@ -100,15 +97,3 @@ def addBloomsCount(count1, count2):
     for level, count in count2.items():
         count1[level] += count
     return count1
-
-if __name__ == "__main__":
-    # Can replace with any pdf file for testing
-    # course_outline = "C:/Users/mbmas/Downloads/CO_ACCT3202_1_2024_Term1_T1_InPerson_Standard_Kensington.pdf"
-    # course_outline_file_path = "/Users/rbxii3/Downloads/CO_COMP1521_1_2024_Term1_T1_Multimodal_Standard_Kensington.pdf"
-    # course_outline_file_path = "C:/Users/Justin_Yang/Downloads/CO_COMP1521_1_2024_Term1_T1_Multimodal_Standard_Kensington.pdf"
-
-    # blooms_count = classify_clos_from_pdf(course_outline_file_path)
-
-    result = get_clos("COMP1521") # TO-DO fix this with a real value
-    # print (blooms_count)
-    print(result)
