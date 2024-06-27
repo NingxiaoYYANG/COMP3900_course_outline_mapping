@@ -5,7 +5,7 @@ from flask_cors import CORS  # Import CORS from flask_cors
 import json
 
 # imported files
-from classification_controller import classify_clos_from_pdf, addBloomsCount
+from classification_controller import classify_clos_from_pdf, mergeBloomsCount
 from database import add_clos, get_clos, add_course_detail, get_all_course_details
 from blooms_levels import BLOOMS_TAXONOMY
 from extract_helper import course_details_from_pdf
@@ -45,7 +45,9 @@ def upload_course_outline_pdf():
 @app.route('/api/classify_clos', methods=['POST'])
 def classify_learning_outcome_route():
     data = request.form
+    # Python is treating array passed from frontend as string object
     course_codes_raw = data.get('course_codes')
+    # Convert to python list
     course_codes = json.loads(course_codes_raw)
     
     result = {level: 0 for level in BLOOMS_TAXONOMY}
@@ -53,11 +55,11 @@ def classify_learning_outcome_route():
     for course_code in course_codes:
         blooms_count_additive = get_clos(course_code)
         if blooms_count_additive:
-            result = addBloomsCount(result, blooms_count_additive)
+            result = mergeBloomsCount(result, blooms_count_additive)
         else:
             return jsonify({'error': 'No related data, please upload pdf'}), 400
         
-        result = addBloomsCount(result, blooms_count_additive)
+        result = mergeBloomsCount(result, blooms_count_additive)
 
     return jsonify({'blooms_count': result})
 

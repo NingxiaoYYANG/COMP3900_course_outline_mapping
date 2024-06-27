@@ -92,7 +92,7 @@ def match_clos_by_dict(clos):
         
     return bloom_count
 
-def addBloomsCount(count1, count2):
+def mergeBloomsCount(count1, count2):
     # Add blooms_count to result
     for level, count in count2.items():
         count1[level] += count

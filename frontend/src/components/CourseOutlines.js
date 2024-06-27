@@ -13,7 +13,7 @@ function CourseOutlines() {
   };
 
   const handleAddCourseCode = () => {
-    const codePattern = /^[A-Za-z]{4}\d{4}$/;
+    const codePattern = /^[A-Z]{4}\d{4}$/;
     if (!codePattern.test(courseCode)) {
       setError('Please enter course code in correct format (e.g., ABCD1234).');
       return;
