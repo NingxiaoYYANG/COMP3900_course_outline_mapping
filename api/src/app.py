@@ -37,6 +37,7 @@ def upload_course_outline_pdf():
 
     try:
         add_clos(course_code, blooms_count["Remember"], blooms_count["Understand"], blooms_count["Apply"], blooms_count["Analyse"], blooms_count["Evaluate"], blooms_count["Create"])
+        return jsonify({'message': 'Success!'}), 200
     except Exception as e:
         print(e)
         return jsonify({'error': e}), 400
