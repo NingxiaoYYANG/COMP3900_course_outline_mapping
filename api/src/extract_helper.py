@@ -15,7 +15,7 @@ def extract_clos_from_pdf(file_data):
     clos : list containing every CLO stored as a string.
     '''
     
-    reader = PdfReader(BytesIO(file_data))
+    reader = PdfReader(file_data)
     num_pages = len(reader.pages)
 
     clo_pages = []
