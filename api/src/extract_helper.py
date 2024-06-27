@@ -60,10 +60,87 @@ def extract_clos_from_pdf(file_data):
 
     return clos
 
+def course_details_from_pdf(file_data):
+    '''
+    Extracts the course code from a generated course outline pdf file.
+    Inputs
+    ------
+    file_data : course outline file in pdf form
+    Outputs
+    -------
+    dict in the form of:
+    {
+        "courseCode": string,
+        "courseName": string,
+        "courseLevel": string,
+        "courseTerm": int
+    }
+    '''
+
+    course_details = {
+        "courseCode": "",
+        "courseName": "",
+        "courseLevel": "",
+        "courseTerm": 0
+    }
+
+    reader = PdfReader(BytesIO(file_data))
+    num_pages = len(reader.pages)
+
+    # Course details are found on the title page
+    page_text = reader.pages[0].extract_text()
+
+    course_code = re.search("Course Code : .+", page_text)
+    if course_code:
+        # We want to extract the course code by itself.
+        course_code = course_code.group(0)[len("Course Code :"):].strip()
+        course_details["courseCode"] = course_code
+
+    # The format of the header is as follows:
+    # ===
+    # UNSW Course Outline
+    # {courseCode} {courseName} - {year}
+    # Published on the {publishDate}
+    # ...
+    # ---
+    # The title can span multiple lines, so we need to process this all as one line.
+    # We start reading directly after "UNSW Course Outline {courseCode}"
+    # Then stop reading at "Published on the"
+    # And finally remove the hyphen and year at the end.
+    page_line = page_text.replace('\n', ' ')
+    # Remove duplicate whitespaces
+    page_line = re.sub(' +', ' ', page_line)
+    if page_line.startswith(f"UNSW Course Outline {course_code} "):
+        course_name = page_line[len(f"UNSW Course Outline {course_code} "):]
+        # We want everything before "Published on the"
+        course_name = course_name.split(" Published on the")[0]
+        # Remove the hyphen and year at the end.
+        course_name = course_name[:-len(" - 2024")]
+        course_details["courseName"] = course_name
+
+    course_level = re.search("Study Level : .+", page_text)
+    if course_level:
+        course_level = course_level.group(0)[len("Study Level :"):].strip()
+        if "Undergraduate" in course_level:
+            course_details["courseLevel"] = "UG"
+        elif "Postgraduate" in course_level:
+            course_details["courseLevel"] = "PG"
+
+    term = re.search("Term : .+", page_text)
+    if term:
+        term = term.group(0)[len("Term :"):].strip()
+        # The term number would be the last character of the text.
+        if "Term" in term:
+            term = int(term[-1])
+            course_details["courseTerm"] = term
+
+    return course_details
+
 
 if __name__ == "__main__":
     # Can replace with any pdf file for testing
-    # course_outline = "C:/Users/mbmas/Downloads/CO_ACCT3202_1_2024_Term1_T1_InPerson_Standard_Kensington.pdf"
-    course_outline = "C:/Users/20991/Downloads/CO_COMP6771_1_2024_Term2_T2_Multimodal_Standard_Kensington.pdf"
+    course_outline = "C:\\Users\\mbmas\\Desktop\\COMP3900\\capstone-project-3900f11adroptablestudents\\api\\tests\\testFiles\\ACCT2511-2024T1.pdf"
+    # course_outline = "C:/Users/20991/Downloads/CO_COMP6771_1_2024_Term2_T2_Multimodal_Standard_Kensington.pdf"
 
-    clos = extract_clos_from_pdf(course_outline)
+    with open(course_outline, "rb") as f:
+        print(course_details_from_pdf(f.read()))
