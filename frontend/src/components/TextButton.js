@@ -22,7 +22,8 @@ function TextButton (props) {
         variant="contained" 
         color='primary'
         endIcon={props.text === 'NEXT' ? <ArrowForwardIosNewIcon /> : null}
-        startIcon={props.text === 'BACK' ? <ArrowBackIosNewIcon /> : null}>
+        startIcon={props.text === 'BACK' ? <ArrowBackIosNewIcon /> : null}
+      >
 
         {props.text}
       </Button>

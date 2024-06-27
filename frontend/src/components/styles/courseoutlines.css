@@ -62,3 +62,7 @@
 .right {
   margin-left: 5px;
 }
+
+.button:hover {
+  background-color: #7d062e;
+}

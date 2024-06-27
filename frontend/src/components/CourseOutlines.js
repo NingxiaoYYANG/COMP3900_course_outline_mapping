@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import Checkbox from '@mui/material/Checkbox';
 import './styles/courseoutlines.css'
 import TextButton from './TextButton';
-
+import ArrowForwardIosNewIcon from '@mui/icons-material/ArrowForwardIos';
 
 function CourseOutlines() {
   const [courseCodes, setCourseCodes] = useState([]);
+  const [courseDetails, setCourseDetails] = useState([]);
   const [bloomsLabels, setBloomsLabels] = useState(null);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -29,6 +30,17 @@ function CourseOutlines() {
     setError('');
   };
 
+  const fetchCourseDetails = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/courses');
+      console.log(response)
+      setCourseDetails(response.data.course_details);
+    } catch (err) {
+      setError('Error fetching course details. Please try again.');
+      setBloomsLabels(null);
+    }
+  }
+
   const handleFetchBloomsCount = async () => {
     if (courseCodes.length === 0) {
       setError('Please add at least one course code.');
@@ -48,6 +60,10 @@ function CourseOutlines() {
     }
   };
 
+  useEffect(() => {
+    fetchCourseDetails();
+  }, []); 
+
   const handleClick = async () => {
     const bloomsCounts = await handleFetchBloomsCount();
     console.log('Bloom\'s Counts before navigating:', bloomsLabels);
@@ -63,8 +79,9 @@ function CourseOutlines() {
          <div className="coursecontent">
            <div className='course-title-content'>
              <div className='course-title'>Course Outlines</div>
-             <div>search</div>
+             {/* <div>search</div> */}
            </div>
+           <div style={{fontSize: '10pt', color: courseCodes.length === 0 ? '#fff' : '#AB1748'}}>selected {courseCodes.length} outlines...</div>
            <div className='course-horizontalline'></div>
            <div className='courseoutline-selection'>
              <div className='courseoutline-box left'>
@@ -81,6 +98,24 @@ function CourseOutlines() {
              </div>
            </div>
            <div>
+            {courseDetails}
+            list
+           {courseDetails.length > 0 && (
+              <div>
+                hello
+              <h3>Selected Course Codes:</h3>
+              <ul>
+                {courseDetails.map((detail, index) => (
+                  <li key={index}>
+                    <strong>Course Code:</strong> {detail[0]}<br />
+                    <strong>Course Name:</strong> {detail[1]}<br />
+                    <strong>Level:</strong> {detail[2]}<br />
+                    <strong>Semester:</strong> {detail[3]}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            )}
            {courseCodes.length > 0 && (
              <div>
                <h3>Selected Course Codes:</h3>
@@ -97,12 +132,22 @@ function CourseOutlines() {
          </div>
        </div>
        <div className='next-button'>
-       <button onClick={handleClick}>generate</button>
-         <Link to='/courseoutlines/builddegree'>
-         
-           <TextButton text='NEXT' />
-         </Link>
-         
+       
+        <button onClick={handleClick} style={{
+            backgroundColor: '#AB1748', 
+            border: 'none', 
+            color: 'white',
+            padding: '12px',
+            borderRadius: '5px',
+            display: 'flex',
+            alignItems: 'center', 
+            cursor: 'pointer',
+            fontSize: '14pt',
+          }}
+            className='button'
+          >
+            NEXT   <ArrowForwardIosNewIcon />
+         </button>
        </div>
       
     </div>
