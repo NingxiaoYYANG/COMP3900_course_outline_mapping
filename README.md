@@ -32,9 +32,13 @@ or
     ```sh
     npm start
 
-6. Open another terminal, turn on backend:
+6. Open another terminal, install requirements for backend:
     ```sh
     cd api
+    pip install -r requirements.txt
+
+7. Turn on backend:
+    ```sh
     python src/app.py
 
 

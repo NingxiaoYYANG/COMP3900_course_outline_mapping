@@ -18,7 +18,8 @@ function CourseOutlines() {
 
     try {
       const formData = new FormData();
-      formData.append('course_code', [courseCode]);
+      const courseCodeArray = [courseCode];
+      formData.append('course_codes', JSON.stringify(courseCodeArray));
 
       const response = await axios.post('http://localhost:5000/api/classify_clos', formData);
       setBloomsLabels(response.data.blooms_count);

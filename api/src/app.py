@@ -2,6 +2,7 @@
 from apiflask import APIFlask
 from flask import Flask, request, jsonify
 from flask_cors import CORS  # Import CORS from flask_cors
+import json
 
 # imported files
 from classification_controller import classify_clos_from_pdf
@@ -50,12 +51,17 @@ def upload_course_outline_pdf():
 @app.route('/api/classify_clos', methods=['POST'])
 def classify_learning_outcome_route():
     data = request.form
-    course_codes = data.get('course_codes')
+    course_codes_raw = data.get('course_codes')
+    course_codes = json.loads(course_codes_raw)
 
     result = {level: 0 for level in BLOOMS_TAXONOMY}
 
     for course_code in course_codes:
+        print(course_code)
         file_data = get_pdf(course_code)
+
+        if file_data == None:
+            return jsonify({'error': 'No such pdf file'}), 400
         blooms_count = classify_clos_from_pdf(file_data)
         
         # Add blooms_count to result

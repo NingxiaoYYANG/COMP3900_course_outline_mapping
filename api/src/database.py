@@ -87,7 +87,7 @@ def get_pdf(course_code):
         statement = "SELECT file_data FROM course_files WHERE course_code = %s"
         cursor.execute(statement, (course_code,))
         result = cursor.fetchone()
-
+        print(result)
         if result:
             return result[0]
         else:

@@ -1,11 +1,11 @@
 import openai
 import re
 
-from src.extract_helper import extract_clos_from_pdf
-from src.blooms_levels import BLOOMS_TAXONOMY
+from extract_helper import extract_clos_from_pdf
+from blooms_levels import BLOOMS_TAXONOMY
 
 # import from database.py
-from src.database import add_clos, get_clos
+from database import add_clos, get_clos
 
 # Set up OpenAI API key
 openai.api_key = 'secret-key'
