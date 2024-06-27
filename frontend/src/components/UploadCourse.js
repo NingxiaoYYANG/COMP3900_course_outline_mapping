@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 import './styles/uploadcourse.css';
-import { useState } from 'react';
 
 
 function UploadCourse() {
@@ -9,6 +9,55 @@ function UploadCourse() {
   const handleSelectionChange = (selection) => {
     setSelection(selection);
   }
+
+  const [courseCode, setCourseCode] = useState('');
+  const [file, setFile] = useState(null);
+  const [error, setError] = useState('');
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      if (selectedFile.name.endsWith('.pdf')) {
+        setFile(selectedFile);
+        setError('');
+      } else {
+        setError('Invalid file format. Please upload a PDF file.');
+      }
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!file) {
+      setError('Please select a file to upload.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('course_code', courseCode);
+    formData.append('file', file);
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/upload_pdf', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      if (response.status === 200) {
+        alert('PDF file uploaded successfully!');
+        // Clear form state
+        setCourseCode('');
+        setFile(null);
+        setError('');
+      } else {
+        setError('Failed to upload PDF file.');
+      }
+    } catch (error) {
+      console.error('Error uploading PDF:', error);
+      setError('Error uploading PDF. Please try again later.');
+    }
+  };
+
 
   return (<>
     <div className="container">
@@ -35,7 +84,18 @@ function UploadCourse() {
           <i className="fas fa-cloud-upload-alt"></i>
           <p>Drop file to upload</p>
           <p>or</p>
-          <button className="button">Browse</button>
+          <label>
+            Course Code:
+            <input
+              type="text"
+              value={courseCode}
+              onChange={(e) => setCourseCode(e.target.value)}
+            />
+          </label>
+          <br />
+          <input type="file" accept=".pdf" onChange={handleFileChange} />
+          <br />
+          <button onClick={handleUpload}>Upload PDF</button>
           <p className='max_size_label'>Max file size: 10MB</p>
           <p className='supported_file_label'>Supported file types: PDF</p>
         </div>)}
