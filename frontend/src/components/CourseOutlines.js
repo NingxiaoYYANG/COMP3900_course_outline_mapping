@@ -44,8 +44,6 @@ function CourseOutlines() {
   const handleFetchBloomsCount = async () => {
     if (courseCodes.length === 0) {
       setError('Please add at least one course code.');
-    if (courseCodes.length === 0) {
-      setError('Please add at least one course code.');
       return;
     }
 
@@ -57,22 +55,24 @@ function CourseOutlines() {
       const response = await axios.post('http://localhost:5000/api/classify_clos', formData);
       setBloomsLabels(response.data.blooms_count);
       setError('');
+      return response.data.blooms_count;
     } catch (err) {
       setError('Error fetching Bloom\'s taxonomy counts. Please try again.');
       setBloomsLabels(null);
+      return null
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     fetchCourseDetails();
   }, []); 
 
   const handleClick = async () => {
     const bloomsCounts = await handleFetchBloomsCount();
-    console.log('Bloom\'s Counts before navigating:', bloomsLabels);
-    if (bloomsLabels) {
+    console.log('Bloom\'s Counts before navigating:', bloomsCounts);
+    if (bloomsCounts) {
       console.log('here')
-      navigate('/courseoutlines/builddegree', { state: { bloomsLabels } });  // Pass data to the next page
+      navigate('/courseoutlines/builddegree', { state: { bloomsLabels: bloomsCounts } });  // Pass data to the next page
     }
   };
 
@@ -87,48 +87,19 @@ function CourseOutlines() {
            <div style={{fontSize: '10pt', color: courseCodes.length === 0 ? '#fff' : '#AB1748'}}>selected {courseCodes.length} outlines...</div>
            <div className='course-horizontalline'></div>
            <div className='courseoutline-selection'>
-             <div className='courseoutline-box left'>
-               <div><Checkbox onChange={(e) => handleAddCourseCode(e, 'COMP1531')} /></div>
-               <div>
-                 <h6>COMP1531</h6>
-               </div>
-             </div>
-             <div className='courseoutline-box right'>
-               <div><Checkbox onChange={(e) => handleAddCourseCode(e, 'COMP3900')} /></div>
-               <div>
-                 <h6>COMP3900</h6>
-               </div>
-             </div>
+             {courseDetails.map((detail, index) => (
+              <div className={`courseoutline-box`} key={index}>
+                <div><Checkbox onChange={(e) => handleAddCourseCode(e, detail[0])} /></div>
+                <div>
+                  <strong>{detail[0]}</strong><br />
+                  <strong>Course Name:</strong> {detail[1]}<br />
+                  <strong>Level:</strong> {detail[2]}<br />
+                  <strong>Semester:</strong> {detail[3]}
+                </div>
+              </div>
+            ))}
            </div>
            <div>
-            {courseDetails}
-            list
-           {courseDetails.length > 0 && (
-              <div>
-                hello
-              <h3>Selected Course Codes:</h3>
-              <ul>
-                {courseDetails.map((detail, index) => (
-                  <li key={index}>
-                    <strong>Course Code:</strong> {detail[0]}<br />
-                    <strong>Course Name:</strong> {detail[1]}<br />
-                    <strong>Level:</strong> {detail[2]}<br />
-                    <strong>Semester:</strong> {detail[3]}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            )}
-           {courseCodes.length > 0 && (
-             <div>
-               <h3>Selected Course Codes:</h3>
-               <ul>
-                 {courseCodes.map((code, index) => (
-                   <li key={index}>{code}</li>
-                 ))}
-               </ul>
-             </div>
-           )}
            
             {error && <p style={{ color: 'red' }}>{error}</p>}
          </div>

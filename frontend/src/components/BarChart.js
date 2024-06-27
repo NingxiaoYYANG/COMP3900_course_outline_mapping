@@ -13,11 +13,18 @@ ChartJS.register(
 );
 
 const BarChart = ({ data }) => {
+  // Convert data object to array and sort it in descending order
+  const sortedData = Object.entries(data).sort(([, a], [, b]) => b - a);
+  
+  // Extract sorted labels and values
+  const labels = sortedData.map(([key]) => key);
+  const values = sortedData.map(([, value]) => value);
+
   const chartData = {
-    labels: Object.keys(data),
+    labels: labels,
     datasets: [
       {
-        data: Object.values(data),
+        data: values,
         backgroundColor: 'rgba(171, 23, 82, 0.2)',
         borderColor: 'rgba(171, 23, 82, 1)',
         borderWidth: 1,
@@ -29,7 +36,7 @@ const BarChart = ({ data }) => {
   const options = {
     indexAxis: 'x',
     responsive: true,
-    maintainAspectRatio: true, // Keep chart aspect ratio
+    maintainAspectRatio: false, // Allow the chart to stretch to the container's aspect ratio
     plugins: {
       legend: {
         display: false // Hide legend
@@ -55,9 +62,11 @@ const BarChart = ({ data }) => {
     }
   };
 
-  return <div style={{ width: '700px', }}>
-    <Bar data={chartData} options={options} />
-  </div>;
+  return (
+    <div style={{ width: '80%', height: '80%' }}>
+      <Bar data={chartData} options={options} />
+    </div>
+  );
 };
 
 export default BarChart;

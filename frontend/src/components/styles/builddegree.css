@@ -1,20 +1,28 @@
+/* builddegree.css */
 .builddegree-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  height: 90vh;
+  width: 100%;
+  height: 100%;
+  margin-top: 50px;
 }
 
 .builddegreecontent {
+  width: 80%;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center;
+  align-items: center; */
   background-color: white;
   padding: 20px;
   border-radius: 8px;
-  width: 80%;
-  min-height: 85%;
 }
 
-
 .builddegree-title {
+  margin-bottom: 10px;
+  padding-top: 20px;
   font-size: 25pt;
   font-weight: 700;
   color: #070F2B;
@@ -28,10 +36,15 @@
 }
 
 .builddegree-graph {
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  margin: 50px;
-  /* padding: 100px; */
+}
+
+.builddegree-button {
+  align-self: flex-start;
+  margin-top: -20px;
+  margin-left: 30px;
 }
