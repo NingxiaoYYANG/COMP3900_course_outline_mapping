@@ -44,11 +44,14 @@ function CourseOutlines() {
   const handleFetchBloomsCount = async () => {
     if (courseCodes.length === 0) {
       setError('Please add at least one course code.');
+    if (courseCodes.length === 0) {
+      setError('Please add at least one course code.');
       return;
     }
 
     try {
       const formData = new FormData();
+      formData.append('course_codes', JSON.stringify(courseCodes));
       formData.append('course_codes', JSON.stringify(courseCodes));
 
       const response = await axios.post('http://localhost:5000/api/classify_clos', formData);
