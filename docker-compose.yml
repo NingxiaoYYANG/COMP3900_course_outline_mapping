@@ -1,0 +1,18 @@
+services:
+  database:
+    container_name: f11a-p16-database
+    image: mariadb:11
+    env_file:
+      - .env
+    ports:
+      - 3306:3306
+    volumes:
+      - ./database:/var/lib/mysql
+  api:
+    container_name: f11a-p16-api
+    image: f11ap16/api
+    build: ./api
+    depends_on:
+      - database
+
+  

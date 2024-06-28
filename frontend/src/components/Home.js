@@ -1,6 +1,10 @@
+import React from 'react';
+import UploadCourse from './UploadCourse';
 
 function Home() {
-  return (<>home</>)
+  return (<>
+    <UploadCourse />
+  </>)
 }
 
 export default Home;
