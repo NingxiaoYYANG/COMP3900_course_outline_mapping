@@ -1,7 +1,6 @@
 .navigation-container {
   background-color: #070F2B;
-  height: 12vh;
-  min-height: 80px;
+  height: 110px;
   color: #FCD3CA;
   display: flex;
   flex-direction: row;
