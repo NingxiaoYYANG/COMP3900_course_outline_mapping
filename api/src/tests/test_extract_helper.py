@@ -14,7 +14,7 @@ def test_can_extract_course_details_from_pdf():
     pdf_binaries = test_helper.get_pdf_binaries()
     course_details = extract_helper.course_details_from_pdf(pdf_binaries[0])
     
-    assert course_details['courseCode'] == 'ACCT2511'
-    assert course_details['courseName'] == 'Financial Accounting Fundamentals'
-    assert course_details['courseLevel'] == 'UG'
-    assert course_details['courseTerm'] == 1
+    assert course_details['course_code'] == 'ACCT2511'
+    assert course_details['course_name'] == 'Financial Accounting Fundamentals'
+    assert course_details['course_level'] == 'UG'
+    assert course_details['course_term'] == '24T1'

@@ -1,7 +1,6 @@
 import classification_controller as classifier
 from tests.helper import *
 
-
 class TestClassifyCLOsFromPdf:
     def test_can_classify_clos_from_pdf(self):
         pdf_binaries = get_pdf_binaries()
@@ -10,8 +9,8 @@ class TestClassifyCLOsFromPdf:
             
             # We can't be for sure what the correct classification is.
             # Just check that the classification is valid and not empty.
-            assert set(classifier.keys()) == set(BLOOMS_LEVELS)
-            assert any(classifier.values())
+            assert set(extracted_clos.keys()) == set(BLOOMS_LEVELS)
+            assert any(extracted_clos.values())
 
 # TODO: Add test cases
 class TestMatchVerbsByAI:
