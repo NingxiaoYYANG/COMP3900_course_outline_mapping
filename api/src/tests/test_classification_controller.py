@@ -1,5 +1,5 @@
 import classification_controller as classifier
-from tests.helper import *
+from tests.helper import get_pdf_binaries, extract_test_clos, CLOS_FILES, VALID_PDFS, BLOOMS_LEVELS
 
 
 class TestClassifyCLOsFromPdf:
