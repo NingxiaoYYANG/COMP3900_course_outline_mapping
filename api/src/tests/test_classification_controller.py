@@ -1,6 +1,7 @@
 import classification_controller as classifier
 from tests.helper import *
 
+
 class TestClassifyCLOsFromPdf:
     def test_can_classify_clos_from_pdf(self):
         pdf_binaries = get_pdf_binaries()
