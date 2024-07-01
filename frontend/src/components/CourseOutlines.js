@@ -1,25 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
+import Checkbox from '@mui/material/Checkbox';
+import './styles/courseoutlines.css'
+import TextButton from './TextButton';
+import ArrowForwardIosNewIcon from '@mui/icons-material/ArrowForwardIos';
 
 function CourseOutlines() {
-  const [courseCode, setCourseCode] = useState('');
   const [courseCodes, setCourseCodes] = useState([]);
   const [courseDetails, setCourseDetails] = useState([]);
   const [bloomsLabels, setBloomsLabels] = useState(null);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
-    setCourseCode(e.target.value);
-  };
-
-  const handleAddCourseCode = () => {
-    const codePattern = /^[A-Z]{4}\d{4}$/;
-    if (!codePattern.test(courseCode)) {
+  const handleAddCourseCode = (e, code) => {
+    const codePattern = /^[A-Za-z]{4}\d{4}$/;
+    const checked = e.target.checked;
+    if (!codePattern.test(code)) {
+      console.log(code)
       setError('Please enter course code in correct format (e.g., ABCD1234).');
       return;
     }
-    setCourseCodes([...courseCodes, courseCode]);
-    setCourseCode('');  // Clear the input field
+    if (checked &&!courseCodes.includes(code)) {
+      setCourseCodes([...courseCodes, code])
+    } else if (!checked &&courseCodes.includes(code)) {
+      setCourseCodes(courseCodes.filter(c => c !== code));
+    }
+    // setCourseCode('');  // Clear the input field
     setError('');
   };
 
@@ -43,69 +50,80 @@ function CourseOutlines() {
     try {
       const formData = new FormData();
       formData.append('course_codes', JSON.stringify(courseCodes));
+      formData.append('course_codes', JSON.stringify(courseCodes));
 
       const response = await axios.post('http://localhost:5000/api/classify_clos', formData);
       setBloomsLabels(response.data.blooms_count);
       setError('');
+      return response.data.blooms_count;
     } catch (err) {
       setError('Error fetching Bloom\'s taxonomy counts. Please try again.');
       setBloomsLabels(null);
+      return null
     }
   };
 
-  useEffect(() => {
-    // This code runs once when the component mounts
+  React.useEffect(() => {
     fetchCourseDetails();
   }, []); 
 
+  const handleClick = async () => {
+    const bloomsCounts = await handleFetchBloomsCount();
+    console.log('Bloom\'s Counts before navigating:', bloomsCounts);
+    if (bloomsCounts) {
+      console.log('here')
+      navigate('/courseoutlines/builddegree', { state: { bloomsLabels: bloomsCounts } });  // Pass data to the next page
+    }
+  };
+
   return (
     <div>
-      <h2>Retrieve Bloom's Taxonomy Counts</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <label>
-        Course Code:
-        <input
-          type="text"
-          value={courseCode}
-          onChange={handleInputChange}
-        />
-      </label>
-      <button onClick={handleAddCourseCode}>Add Course Code</button>
-      <button onClick={handleFetchBloomsCount}>Fetch Bloom's Counts</button>
-
-      {courseCodes.length > 0 && (
-        <div>
-          <h3>Selected Course Codes:</h3>
-          <ul>
-            {courseCodes.map((code, index) => (
-              <li key={index}>{code}</li>
+      <div className='courseoutline-container'>
+         <div className="coursecontent">
+           <div className='course-title-content'>
+             <div className='course-title'>Course Outlines</div>
+             {/* <div>search</div> */}
+           </div>
+           <div style={{fontSize: '10pt', color: courseCodes.length === 0 ? '#fff' : '#AB1748'}}>selected {courseCodes.length} outlines...</div>
+           <div className='course-horizontalline'></div>
+           <div className='courseoutline-selection'>
+             {courseDetails.map((detail, index) => (
+              <div className={`courseoutline-box`} key={index}>
+                <div><Checkbox onChange={(e) => handleAddCourseCode(e, detail[0])} /></div>
+                <div>
+                  <strong>{detail[0]}</strong><br />
+                  <strong>Course Name:</strong> {detail[1]}<br />
+                  <strong>Level:</strong> {detail[2]}<br />
+                  <strong>Semester:</strong> {detail[3]}
+                </div>
+              </div>
             ))}
-          </ul>
-        </div>
-      )}
-
-      {courseDetails.length > 0 && (
-        <div>
-        <h3>Selected Course Codes:</h3>
-        <ul>
-          {courseDetails.map((detail, index) => (
-            <li key={index}>
-              <strong>Course Code:</strong> {detail[0]}<br />
-              <strong>Course Name:</strong> {detail[1]}<br />
-              <strong>Level:</strong> {detail[2]}<br />
-              <strong>Semester:</strong> {detail[3]}
-            </li>
-          ))}
-        </ul>
-      </div>
-      )}
-
-      {bloomsLabels && (
-        <div>
-          <h3>Bloom's Taxonomy Counts</h3>
-          <pre>{JSON.stringify(bloomsLabels, null, 2)}</pre>
-        </div>
-      )}
+           </div>
+           <div>
+           
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+         </div>
+         </div>
+       </div>
+       <div className='next-button'>
+       
+        <button onClick={handleClick} style={{
+            backgroundColor: '#AB1748', 
+            border: 'none', 
+            color: 'white',
+            padding: '12px',
+            borderRadius: '5px',
+            display: 'flex',
+            alignItems: 'center', 
+            cursor: 'pointer',
+            fontSize: '14pt',
+          }}
+            className='button'
+          >
+            NEXT   <ArrowForwardIosNewIcon />
+         </button>
+       </div>
+      
     </div>
   );
 }

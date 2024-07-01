@@ -110,10 +110,13 @@ def course_details_from_pdf(file_data):
     page_line = page_text.replace('\n', ' ')
     # Remove duplicate whitespaces
     page_line = re.sub(' +', ' ', page_line)
+    year = ""
     if page_line.startswith(f"UNSW Course Outline {course_code} "):
         course_name = page_line[len(f"UNSW Course Outline {course_code} "):]
         # We want everything before "Published on the"
         course_name = course_name.split(" Published on the")[0]
+        # Save the year in a variable for later.
+        year = course_name[-2:]
         # Remove the hyphen and year at the end.
         course_name = course_name[:-len(" - 2024")]
         course_details["course_name"] = course_name
@@ -130,9 +133,10 @@ def course_details_from_pdf(file_data):
     if term:
         term = term.group(0)[len("Term :"):].strip()
         # The term number would be the last character of the text.
-        if "Term" in term:
+        # We also use the year that we saved from earlier.
+        if "Term" in term and year:
             term = term[-1]
-            course_details["course_term"] = term
+            course_details["course_term"] = f"{year}T{term}"
 
     return course_details
 
@@ -143,4 +147,4 @@ if __name__ == "__main__":
     # course_outline = "C:/Users/20991/Downloads/CO_COMP6771_1_2024_Term2_T2_Multimodal_Standard_Kensington.pdf"
 
     with open(course_outline, "rb") as f:
-        print(course_details_from_pdf(f.read()))
+        print(course_details_from_pdf(f))
