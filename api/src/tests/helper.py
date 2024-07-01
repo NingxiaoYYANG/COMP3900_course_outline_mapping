@@ -1,3 +1,5 @@
+import io
+
 VALID_PDFS = [
     "tests/testFiles/ACCT2511-2024T1.pdf",
     "tests/testFiles/CDEV2000-2024summer.pdf",
@@ -49,5 +51,5 @@ def get_pdf_binaries():
     pdfs = []
     for pdf_path in VALID_PDFS:
         with open(pdf_path, mode='rb') as f:
-            pdfs.append(f.read())
+            pdfs.append(io.BytesIO(f.read()))
     return pdfs

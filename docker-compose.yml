@@ -8,6 +8,7 @@ services:
       - 3306:3306
     volumes:
       - ./database:/var/lib/mysql
+
   api:
     container_name: f11a-p16-api
     image: f11ap16/api
