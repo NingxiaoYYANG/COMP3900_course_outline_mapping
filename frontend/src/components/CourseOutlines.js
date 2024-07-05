@@ -5,13 +5,28 @@ import Checkbox from '@mui/material/Checkbox';
 import './styles/courseoutlines.css'
 import TextButton from './TextButton';
 import ArrowForwardIosNewIcon from '@mui/icons-material/ArrowForwardIos';
+import { InputAdornment, TextField } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 
 function CourseOutlines() {
   const [courseCodes, setCourseCodes] = useState([]);
-  const [courseDetails, setCourseDetails] = useState([]);
+  // const [courseDetails, setCourseDetails] = useState([]);
   const [bloomsLabels, setBloomsLabels] = useState(null);
   const [error, setError] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+  const courseDetails = [
+    ['COMP3121', 'Title', 'UG', '2'],
+    ['COMP4121', 'Title', 'UG', '2'],
+    ['COMP2121', 'Title', 'UG', '2'],
+    ['COMP5121', 'Title', 'UG', '2'],
+    ['COMP4121', 'Title', 'UG', '2'],
+    ['COMP2121', 'Title', 'UG', '2'],
+    ['COMP5121', 'Title', 'UG', '2'],
+    ['COMP4121', 'mary', 'UG', '2'],
+    ['COMP2121', 'moo', 'UG', '2'],
+    ['COMP5121', 'maar', 'UG', '2'],
+  ]
 
   const handleAddCourseCode = (e, code) => {
     const codePattern = /^[A-Za-z]{4}\d{4}$/;
@@ -30,16 +45,16 @@ function CourseOutlines() {
     setError('');
   };
 
-  const fetchCourseDetails = async () => {
-    try {
-      const response = await axios.get('http://localhost:5000/api/courses');
-      console.log(response)
-      setCourseDetails(response.data.course_details);
-    } catch (err) {
-      setError('Error fetching course details. Please try again.');
-      setBloomsLabels(null);
-    }
-  }
+  // const fetchCourseDetails = async () => {
+  //   try {
+  //     const response = await axios.get('http://localhost:5000/api/courses');
+  //     console.log(response)
+  //     setCourseDetails(response.data.course_details);
+  //   } catch (err) {
+  //     setError('Error fetching course details. Please try again.');
+  //     setBloomsLabels(null);
+  //   }
+  // }
 
   const handleFetchBloomsCount = async () => {
     if (courseCodes.length === 0) {
@@ -64,7 +79,7 @@ function CourseOutlines() {
   };
 
   React.useEffect(() => {
-    fetchCourseDetails();
+    // fetchCourseDetails();
   }, []); 
 
   const handleClick = async () => {
@@ -76,18 +91,54 @@ function CourseOutlines() {
     }
   };
 
+  const handleSearchQueryChange = (e) => {
+    setSearchQuery(e.target.value)
+  }
+
+  const filteredCourseDetails = courseDetails.filter(
+    (detail) => detail[0].toLowerCase().includes(searchQuery.toLowerCase()) ||
+    detail[1].toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div>
       <div className='courseoutline-container'>
-         <div className="coursecontent">
-           <div className='course-title-content'>
-             <div className='course-title'>Course Outlines</div>
+        <div className="coursecontent">
+          <div className='course-title-content'>
+            <div className='course-title'>Course Outlines</div>
              {/* <div>search</div> */}
+            <TextField 
+              label="Search by code or name" 
+              variant='outlined' 
+              type='text'
+              value={searchQuery}
+              onChange={handleSearchQueryChange}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+             {/* <input 
+              type="text" 
+              placeholder="Search by code or name" 
+              value={searchQuery} 
+              onChange={handleSearchQueryChange}
+              style={{
+                padding: '8px',
+                margin: '10px 0',
+                borderRadius: '5px',
+                border: '1px solid #ccc'
+              }}
+            /> */}
            </div>
            <div style={{fontSize: '10pt', color: courseCodes.length === 0 ? '#fff' : '#AB1748'}}>selected {courseCodes.length} outlines...</div>
+           {error && <p style={{ color: 'red' }}>{error}</p>}
            <div className='course-horizontalline'></div>
            <div className='courseoutline-selection'>
-             {courseDetails.map((detail, index) => (
+             {filteredCourseDetails.map((detail, index) => (
               <div className={`courseoutline-box`} key={index}>
                 <div><Checkbox onChange={(e) => handleAddCourseCode(e, detail[0])} /></div>
                 <div>
@@ -100,8 +151,6 @@ function CourseOutlines() {
             ))}
            </div>
            <div>
-           
-            {error && <p style={{ color: 'red' }}>{error}</p>}
          </div>
          </div>
        </div>
