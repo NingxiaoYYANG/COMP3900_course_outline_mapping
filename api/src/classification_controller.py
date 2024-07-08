@@ -48,6 +48,9 @@ def match_clos(clos):
 
         for word, tag in tagged:
             if tag.startswith('VB'):  # Checks if the word is a verb
+                # Turn word to lowercase for consistency
+                word = word.lower()
+
                 # Check each Bloom's level
                 matched_by_dict = False
                 for level, keywords in BLOOMS_TAXONOMY.items():
@@ -118,6 +121,6 @@ def check_code_format(course_code):
     return re.match(pattern, course_code)
 
 
-# sentence = "Explain how you would design a new system to solve this problem and evaluate its effectiveness."
-# result = match_clos([sentence])
-# print(result)
+sentence = "Explain how you would design a new system to solve this problem and evaluate its effectiveness."
+result = match_clos([sentence])
+print(result)
