@@ -1,6 +1,5 @@
 from pypdf import PdfReader
 import re
-from io import BytesIO
 
 def extract_clos_from_pdf(file_data):
     '''
@@ -85,7 +84,6 @@ def course_details_from_pdf(file_data):
     }
 
     reader = PdfReader(file_data)
-    num_pages = len(reader.pages)
 
     # Course details are found on the title page
     page_text = reader.pages[0].extract_text()
