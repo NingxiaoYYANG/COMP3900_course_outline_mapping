@@ -6,7 +6,6 @@ from transformers import pipeline
 from extract_helper import extract_clos_from_pdf
 from blooms_levels import BLOOMS_TAXONOMY
 
-
 # Load a pre-trained model for text classification
 classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
 
@@ -37,16 +36,7 @@ def classify_clos_from_pdf(file):
 
     return blooms_count
 
-def extract_words_from_clo(clo):
-    # Split the sentence using the pattern
-    words = re.split(pattern, clo)
 
-    # Remove empty strings from the result
-    words = [word.lower() for word in words if word]
-
-    return words
-
-# TO-FIX
 def match_clos(clos):
     for clo in clos:
         tokens = word_tokenize(clo)
@@ -75,6 +65,7 @@ def match_clos(clos):
         
     return bloom_count
 
+# legacy version, use as backup in case match_clos fails
 def match_clos_by_dict(clos):
     '''
     Matches extracted verbs to Bloom's Taxonomy levels.
@@ -104,13 +95,29 @@ def match_clos_by_dict(clos):
         
     return bloom_count
 
+def extract_words_from_clo(clo):
+    # Split the sentence using the pattern
+    words = re.split(pattern, clo)
+
+    # Remove empty strings from the result
+    words = [word.lower() for word in words if word]
+
+    return words
+
+
 def mergeBloomsCount(count1, count2):
     # Add blooms_count to result
     for level, count in count2.items():
         count1[level] += count
     return count1
 
+def check_code_format(course_code):
+    # Define the regex pattern
+    pattern = r'^[A-Za-z]{4}\d{4}$'
 
-sentence = "Explain how you would design a new system to solve this problem and evaluate its effectiveness."
-result = match_clos([sentence])
-print(result)
+    return re.match(pattern, course_code)
+
+
+# sentence = "Explain how you would design a new system to solve this problem and evaluate its effectiveness."
+# result = match_clos([sentence])
+# print(result)
