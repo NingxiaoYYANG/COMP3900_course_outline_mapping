@@ -63,7 +63,7 @@ def extract_clos_from_pdf(file_data):
 
 def course_details_from_pdf(file_data):
     '''
-    Extracts the course code from a generated course outline pdf file.
+    Extracts course details from a generated course outline pdf file.
     
     Inputs
     ------
@@ -177,6 +177,7 @@ def get_coID_from_code(course_code):
             if latest_period is None:
                 latest_period = teaching_period
                 coID = outline_coID
+            # We want the newest coID, meaning the latest teaching period.
             elif TEACHING_PERIODS.index(teaching_period) > TEACHING_PERIODS.index(latest_period):
                 latest_period = teaching_period
                 coID = outline_coID
@@ -208,7 +209,7 @@ def extract_clos_from_coID(coID):
 def course_details_from_coID(coID):
     '''
     
-    Extracts the course code from a generated course outline pdf file.
+    Extracts course details from a given coID.
 
     Inputs
     ------
