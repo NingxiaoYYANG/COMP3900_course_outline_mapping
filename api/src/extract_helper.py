@@ -1,5 +1,7 @@
 from pypdf import PdfReader
 import re
+import requests
+import json
 
 def extract_clos_from_pdf(file_data):
     '''
@@ -62,9 +64,11 @@ def extract_clos_from_pdf(file_data):
 def course_details_from_pdf(file_data):
     '''
     Extracts the course code from a generated course outline pdf file.
+    
     Inputs
     ------
     file_data : course outline file in pdf form
+    
     Outputs
     -------
     dict in the form of:
@@ -137,6 +141,59 @@ def course_details_from_pdf(file_data):
             course_details["course_term"] = f"{year}T{term}"
 
     return course_details
+
+def get_coID_from_code(course_code):
+    '''
+    Gets the coID of the newest course outline of a course, 
+    specified by its course code.
+    
+    Each individual course outline has its own coID. This is needed
+    to get the information from the course outline later.
+
+    Inputs
+    ------
+    course_code : course code as a string.
+
+    Outputs
+    -------
+    coID : coID of the newest course outline as a string.
+    '''
+    pass
+
+def extract_clos_from_coID(coID):
+    '''
+    Extracts CLOs from a coID.
+
+    Inputs
+    ------
+    coID : coID of the course outline as a string.
+
+    Outputs
+    -------
+    clos : list containing every CLO stored as a string.
+    '''
+    pass
+ 
+def course_details_from_coID(coID):
+    '''
+    
+    Extracts the course code from a generated course outline pdf file.
+
+    Inputs
+    ------
+    coID : coID of the course outline as a string.
+    
+    Outputs
+    -------
+    dict in the form of:
+    {
+        "course_code": string,
+        "course_name": string,
+        "course_level": string,
+        "course_term": string
+    }
+    '''
+    pass
 
 
 if __name__ == "__main__":
