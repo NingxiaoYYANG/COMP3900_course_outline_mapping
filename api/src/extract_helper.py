@@ -158,7 +158,30 @@ def get_coID_from_code(course_code):
     -------
     coID : coID of the newest course outline as a string.
     '''
-    pass
+    TEACHING_PERIODS = ["U1", "T1", "T2", "T3", "Z1", "Z2", "KB", "KF", "KJ", "KN", "KR", "KV", "T1A", "T1B", "T1C", "T2A", "T2B", "T2C", "T3A", "T3B", "T3C", ]
+    
+    url = f"https://courseoutlines.unsw.edu.au/v1/publicsitecourseoutlines/search?year=2024&searchText={course_code}"
+    
+    r = requests.get(url)
+    data = json.loads(r.text)["response"]["results"]
+    
+    latest_period = None
+    coID = None
+    
+    # Only extract the coIDs which have a code that matches
+    # exactly with the input course_code.
+    for outline in data:
+        if outline["integrat_coursecode"].lower() == course_code.lower():
+            teaching_period = outline["integrat_teachingperiod"]
+            outline_coID = outline["integrat_courseoutlineid"]
+            if latest_period is None:
+                latest_period = teaching_period
+                coID = outline_coID
+            elif TEACHING_PERIODS.index(teaching_period) > TEACHING_PERIODS.index(latest_period):
+                latest_period = teaching_period
+                coID = outline_coID
+    
+    return coID
 
 def extract_clos_from_coID(coID):
     '''
@@ -172,7 +195,15 @@ def extract_clos_from_coID(coID):
     -------
     clos : list containing every CLO stored as a string.
     '''
-    pass
+    
+    url = f"https://courseoutlines.unsw.edu.au/v1/publicsitecourseoutlines/detail?coId={coID}"
+    
+    r = requests.get(url)
+    data = json.loads(r.text)["integrat_CO_LearningOutcome"]
+
+    clos = [clo["integrat_description"] for clo in data]
+    
+    return clos
  
 def course_details_from_coID(coID):
     '''
@@ -193,7 +224,26 @@ def course_details_from_coID(coID):
         "course_term": string
     }
     '''
-    pass
+    
+    url = f"https://courseoutlines.unsw.edu.au/v1/publicsitecourseoutlines/detail?coId={coID}"
+    
+    r = requests.get(url)
+    data = json.loads(r.text)
+    
+    course_level = ""
+    if data["integrat_career"] == "Undergraduate":
+        course_level = "UG"
+    elif data["integrat_career"] == "Postgraduate":
+        course_level = "PG"
+    
+    course_details = {
+        "course_code": data["integrat_coursecode"],
+        "course_name": data["integrat_coursename"],
+        "course_level": course_level,
+        "course_term": "24"+data["integrat_teachingperiod"],
+    }
+    
+    return course_details
 
 
 if __name__ == "__main__":
@@ -201,5 +251,11 @@ if __name__ == "__main__":
     course_outline = "C:\\Users\\mbmas\\Desktop\\COMP3900\\capstone-project-3900f11adroptablestudents\\api\\tests\\testFiles\\ACCT2511-2024T1.pdf"
     # course_outline = "C:/Users/20991/Downloads/CO_COMP6771_1_2024_Term2_T2_Multimodal_Standard_Kensington.pdf"
 
-    with open(course_outline, "rb") as f:
-        print(course_details_from_pdf(f))
+    #with open(course_outline, "rb") as f:
+    #    print(course_details_from_pdf(f))
+    
+    psyc5001 = get_coID_from_code("psyc5001")
+    print(psyc5001)
+    
+    print(extract_clos_from_coID(psyc5001))
+    print(course_details_from_coID(psyc5001))
