@@ -1,15 +1,15 @@
 import io
 
 VALID_PDFS = [
-    "tests/testFiles/ACCT2511-2024T1.pdf",
-    "tests/testFiles/CDEV2000-2024summer.pdf",
-    "tests/testFiles/COMP1521-2024T2.pdf",
+    "./src/tests/testFiles/ACCT2511-2024T1.pdf",
+    "./src/tests/testFiles/CDEV2000-2024summer.pdf",
+    "./src/tests/testFiles/COMP1521-2024T2.pdf",
 ]
 
 CLOS_FILES = [
-    "tests/testFiles/ACCT2511-2024T1-clos.txt",
-    "tests/testFiles/CDEV2000-2024summer-clos.txt",
-    "tests/testFiles/COMP1521-2024T2-clos.txt",
+    "./src/tests/testFiles/ACCT2511-2024T1-clos.txt",
+    "./src/tests/testFiles/CDEV2000-2024summer-clos.txt",
+    "./src/tests/testFiles/COMP1521-2024T2-clos.txt",
 ]
 
 COURSE_CODES = [
@@ -19,7 +19,7 @@ COURSE_CODES = [
 ]
 
 INVALID_PDFS = [
-    "tests/testFiles/invalid.pdf",
+    "./src/tests/testFiles/invalid.pdf",
 ]
 
 BLOOMS_LEVELS = [
