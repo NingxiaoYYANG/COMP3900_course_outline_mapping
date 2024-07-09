@@ -40,3 +40,4 @@ nltk==3.8.1
 transformers==4.42.3
 tensorflow
 tf-keras
+requests
