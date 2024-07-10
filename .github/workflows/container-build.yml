@@ -18,7 +18,8 @@ permissions:
 jobs:
   build_backend:
   # TK: self-host
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    name: Build and push backend Docker image
     permissions:
       contents: read
       packages: write
@@ -68,5 +69,3 @@ jobs:
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
         
-
-      
