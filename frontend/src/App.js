@@ -17,7 +17,6 @@ function Routing() {
       <Route exact path='/' element={<Home/>}/>
       <Route path='/courseoutlines' element={<CourseOutlines/>}/>
       <Route path='/courseoutlines/builddegree' element={<BuildDegree/>} />
-      <Route path='/courseoutlines/uploadfile' element={<UploadCourse/>} />
     </Routes>
   )
 }

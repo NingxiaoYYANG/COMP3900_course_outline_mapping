@@ -5,7 +5,7 @@ from flask_cors import CORS  # Import CORS from flask_cors
 import json
 
 # imported files
-from classification_controller import classify_clos_from_pdf, mergeBloomsCount
+from classification_controller import classify_clos_from_pdf, mergeBloomsCount, check_code_format
 from database import add_clos, get_clos, add_course_detail, get_all_course_details
 from blooms_levels import BLOOMS_TAXONOMY
 from extract_helper import course_details_from_pdf
@@ -16,6 +16,19 @@ CORS(app)  # Apply CORS to your app
 @app.get('/')
 def index():
     return {'message': 'hello'}
+
+@app.route('/api/upload_course_code', methods=["POST"])
+def upload_course_outline_by_code():
+    code = request.form['course_code']
+
+    if not check_code_format(code):
+        return "Invalid course code format", 400
+    else:
+        #TO-DO
+        return "not finished", 200
+    
+
+    
 
 @app.route('/api/upload_pdf', methods=["POST"])
 def upload_course_outline_pdf():
