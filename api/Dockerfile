@@ -20,13 +20,7 @@ COPY setup.sh /app
 RUN ./setup.sh
 
 # Cleanup the files that are not needed
-RUN rm -rf /app/tests
-
-RUN rm -rf /app/setup.sh
-
-RUN rm -rf /app/download_model.py
-
-RUN rm -rf /app/requirements.txt
+RUN rm -rf /app/tests /app/setup.sh /app/download_model.py /app/requirements.txt
 
 # Expose the port the app runs on
 
