@@ -124,3 +124,6 @@ def check_code_format(course_code):
 # sentence = "Explain how you would design a new system to solve this problem and evaluate its effectiveness."
 # result = match_clos([sentence])
 # print(result)
+
+if __name__ == "__main__":
+    classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
