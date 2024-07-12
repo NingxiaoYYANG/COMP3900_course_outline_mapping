@@ -20,7 +20,7 @@ COPY setup.sh /app
 RUN ./setup.sh
 
 # Download the model files
-RUN python3 src/classification_controller.py
+RUN python3 classification_controller.py
 
 # Cleanup the files that are not needed
 RUN rm -rf /app/tests /app/setup.sh /app/requirements.txt
@@ -30,4 +30,4 @@ RUN rm -rf /app/tests /app/setup.sh /app/requirements.txt
 EXPOSE 5000
 
 # Set the command to run the application
-CMD ["python3", "src/app.py"]
+CMD ["python3", "app.py"]

@@ -18,7 +18,7 @@ permissions:
 jobs:
   build_backend:
   # TK: self-host
-    runs-on: macos-latest-xlarge
+    runs-on: ubuntu-latest
     name: Build and push backend Docker image
     permissions:
       contents: read
@@ -69,7 +69,6 @@ jobs:
           push: true
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          platforms: linux/amd64,linux/arm64
         
   build_frontend:
     runs-on: ubuntu-latest
