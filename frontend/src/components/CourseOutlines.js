@@ -5,8 +5,10 @@ import Checkbox from '@mui/material/Checkbox';
 import './styles/courseoutlines.css'
 import TextButton from './TextButton';
 import ArrowForwardIosNewIcon from '@mui/icons-material/ArrowForwardIos';
-import { InputAdornment, TextField } from '@mui/material';
+import { FormControl, IconButton, InputAdornment, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import FilterListIcon from '@mui/icons-material/FilterList';
+
 
 function CourseOutlines() {
   const [courseCodes, setCourseCodes] = useState([]);
@@ -100,27 +102,73 @@ function CourseOutlines() {
     detail[1].toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const [isBoxVisible, setItBoxVisible] = useState(false);
+
+  const handleFilterClick = () => {
+    setItBoxVisible(!isBoxVisible);
+  }
+
+  const [year, setYear] = useState('');
+  const handleYearChange = (event) => {
+    setYear(event.target.value);
+  };
+
   return (
     <div>
       <div className='courseoutline-container'>
         <div className="coursecontent">
           <div className='course-title-content'>
             <div className='course-title'>Course Outlines</div>
-             {/* <div>search</div> */}
-            <TextField 
-              label="Search by code or name" 
-              variant='outlined' 
-              type='text'
-              value={searchQuery}
-              onChange={handleSearchQueryChange}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
+            {/* <div>search</div> */}
+            <div style={{ alignItems: 'center', display: 'flex', position: 'relative' }}>
+            
+              <IconButton aria-label='filter' onClick={handleFilterClick}>
+                <FilterListIcon />
+              </IconButton>
+              {isBoxVisible && <div className='box'>
+                <div style={{ width: '90%', margin: '0 auto'}}>
+                  <h5>Filter</h5>
+                  <FormControl fullWidth>
+                    <InputLabel>Year</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={year}
+                      label="Year"
+                      onChange={handleYearChange}
+                    >
+                      <MenuItem value='hoo'>hoo</MenuItem>
+                      <MenuItem value='hoo'>hoo</MenuItem>
+                      <MenuItem value='hoo'>hoo</MenuItem>
+                    </Select>
+                  </FormControl>
+                  
+                </div>
+                FilterList
+                Year
+                Term
+                Teaching Period
+                Delivery Mode
+                Delivery format
+                location
+                Faculty
+                </div>}
+            
+              <TextField 
+                label="Search by code or name" 
+                variant='outlined' 
+                type='text'
+                value={searchQuery}
+                onChange={handleSearchQueryChange}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </div>
              {/* <input 
               type="text" 
               placeholder="Search by code or name" 
