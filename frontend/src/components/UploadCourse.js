@@ -60,22 +60,24 @@ function UploadCourse() {
   return (<>
     <div className="container">
       <div className="container_inner">
-        <h1>Upload</h1>
-        <div className="button_group">
-          <button 
-            id="button_outline" 
-            className={selection === 'courseOutline' ? 'active' : ''}
-            onClick={() => handleSelectionChange('courseOutline')}
-          >
-            Course Outline
-          </button>
-          <button 
-            id="button_exam" 
-            className={selection === 'examPaper' ? 'active' : ''}
-            onClick={() => handleSelectionChange('examPaper')}
-          >
-            Exam Paper
-          </button>
+        <div style={{ display: 'flex', alignItems:'center'}}>
+          <h1 >Upload</h1>
+          <div className="button_group">
+            <button 
+              id="button_outline" 
+              className={selection === 'courseOutline' ? 'active' : ''}
+              onClick={() => handleSelectionChange('courseOutline')}
+            >
+              <b>Course Outline</b>
+            </button>
+            <button 
+              id="button_exam" 
+              className={selection === 'examPaper' ? 'active' : ''}
+              onClick={() => handleSelectionChange('examPaper')}
+            >
+              <b>Exam Paper</b>
+            </button>
+          </div>
         </div>
 
         

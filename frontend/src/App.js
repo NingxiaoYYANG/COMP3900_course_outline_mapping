@@ -9,7 +9,6 @@ import Home from './components/Home';
 import CourseOutlines from './components/CourseOutlines';
 import BuildDegree from './components/BuildDegree';
 import Navigation from './components/Navigation';
-import UploadCourse from './components/UploadCourse';
 
 function Routing() {
   return (
@@ -24,13 +23,14 @@ function Routing() {
 function App() {
   return (
     <Router>
-      <Navigation />
-      <div style={{ minWidth: '100vw', minHeight: '100vh',backgroundColor: '#FCD3CA'}}>
-        <div style={{ paddingTop: '100px' }}>
-          <Routing />
+      <div className='app-container'>
+        <Navigation />
+        <div className='app-content' style={{ width: '100vw', height: '100vh', backgroundColor: '#FCD3CA'}}>
+          <div style={{ paddingTop: '100px' }}>
+            <Routing />
+          </div>
         </div>
       </div>
-  
     </Router>
   );
 }
