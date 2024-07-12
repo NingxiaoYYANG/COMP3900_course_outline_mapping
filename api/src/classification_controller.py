@@ -36,7 +36,6 @@ def classify_clos_from_pdf(file):
 
     return blooms_count
 
-
 def match_clos(clos):
     for clo in clos:
         tokens = word_tokenize(clo)

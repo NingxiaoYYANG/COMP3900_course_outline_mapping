@@ -6,6 +6,8 @@ import './styles/uploadcourse.css';
 function UploadCourse() {
 
   const [selection, setSelection] = useState('courseOutline');
+  const [courseCode, setCourseCode] = useState("");
+
   const handleSelectionChange = (selection) => {
     setSelection(selection);
   }
@@ -24,6 +26,44 @@ function UploadCourse() {
       }
     }
   };
+
+  const handleTextChange = (e) => {
+    setCourseCode(e.target.value);
+  }
+
+  const handleUploadCourseCode = async (e) => {
+    if (!courseCode) {
+      setError('Please provide the course code.')
+      alert('Please provide the course code.')
+      return;
+    }
+
+    const codePattern = /^[A-Za-z]{4}\d{4}$/;
+    if (!codePattern.test(courseCode)) {
+      setError('Please enter course code in correct format (e.g., ABCD1234).');
+      alert('Please enter course code in correct format (e.g., ABCD1234).')
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('course_code', courseCode);
+    console.log('Uploading course code:', formData);
+
+    try {
+      const response = await axios.post('http://127.0.0.1:5000/api/upload_course_code', formData);
+      if (response.status === 200) {
+        alert('corse code uploaded successfully!');
+        // Clear form state
+        setCourseCode('');
+        setError('');
+      } else {
+        setError('Failed to upload course code.');
+      }
+    } catch (error) {
+      console.error('Error uploading course code:', error);
+      setError('Error uploading course code. Please try again later.');
+    }
+  }
 
   const handleUpload = async () => {
     if (!file) {
@@ -89,7 +129,10 @@ function UploadCourse() {
           <br />
           <input type="file" accept=".pdf" onChange={handleFileChange} />
           <br />
+          <input type="text" onChange={handleTextChange} />
+          <br />
           <button onClick={handleUpload}>Upload PDF</button>
+          <button onClick={handleUploadCourseCode}>Upload by Course Code</button>
           <p className='max_size_label'>Max file size: 10MB</p>
           <p className='supported_file_label'>Supported file types: PDF</p>
         </div>)}
