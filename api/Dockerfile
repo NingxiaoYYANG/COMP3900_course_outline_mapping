@@ -6,9 +6,6 @@ WORKDIR /app
 COPY setup.sh setup.sh
 RUN chmod +x setup.sh
 
-# Copy the rest of the application files
-COPY src /app
-
 # Copy setup files
 COPY requirements.txt /app
 
@@ -19,8 +16,8 @@ COPY setup.sh /app
 # Run the setup script
 RUN ./setup.sh
 
-# Download the model files
-RUN python3 classification_controller.py
+# Copy the rest of the application files
+COPY src /app
 
 # Cleanup the files that are not needed
 RUN rm -rf /app/tests /app/setup.sh /app/requirements.txt

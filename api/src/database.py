@@ -149,3 +149,6 @@ def clear_database():
     finally:
         cursor.close()
         conn.close()
+
+if __name__ == "__main__":
+    clear_database()
