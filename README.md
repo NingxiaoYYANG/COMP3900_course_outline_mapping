@@ -35,7 +35,7 @@ or
 6. Open another terminal, install requirements for backend:
     ```sh
     cd api
-    pip install -r requirements.txt
+    ./setup.sh
 
 7. Turn on backend:
     ```sh

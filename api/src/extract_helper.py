@@ -1,6 +1,7 @@
 from pypdf import PdfReader
 import re
-from io import BytesIO
+import requests
+import json
 
 def extract_clos_from_pdf(file_data):
     '''
@@ -62,10 +63,12 @@ def extract_clos_from_pdf(file_data):
 
 def course_details_from_pdf(file_data):
     '''
-    Extracts the course code from a generated course outline pdf file.
+    Extracts course details from a generated course outline pdf file.
+    
     Inputs
     ------
     file_data : course outline file in pdf form
+    
     Outputs
     -------
     dict in the form of:
@@ -85,7 +88,6 @@ def course_details_from_pdf(file_data):
     }
 
     reader = PdfReader(file_data)
-    num_pages = len(reader.pages)
 
     # Course details are found on the title page
     page_text = reader.pages[0].extract_text()
@@ -140,11 +142,121 @@ def course_details_from_pdf(file_data):
 
     return course_details
 
+def get_coID_from_code(course_code):
+    '''
+    Gets the coID of the newest course outline of a course, 
+    specified by its course code.
+    
+    Each individual course outline has its own coID. This is needed
+    to get the information from the course outline later.
+
+    Inputs
+    ------
+    course_code : course code as a string.
+
+    Outputs
+    -------
+    coID : coID of the newest course outline as a string.
+    '''
+    TEACHING_PERIODS = ["U1", "T1", "T2", "T3", "Z1", "Z2", "KB", "KF", "KJ", "KN", "KR", "KV", "T1A", "T1B", "T1C", "T2A", "T2B", "T2C", "T3A", "T3B", "T3C", ]
+    
+    url = f"https://courseoutlines.unsw.edu.au/v1/publicsitecourseoutlines/search?year=2024&searchText={course_code}"
+    
+    r = requests.get(url)
+    data = json.loads(r.text)["response"]["results"]
+    
+    latest_period = None
+    coID = None
+    
+    # Only extract the coIDs which have a code that matches
+    # exactly with the input course_code.
+    for outline in data:
+        if outline["integrat_coursecode"].lower() == course_code.lower():
+            teaching_period = outline["integrat_teachingperiod"]
+            outline_coID = outline["integrat_courseoutlineid"]
+            if latest_period is None:
+                latest_period = teaching_period
+                coID = outline_coID
+            # We want the newest coID, meaning the latest teaching period.
+            elif TEACHING_PERIODS.index(teaching_period) > TEACHING_PERIODS.index(latest_period):
+                latest_period = teaching_period
+                coID = outline_coID
+    
+    return coID
+
+def extract_clos_from_coID(coID):
+    '''
+    Extracts CLOs from a coID.
+
+    Inputs
+    ------
+    coID : coID of the course outline as a string.
+
+    Outputs
+    -------
+    clos : list containing every CLO stored as a string.
+    '''
+    
+    url = f"https://courseoutlines.unsw.edu.au/v1/publicsitecourseoutlines/detail?coId={coID}"
+    
+    r = requests.get(url)
+    data = json.loads(r.text)["integrat_CO_LearningOutcome"]
+
+    clos = [clo["integrat_description"] for clo in data]
+    
+    return clos
+ 
+def course_details_from_coID(coID):
+    '''
+    
+    Extracts course details from a given coID.
+
+    Inputs
+    ------
+    coID : coID of the course outline as a string.
+    
+    Outputs
+    -------
+    dict in the form of:
+    {
+        "course_code": string,
+        "course_name": string,
+        "course_level": string,
+        "course_term": string
+    }
+    '''
+    
+    url = f"https://courseoutlines.unsw.edu.au/v1/publicsitecourseoutlines/detail?coId={coID}"
+    
+    r = requests.get(url)
+    data = json.loads(r.text)
+    
+    course_level = ""
+    if data["integrat_career"] == "Undergraduate":
+        course_level = "UG"
+    elif data["integrat_career"] == "Postgraduate":
+        course_level = "PG"
+    
+    course_details = {
+        "course_code": data["integrat_coursecode"],
+        "course_name": data["integrat_coursename"],
+        "course_level": course_level,
+        "course_term": "24"+data["integrat_teachingperiod"],
+    }
+    
+    return course_details
+
 
 if __name__ == "__main__":
     # Can replace with any pdf file for testing
     course_outline = "C:\\Users\\mbmas\\Desktop\\COMP3900\\capstone-project-3900f11adroptablestudents\\api\\tests\\testFiles\\ACCT2511-2024T1.pdf"
     # course_outline = "C:/Users/20991/Downloads/CO_COMP6771_1_2024_Term2_T2_Multimodal_Standard_Kensington.pdf"
 
-    with open(course_outline, "rb") as f:
-        print(course_details_from_pdf(f))
+    #with open(course_outline, "rb") as f:
+    #    print(course_details_from_pdf(f))
+    
+    psyc5001 = get_coID_from_code("psyc5001")
+    print(psyc5001)
+    
+    print(extract_clos_from_coID(psyc5001))
+    print(course_details_from_coID(psyc5001))
