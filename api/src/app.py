@@ -35,7 +35,7 @@ def upload_course_outline_by_code():
         # return jsonify({'message': 'Success!'}), 200
         try:
             add_clos(course_details["course_code"], blooms_count["Remember"], blooms_count["Understand"], blooms_count["Apply"], blooms_count["Analyse"], blooms_count["Evaluate"], blooms_count["Create"])
-            add_course_detail(course_details["course_code"], course_details["course_name"], course_details["course_level"], course_details["course_term"])
+            add_course_detail(course_details)
             return jsonify({'message': 'Success!'}), 200
         except Exception as e:
             print(e)
