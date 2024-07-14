@@ -11,9 +11,14 @@ services:
 
   api:
     container_name: f11a-p16-api
-    image: f11ap16/api
-    build: ./api
+    image: f11adts/coursemapper-api:latest
     depends_on:
       - database
 
-  
+  frontend:
+    container_name: f11a-p16-frontend
+    image: f11adts/coursemapper-frontend:latest
+    ports:
+      - 8080:8080
+    depends_on:
+      - api
