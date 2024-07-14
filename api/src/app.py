@@ -79,13 +79,12 @@ def classify_learning_outcome_route():
 
     for course_code in course_codes:
         blooms_count_additive = get_clos(course_code)
+        print(blooms_count_additive)
         if blooms_count_additive:
             result = mergeBloomsCount(result, blooms_count_additive)
         else:
             return jsonify({'error': 'No related data, please upload pdf'}), 400
-        
-        result = mergeBloomsCount(result, blooms_count_additive)
-
+    print(result)
     return jsonify({'blooms_count': result})
 
 @app.route('/api/courses', methods=['GET'])

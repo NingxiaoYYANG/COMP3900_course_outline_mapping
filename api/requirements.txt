@@ -37,6 +37,8 @@ webargs==8.4.0
 Werkzeug==3.0.3
 nltk==3.8.1
 transformers==4.42.3
-tensorflow===2.16.2
-tf-keras===2.16.0
+-f https://download.pytorch.org/whl/cu121
+torch
+torchvision
+torchaudio
 requests===2.32.3
