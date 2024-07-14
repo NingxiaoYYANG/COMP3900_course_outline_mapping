@@ -2,16 +2,14 @@ FROM python:3.12-bookworm
 
 WORKDIR /app
 
-# Copy the setup script and make it executable
-COPY setup.sh setup.sh
+# Copy setup files
+COPY setup.sh /app
+
 RUN chmod +x setup.sh
 
-# Copy setup files
 COPY requirements.txt /app
 
 COPY download_model.py /app
-
-COPY setup.sh /app
 
 # Run the setup script
 RUN ./setup.sh
@@ -21,6 +19,8 @@ COPY src /app
 
 # Cleanup the files that are not needed
 RUN rm -rf /app/tests /app/setup.sh /app/requirements.txt
+
+HEALTHCHECK --interval=60s --start-period=60s --timeout=5s CMD curl -f http://localhost:5000/ || exit 1
 
 # Expose the port the app runs on
 
