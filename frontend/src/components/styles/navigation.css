@@ -51,6 +51,10 @@
   border-bottom: 2px solid #FCD3CA;
 }
 
+.burger-navigation {
+  position: absolute;
+  width: 90vw;
+}
 
 
 /* Extra small devices (phones, 600px and down) */
@@ -61,10 +65,31 @@
   .vertical-line {
     height: 80px;
   }
+  .burger-navigation {
+    display: block;
+    text-align: right;
+  }
+  .navigation-list-items {
+    display: none;
+  }
+  .nav-list-item {
+    color: #070F2B;
+  }
+  .nav-list-item-hover {
+    border-bottom: 2px solid #070F2B;
+  }
+  .nav-list-item:hover {
+    border-bottom: 2px solid #070F2B;
+  }
 }
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
- 
+  .burger-navigation {
+    display: none;
+  }
+  .navigation-list-items {
+    display: flex;
+  }
 }
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) {
