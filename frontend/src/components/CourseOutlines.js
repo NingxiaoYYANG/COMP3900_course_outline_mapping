@@ -159,7 +159,7 @@ function CourseOutlines() {
               
               {isBoxVisible && <div className='box'>
                 <div style={{ width: '90%', margin: '0 auto'}}>
-                <h5>Search</h5>
+                <h5 className="search-bar-filter">Search</h5>
                 <div className="search-bar-filter">
                   <TextField 
                     label="Search by code or name" 
