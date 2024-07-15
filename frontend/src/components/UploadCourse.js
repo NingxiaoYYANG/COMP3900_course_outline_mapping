@@ -86,7 +86,7 @@ function UploadCourse() {
           <p>Drop file to upload</p>
           <p>or</p>
           <br />
-          <input style={{marginLeft: '70px', paddingBottom: '10px'}} type="file" accept=".pdf" onChange={handleFileChange} />
+          <input style={{marginLeft: '30px', paddingBottom: '10px'}} type="file" accept=".pdf" onChange={handleFileChange} />
           <br />
           <button onClick={handleUpload}>Upload PDF</button>
           <p className='max_size_label'>Max file size: 10MB</p>
