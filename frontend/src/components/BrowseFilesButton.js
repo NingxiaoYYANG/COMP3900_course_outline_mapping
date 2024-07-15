@@ -22,13 +22,14 @@ function BrowseFilesButton (props) {
       <button 
         onClick={()=>fileInputRef.current.click()}
         style={{
-          border: '3px solid #AB1748',
-          height: '40px',
-          width: '170px',
+          border: '2px solid #AB1748',
+          height: '35px',
+          width: '160px',
           borderRadius: '25px',
           backgroundColor: 'white',
           color: '#AB1748',
-          fontSize: '12pt'
+          fontSize: '12pt',
+          cursor: 'pointer'
         }}
       >
         Browse Files

@@ -15,7 +15,7 @@ const theme = createTheme({
 function UploadButton (props) {
   return (
     <ThemeProvider theme={theme}>
-      <Button onClick={props.onclick} variant='contained' color='primary' style={{ width: '170px' }}>
+      <Button onClick={props.onclick} variant='contained' color='primary' style={{ width: props.width }}>
         {props.text}
       </Button>
     </ThemeProvider>

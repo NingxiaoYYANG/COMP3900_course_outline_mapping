@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './styles/uploadcourse.css';
-import { Alert, Button, TextField } from '@mui/material';
+import { Alert, Button, FormControl, TextField } from '@mui/material';
 import BrowseFilesButton from './BrowseFilesButton';
 import UploadButton from './UploadButton';
 
@@ -17,6 +17,7 @@ function UploadCourse() {
 
   const [file, setFile] = useState(null);
   const [error, setError] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
 
 
   const handleFileChange = (e) => {
@@ -27,6 +28,7 @@ function UploadCourse() {
         setError('');
       } else {
         setError('Invalid file format. Please upload a PDF file.');
+        setShowAlert(true)
       }
     }
   };
@@ -38,6 +40,7 @@ function UploadCourse() {
   const handleUploadCourseCode = async (e) => {
     if (!courseCode) {
       setError('Please provide the course code.')
+      setShowAlert(true)
       // alert('Please provide the course code.')
       return;
     }
@@ -45,6 +48,7 @@ function UploadCourse() {
     const codePattern = /^[A-Za-z]{4}\d{4}$/;
     if (!codePattern.test(courseCode)) {
       setError('Please enter course code in correct format (e.g., ABCD1234).');
+      setShowAlert(true)
       // alert('Please enter course code in correct format (e.g., ABCD1234).')
       return;
     }
@@ -66,12 +70,14 @@ function UploadCourse() {
     } catch (error) {
       console.error('Error uploading course code:', error);
       setError('Error uploading course code. Please try again later.');
+      setShowAlert(true)
     }
   }
 
   const handleUpload = async () => {
     if (!file) {
       setError('Please select a file to upload.');
+      setShowAlert(true)
       return;
     }
 
@@ -97,14 +103,18 @@ function UploadCourse() {
     } catch (error) {
       console.error('Error uploading PDF:', error);
       setError('Error uploading PDF. Please try again later.');
+      setShowAlert(true)
     }
   };
 
+  const handleAlertClose = () => {
+    setShowAlert(false);
+  };
 
   return (<>
     <div className="container">
       <div className="container_inner">
-        <div style={{ display: 'flex', alignItems:'center'}}>
+        <div style={{ display: 'flex', alignItems:'center', marginTop: '-15px'}}>
           <h1 >Upload</h1>
           <div className="button_group">
             <button 
@@ -126,28 +136,38 @@ function UploadCourse() {
 
         
 
-        {selection === 'courseOutline' && (<div className="upload_form">
-          <Alert severity="error" style={{marginBottom: '20px', display: error ? 'flex' : 'none'}} >
-            {error}
-          </Alert>
+        {selection === 'courseOutline' && (<>
+          
+          <div className="upload_form">
+            <Alert severity="error" onClose={handleAlertClose} style={{marginBottom: '20px', marginTop: '-10px', display: showAlert ? 'flex' : 'none'}} >
+              {error}
+            </Alert>
           <i className="fas fa-cloud-upload-alt"></i>
           <p>Drop file to upload</p>
           <p>or</p>
-          <BrowseFilesButton handleChange={handleFileChange}/>
-          {file === null ? 'No file chosen' : file.name}
-          
+          <div>
+            <BrowseFilesButton handleChange={handleFileChange}/>
+            {file === null ? 'No file chosen' : file.name}
+          </div>
           {/* <input type="file" accept=".pdf" onChange={handleFileChange} /> */}
           <br />
-          <br />
-          <UploadButton text="Upload PDF" onclick={handleUpload} />
+          <UploadButton text="Upload PDF" onclick={handleUpload} width='160px'/>
           {/* <Button variant='contained' onClick={handleUpload}>Upload PDF</Button> */}
-          <br />
-          <TextField type='text' variant="outlined" label="Input course code" size='small' onChange={handleTextChange}/>
-          <br/>
-          <button onClick={handleUploadCourseCode}>Upload by Course Code</button>
+
           <p className='max_size_label'>Max file size: 10MB</p>
           <p className='supported_file_label'>Supported file types: PDF</p>
-        </div>)}
+          <br/>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      
+          </div>
+          
+        </div>
+        <div className="upload_form" style={{ display: 'flex', justifyContent: 'center' }}>
+          <TextField type='text' variant="standard" label="Input course code" size='small' onChange={handleTextChange} style={{ width: '140px', marginRight: '30px' }}/>
+            <br/>
+            <UploadButton text="Upload course code" onclick={handleUploadCourseCode} />
+        </div>
+      </>)}
 
         {selection === 'examPaper' && (
         <>
@@ -155,13 +175,15 @@ function UploadCourse() {
             <i className="fas fa-cloud-upload-alt"></i>
             <p>Drop file to upload</p>
             <p>or</p>
-            <button className="button">Browse</button>
+            <BrowseFilesButton handleChange={handleFileChange}/>
             <p className='max_size_label'>Max file size: 10MB</p>
             <p className='supported_file_label'>Supported file types: PDF</p>
           </div>
         <div className="upload_form">
+          {/* Input Text */}
           <p>Input Text</p>
-          <textarea></textarea>
+          <TextField multiline rows={2} maxRows={3} fullWidth />
+          {/* <textarea></textarea> */}
         </div>
         </>
         )}
