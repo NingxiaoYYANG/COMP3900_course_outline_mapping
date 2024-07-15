@@ -146,7 +146,6 @@ def clear_database():
         cursor = conn.cursor()
 
         cursor.execute("DROP TABLE IF EXISTS clos")
-        cursor.execute("DROP TABLE IF EXISTS course_files")
         cursor.execute("DROP TABLE IF EXISTS course_details")
         conn.commit()
 
