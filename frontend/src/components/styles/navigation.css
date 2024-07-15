@@ -4,8 +4,8 @@
   color: #FCD3CA;
   display: flex;
   flex-direction: row;
-  position: absolute;
-  width: 100vw;
+  position: relative;
+  width: 100%;
 }
 
 .navigation-text-container {

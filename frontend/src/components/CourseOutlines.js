@@ -8,6 +8,7 @@ import ArrowForwardIosNewIcon from '@mui/icons-material/ArrowForwardIos';
 import { FormControl, IconButton, InputAdornment, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import SelectField from './SelectField';
 
 
 function CourseOutlines() {
@@ -16,18 +17,36 @@ function CourseOutlines() {
   const [bloomsLabels, setBloomsLabels] = useState(null);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchActive, setIsSearchActive] = useState(false);
   const navigate = useNavigate();
+  // course_code VARCHAR(8) PRIMARY KEY,
+  // course_name VARCHAR(30),
+  // course_level VARCHAR(2),
+  // course_term VARCHAR(4),
+  // faculty VARCHAR(30),
+  // delivery_mode VARCHAR(30),
+  // delivery_format VARCHAR(30),
+  // delivery_location VARCHAR(30),
+  // campus VARCHAR(30)
   const courseDetails = [
-    ['COMP3121', 'Title', 'UG', '2'],
-    ['COMP4121', 'Title', 'UG', '2'],
-    ['COMP2121', 'Title', 'UG', '2'],
-    ['COMP5121', 'Title', 'UG', '2'],
-    ['COMP4121', 'Title', 'UG', '2'],
-    ['COMP2121', 'Title', 'UG', '2'],
-    ['COMP5121', 'Title', 'UG', '2'],
-    ['COMP4121', 'mary', 'UG', '2'],
-    ['COMP2121', 'moo', 'UG', '2'],
-    ['COMP5121', 'maar', 'UG', '2'],
+    ['COMP3121', 'Title', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+    ],
+    ['COMP4121', 'moo', 'PG', '2', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+    ],
+    ['COMP2121', 'hoo', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+    ],
+    ['COMP3121', 'Title', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+    ],
+    ['COMP4121', 'moo', 'PG', '2', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+    ],
+    ['COMP2121', 'hoo', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+    ],
+    ['COMP3121', 'Title', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+    ],
+    ['COMP4121', 'moo', 'PG', '2', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+    ],
+    ['COMP2121', 'hoo', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+    ],
   ]
 
   const handleAddCourseCode = (e, code) => {
@@ -97,21 +116,55 @@ function CourseOutlines() {
     setSearchQuery(e.target.value)
   }
 
-  const filteredCourseDetails = courseDetails.filter(
-    (detail) => detail[0].toLowerCase().includes(searchQuery.toLowerCase()) ||
-    detail[1].toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const [isBoxVisible, setItBoxVisible] = useState(false);
+  const [isBoxVisible, setIsBoxVisible] = useState(false);
 
   const handleFilterClick = () => {
-    setItBoxVisible(!isBoxVisible);
+    setIsBoxVisible(!isBoxVisible);
   }
+  
+  const [selectedYear, setSelectedYear] = useState('');
+  const [selectedTerm, setSelectedTerm] = useState('');
+  const [selectedDeliveryMode, setSelectedDeliveryMode] = useState('');
+  const [selectedDeliveryFormat, setSelectedDeliveryFormat] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('');
+  const [selectedFaculty, setSelectedFaculty] = useState('');
+  const [selectedStudyLevel, setSelectedStudyLevel] = useState('');
+  const [selectedCampus, setSelectedCampus] = useState('');
 
-  const [year, setYear] = useState('');
-  const handleYearChange = (event) => {
-    setYear(event.target.value);
-  };
+  // course_code VARCHAR(8) PRIMARY KEY,
+  // course_name VARCHAR(30),
+  // course_level VARCHAR(2),
+  // course_term VARCHAR(4),
+  // faculty VARCHAR(30),
+  // delivery_mode VARCHAR(30),
+  // delivery_format VARCHAR(30),
+  // delivery_location VARCHAR(30),
+  // campus VARCHAR(30)
+
+  // const uniqueYears = Array.from(new Set(courseDetails.map(course => course[4]))).sort((a, b) => b - a);
+  const uniqueTerms = [...new Set(courseDetails.map(course => course[3]))].sort();
+  const uniqueDeliveryMode = [...new Set(courseDetails.map(course => course[5]))].sort();
+  const uniqueDeliveryFormat = [...new Set(courseDetails.map(course => course[6]))].sort();
+  const uniqueLocation = [...new Set(courseDetails.map(course => course[7]))].sort();
+  const uniqueFaculty = [...new Set(courseDetails.map(course => course[4]))].sort();
+  const uniqueStudyLevel = [...new Set(courseDetails.map(course => course[2]))].sort();
+  const uniqueCampus = [...new Set(courseDetails.map(course => course[8]))].sort();
+
+
+  const filteredCourseDetails = courseDetails.filter((detail) => {
+    const matchesSearchQuery = detail[0].toLowerCase().includes(searchQuery.toLowerCase()) ||
+                               detail[1].toLowerCase().includes(searchQuery.toLowerCase());
+    // const matchesYear = selectedYear === '' || detail[4] === selectedYear;
+    const matchesTerm = selectedTerm === '' || detail[3] === selectedTerm;
+    const matchesDeliveryMode = selectedDeliveryMode === '' || detail[5] === selectedDeliveryMode;
+    const matchesDeliveryFormat = selectedDeliveryFormat === '' || detail[6] === selectedDeliveryFormat;
+    const matchesLocation = selectedLocation === '' || detail[7] === selectedLocation;
+    const matchesFaculty = selectedFaculty === '' || detail[7] === selectedFaculty;
+    const matchesStudyLevel = selectedStudyLevel === '' || detail[2] === selectedStudyLevel;
+    const matchesCampus = selectedCampus === '' || detail[8] === selectedCampus;
+
+    return matchesSearchQuery && matchesTerm && matchesDeliveryMode && matchesDeliveryFormat && matchesLocation && matchesFaculty && matchesStudyLevel && matchesCampus;
+  });
 
   return (
     <div>
@@ -119,71 +172,130 @@ function CourseOutlines() {
         <div className="coursecontent">
           <div className='course-title-content'>
             <div className='course-title'>Course Outlines</div>
-            {/* <div>search</div> */}
-            <div style={{ alignItems: 'center', display: 'flex', position: 'relative' }}>
+            <div className='filter-button-container'>
             
-              <IconButton aria-label='filter' onClick={handleFilterClick}>
+              <IconButton aria-label='filter' onClick={handleFilterClick} style={{ marginRight: '20px' }}>
                 <FilterListIcon />
               </IconButton>
+              
               {isBoxVisible && <div className='box'>
                 <div style={{ width: '90%', margin: '0 auto'}}>
+                <h5>Search</h5>
+                <div className="search-bar-filter">
+                  <TextField 
+                    label="Search by code or name" 
+                    variant='outlined' 
+                    type='text'
+                    value={searchQuery}
+                    onChange={handleSearchQueryChange}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                    style={{ marginRight: '20px' }}
+                    fullWidth
+                  />
+                </div>
                   <h5>Filter</h5>
-                  <FormControl fullWidth>
-                    <InputLabel>Year</InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      value={year}
+                    {/* <SelectField 
                       label="Year"
-                      onChange={handleYearChange}
-                    >
-                      <MenuItem value='hoo'>hoo</MenuItem>
-                      <MenuItem value='hoo'>hoo</MenuItem>
-                      <MenuItem value='hoo'>hoo</MenuItem>
-                    </Select>
-                  </FormControl>
+                      id="year-select"
+                      value={selectedYear}
+                      onChange={(e) => setSelectedYear(e.target.value)}
+                      options={uniqueYears}
+                    /> */}
+                    <SelectField
+                      label="Term"
+                      id="term-select"
+                      value={selectedTerm}
+                      onChange={(e) => setSelectedTerm(e.target.value)}
+                      options={uniqueTerms}
+                    />
+                    <SelectField
+                      label="Delivery Mode"
+                      id="deliveryMode-select"
+                      value={selectedDeliveryMode}
+                      onChange={(e) => setSelectedDeliveryMode(e.target.value)}
+                      options={uniqueDeliveryMode}
+                    />
+                    <SelectField
+                      label="Delivery Format"
+                      id="deliveryFormat-select"
+                      value={selectedDeliveryFormat}
+                      onChange={(e) => setSelectedDeliveryFormat(e.target.value)}
+                      options={uniqueDeliveryFormat}
+                    />
+                    <SelectField
+                      label="Location"
+                      id="location-select"
+                      value={selectedLocation}
+                      onChange={(e) => setSelectedLocation(e.target.value)}
+                      options={uniqueLocation}
+                    />
+                    <SelectField
+                      label="Faculty"
+                      id="faculty-select"
+                      value={selectedFaculty}
+                      onChange={(e) => setSelectedFaculty(e.target.value)}
+                      options={uniqueFaculty}
+                    />
+                    <SelectField
+                      label="Study Level"
+                      id="studyLevel-select"
+                      value={selectedStudyLevel}
+                      onChange={(e) => setSelectedStudyLevel(e.target.value)}
+                      options={uniqueStudyLevel}
+                    />
+                    <SelectField
+                      label="Campus"
+                      id="campus-select"
+                      value={selectedCampus}
+                      onChange={(e) => setSelectedCampus(e.target.value)}
+                      options={uniqueCampus}
+                    />
                   
                 </div>
-                FilterList
-                Year
-                Term
-                Teaching Period
-                Delivery Mode
-                Delivery format
-                location
-                Faculty
                 </div>}
             
-              <TextField 
-                label="Search by code or name" 
-                variant='outlined' 
-                type='text'
-                value={searchQuery}
-                onChange={handleSearchQueryChange}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
+                <div className="search-bar" style={{justifySelf: 'flex-end'}}>
+                  <TextField 
+                    label="Search by code or name" 
+                    variant='outlined' 
+                    type='text'
+                    value={searchQuery}
+                    onChange={handleSearchQueryChange}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <SearchIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                    style={{ marginRight: '20px' }}
+                  />
+                </div>
+                <button onClick={handleClick} style={{
+                  backgroundColor: '#AB1748', 
+                  border: 'none', 
+                  color: 'white',
+                  padding: '12px',
+                  borderRadius: '5px',
+                  display: 'flex',
+                  alignItems: 'center', 
+                  cursor: 'pointer',
+                  fontSize: '14pt',
                 }}
-              />
+                >
+                  NEXT   <ArrowForwardIosNewIcon />
+                </button>
             </div>
-             {/* <input 
-              type="text" 
-              placeholder="Search by code or name" 
-              value={searchQuery} 
-              onChange={handleSearchQueryChange}
-              style={{
-                padding: '8px',
-                margin: '10px 0',
-                borderRadius: '5px',
-                border: '1px solid #ccc'
-              }}
-            /> */}
            </div>
-           <div style={{fontSize: '10pt', color: courseCodes.length === 0 ? '#fff' : '#AB1748'}}>selected {courseCodes.length} outlines...</div>
-           {error && <p style={{ color: 'red' }}>{error}</p>}
+           <div style={{fontSize: '10pt', color: error ? '#AB1748' : courseCodes.length === 0 ? '#fff' : '#AB1748'}}>
+            {error || `Selected ${courseCodes.length} outlines...`}
+          </div>
            <div className='course-horizontalline'></div>
            <div className='courseoutline-selection'>
              {filteredCourseDetails.map((detail, index) => (
@@ -202,7 +314,7 @@ function CourseOutlines() {
          </div>
          </div>
        </div>
-       <div className='next-button'>
+       {/* <div className='next-button'>
        
         <button onClick={handleClick} style={{
             backgroundColor: '#AB1748', 
@@ -219,7 +331,7 @@ function CourseOutlines() {
           >
             NEXT   <ArrowForwardIosNewIcon />
          </button>
-       </div>
+       </div> */}
       
     </div>
   );

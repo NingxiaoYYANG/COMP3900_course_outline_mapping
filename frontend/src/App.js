@@ -25,10 +25,10 @@ function App() {
     <Router>
       <div className='app-container'>
         <Navigation />
-        <div className='app-content' style={{ width: '100vw', height: '100vh', backgroundColor: '#FCD3CA'}}>
-          <div style={{ paddingTop: '100px' }}>
+        <div className='app-content'>
+          {/* <div style={{ paddingTop: '100px' }}> */}
             <Routing />
-          </div>
+          {/* </div> */}
         </div>
       </div>
     </Router>
