@@ -1,16 +1,23 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './styles/uploadcourse.css';
+import { Alert, Button, TextField } from '@mui/material';
+import BrowseFilesButton from './BrowseFilesButton';
+import UploadButton from './UploadButton';
+
 
 function UploadCourse() {
 
   const [selection, setSelection] = useState('courseOutline');
+  const [courseCode, setCourseCode] = useState("");
+
   const handleSelectionChange = (selection) => {
     setSelection(selection);
   }
 
   const [file, setFile] = useState(null);
   const [error, setError] = useState('');
+
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -23,6 +30,44 @@ function UploadCourse() {
       }
     }
   };
+
+  const handleTextChange = (e) => {
+    setCourseCode(e.target.value);
+  }
+
+  const handleUploadCourseCode = async (e) => {
+    if (!courseCode) {
+      setError('Please provide the course code.')
+      // alert('Please provide the course code.')
+      return;
+    }
+
+    const codePattern = /^[A-Za-z]{4}\d{4}$/;
+    if (!codePattern.test(courseCode)) {
+      setError('Please enter course code in correct format (e.g., ABCD1234).');
+      // alert('Please enter course code in correct format (e.g., ABCD1234).')
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('course_code', courseCode);
+    console.log('Uploading course code:', formData);
+
+    try {
+      const response = await axios.post('http://127.0.0.1:5000/api/upload_course_code', formData);
+      if (response.status === 200) {
+        alert('course code uploaded successfully!');
+        // Clear form state
+        setCourseCode('');
+        setError('');
+      } else {
+        setError('Failed to upload course code.');
+      }
+    } catch (error) {
+      console.error('Error uploading course code:', error);
+      setError('Error uploading course code. Please try again later.');
+    }
+  }
 
   const handleUpload = async () => {
     if (!file) {
@@ -82,13 +127,24 @@ function UploadCourse() {
         
 
         {selection === 'courseOutline' && (<div className="upload_form">
+          <Alert severity="error" style={{marginBottom: '20px', display: error ? 'flex' : 'none'}} >
+            {error}
+          </Alert>
           <i className="fas fa-cloud-upload-alt"></i>
           <p>Drop file to upload</p>
           <p>or</p>
+          <BrowseFilesButton handleChange={handleFileChange}/>
+          {file === null ? 'No file chosen' : file.name}
+          
+          {/* <input type="file" accept=".pdf" onChange={handleFileChange} /> */}
           <br />
-          <input style={{marginLeft: '30px', paddingBottom: '10px'}} type="file" accept=".pdf" onChange={handleFileChange} />
           <br />
-          <button onClick={handleUpload}>Upload PDF</button>
+          <UploadButton text="Upload PDF" onclick={handleUpload} />
+          {/* <Button variant='contained' onClick={handleUpload}>Upload PDF</Button> */}
+          <br />
+          <TextField type='text' variant="outlined" label="Input course code" size='small' onChange={handleTextChange}/>
+          <br/>
+          <button onClick={handleUploadCourseCode}>Upload by Course Code</button>
           <p className='max_size_label'>Max file size: 10MB</p>
           <p className='supported_file_label'>Supported file types: PDF</p>
         </div>)}
