@@ -23,8 +23,8 @@ function TextButton (props) {
         color='primary'
         endIcon={props.text === 'NEXT' ? <ArrowForwardIosNewIcon /> : null}
         startIcon={props.text === 'BACK' ? <ArrowBackIosNewIcon /> : null}
+        onClick={props.handleclick}        
       >
-
         {props.text}
       </Button>
   </ThemeProvider>

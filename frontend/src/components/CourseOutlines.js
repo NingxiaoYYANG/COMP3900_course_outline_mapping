@@ -17,17 +17,7 @@ function CourseOutlines() {
   const [bloomsLabels, setBloomsLabels] = useState(null);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [isSearchActive, setIsSearchActive] = useState(false);
   const navigate = useNavigate();
-  // course_code VARCHAR(8) PRIMARY KEY,
-  // course_name VARCHAR(30),
-  // course_level VARCHAR(2),
-  // course_term VARCHAR(4),
-  // faculty VARCHAR(30),
-  // delivery_mode VARCHAR(30),
-  // delivery_format VARCHAR(30),
-  // delivery_location VARCHAR(30),
-  // campus VARCHAR(30)
   const courseDetails = [
     ['COMP3121', 'Title', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
     ],
@@ -131,16 +121,6 @@ function CourseOutlines() {
   const [selectedStudyLevel, setSelectedStudyLevel] = useState('');
   const [selectedCampus, setSelectedCampus] = useState('');
 
-  // course_code VARCHAR(8) PRIMARY KEY,
-  // course_name VARCHAR(30),
-  // course_level VARCHAR(2),
-  // course_term VARCHAR(4),
-  // faculty VARCHAR(30),
-  // delivery_mode VARCHAR(30),
-  // delivery_format VARCHAR(30),
-  // delivery_location VARCHAR(30),
-  // campus VARCHAR(30)
-
   // const uniqueYears = Array.from(new Set(courseDetails.map(course => course[4]))).sort((a, b) => b - a);
   const uniqueTerms = [...new Set(courseDetails.map(course => course[3]))].sort();
   const uniqueDeliveryMode = [...new Set(courseDetails.map(course => course[5]))].sort();
@@ -173,7 +153,6 @@ function CourseOutlines() {
           <div className='course-title-content'>
             <div className='course-title'>Course Outlines</div>
             <div className='filter-button-container'>
-            
               <IconButton aria-label='filter' onClick={handleFilterClick} style={{ marginRight: '20px' }}>
                 <FilterListIcon />
               </IconButton>
@@ -199,106 +178,93 @@ function CourseOutlines() {
                     fullWidth
                   />
                 </div>
-                  <h5>Filter</h5>
-                    {/* <SelectField 
-                      label="Year"
-                      id="year-select"
-                      value={selectedYear}
-                      onChange={(e) => setSelectedYear(e.target.value)}
-                      options={uniqueYears}
-                    /> */}
-                    <SelectField
-                      label="Term"
-                      id="term-select"
-                      value={selectedTerm}
-                      onChange={(e) => setSelectedTerm(e.target.value)}
-                      options={uniqueTerms}
-                    />
-                    <SelectField
-                      label="Delivery Mode"
-                      id="deliveryMode-select"
-                      value={selectedDeliveryMode}
-                      onChange={(e) => setSelectedDeliveryMode(e.target.value)}
-                      options={uniqueDeliveryMode}
-                    />
-                    <SelectField
-                      label="Delivery Format"
-                      id="deliveryFormat-select"
-                      value={selectedDeliveryFormat}
-                      onChange={(e) => setSelectedDeliveryFormat(e.target.value)}
-                      options={uniqueDeliveryFormat}
-                    />
-                    <SelectField
-                      label="Location"
-                      id="location-select"
-                      value={selectedLocation}
-                      onChange={(e) => setSelectedLocation(e.target.value)}
-                      options={uniqueLocation}
-                    />
-                    <SelectField
-                      label="Faculty"
-                      id="faculty-select"
-                      value={selectedFaculty}
-                      onChange={(e) => setSelectedFaculty(e.target.value)}
-                      options={uniqueFaculty}
-                    />
-                    <SelectField
-                      label="Study Level"
-                      id="studyLevel-select"
-                      value={selectedStudyLevel}
-                      onChange={(e) => setSelectedStudyLevel(e.target.value)}
-                      options={uniqueStudyLevel}
-                    />
-                    <SelectField
-                      label="Campus"
-                      id="campus-select"
-                      value={selectedCampus}
-                      onChange={(e) => setSelectedCampus(e.target.value)}
-                      options={uniqueCampus}
-                    />
-                  
-                </div>
-                </div>}
-            
-                <div className="search-bar" style={{justifySelf: 'flex-end'}}>
-                  <TextField 
-                    label="Search by code or name" 
-                    variant='outlined' 
-                    type='text'
-                    value={searchQuery}
-                    onChange={handleSearchQueryChange}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <SearchIcon />
-                        </InputAdornment>
-                      ),
-                    }}
-                    style={{ marginRight: '20px' }}
+                <h5>Filter</h5>
+                  {/* <SelectField 
+                    label="Year"
+                    id="year-select"
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(e.target.value)}
+                    options={uniqueYears}
+                  /> */}
+                  <SelectField
+                    label="Term"
+                    id="term-select"
+                    value={selectedTerm}
+                    onChange={(e) => setSelectedTerm(e.target.value)}
+                    options={uniqueTerms}
+                  />
+                  <SelectField
+                    label="Delivery Mode"
+                    id="deliveryMode-select"
+                    value={selectedDeliveryMode}
+                    onChange={(e) => setSelectedDeliveryMode(e.target.value)}
+                    options={uniqueDeliveryMode}
+                  />
+                  <SelectField
+                    label="Delivery Format"
+                    id="deliveryFormat-select"
+                    value={selectedDeliveryFormat}
+                    onChange={(e) => setSelectedDeliveryFormat(e.target.value)}
+                    options={uniqueDeliveryFormat}
+                  />
+                  <SelectField
+                    label="Location"
+                    id="location-select"
+                    value={selectedLocation}
+                    onChange={(e) => setSelectedLocation(e.target.value)}
+                    options={uniqueLocation}
+                  />
+                  <SelectField
+                    label="Faculty"
+                    id="faculty-select"
+                    value={selectedFaculty}
+                    onChange={(e) => setSelectedFaculty(e.target.value)}
+                    options={uniqueFaculty}
+                  />
+                  <SelectField
+                    label="Study Level"
+                    id="studyLevel-select"
+                    value={selectedStudyLevel}
+                    onChange={(e) => setSelectedStudyLevel(e.target.value)}
+                    options={uniqueStudyLevel}
+                  />
+                  <SelectField
+                    label="Campus"
+                    id="campus-select"
+                    value={selectedCampus}
+                    onChange={(e) => setSelectedCampus(e.target.value)}
+                    options={uniqueCampus}
                   />
                 </div>
-                <button onClick={handleClick} style={{
-                  backgroundColor: '#AB1748', 
-                  border: 'none', 
-                  color: 'white',
-                  padding: '12px',
-                  borderRadius: '5px',
-                  display: 'flex',
-                  alignItems: 'center', 
-                  cursor: 'pointer',
-                  fontSize: '14pt',
-                }}
-                >
-                  NEXT   <ArrowForwardIosNewIcon />
-                </button>
+              </div>}
+            
+              <div className="search-bar" style={{justifySelf: 'flex-end'}}>
+                <TextField 
+                  label="Search by code or name" 
+                  variant='outlined' 
+                  type='text'
+                  value={searchQuery}
+                  onChange={handleSearchQueryChange}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                  style={{ marginRight: '20px',}}
+                  size='small'
+                />
+              </div>
+              <TextButton text='NEXT' handleclick={handleClick}/>
             </div>
-           </div>
-           <div style={{fontSize: '10pt', color: error ? '#AB1748' : courseCodes.length === 0 ? '#fff' : '#AB1748'}}>
+          </div>
+          <div style={{fontSize: '10pt', color: error ? '#AB1748' : courseCodes.length === 0 ? '#fff' : '#AB1748'}}>
             {error || `Selected ${courseCodes.length} outlines...`}
           </div>
-           <div className='course-horizontalline'></div>
-           <div className='courseoutline-selection'>
-             {filteredCourseDetails.map((detail, index) => (
+          <div className='course-horizontalline'></div>
+          <div className='courseoutline-selection'>
+            {filteredCourseDetails.map((detail, index) => (
               <div className={`courseoutline-box`} key={index}>
                 <div><Checkbox onChange={(e) => handleAddCourseCode(e, detail[0])} /></div>
                 <div>
@@ -309,30 +275,9 @@ function CourseOutlines() {
                 </div>
               </div>
             ))}
-           </div>
-           <div>
-         </div>
-         </div>
-       </div>
-       {/* <div className='next-button'>
-       
-        <button onClick={handleClick} style={{
-            backgroundColor: '#AB1748', 
-            border: 'none', 
-            color: 'white',
-            padding: '12px',
-            borderRadius: '5px',
-            display: 'flex',
-            alignItems: 'center', 
-            cursor: 'pointer',
-            fontSize: '14pt',
-          }}
-            className='button'
-          >
-            NEXT   <ArrowForwardIosNewIcon />
-         </button>
-       </div> */}
-      
+          </div>
+        </div>
+      </div>      
     </div>
   );
 }
