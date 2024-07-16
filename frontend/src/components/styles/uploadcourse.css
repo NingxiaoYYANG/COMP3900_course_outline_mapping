@@ -1,9 +1,12 @@
 .container {
-    margin-top: 1rem;
+    margin-top: 6rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding-bottom: 20px;
+    height: 80vh;
+    justify-content: center;
+    min-height: 400px;
 }
 
 .container_inner {
