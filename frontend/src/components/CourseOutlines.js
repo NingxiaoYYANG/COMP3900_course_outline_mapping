@@ -13,31 +13,31 @@ import SelectField from './SelectField';
 
 function CourseOutlines() {
   const [courseCodes, setCourseCodes] = useState([]);
-  // const [courseDetails, setCourseDetails] = useState([]);
+  const [courseDetails, setCourseDetails] = useState([]);
   const [bloomsLabels, setBloomsLabels] = useState(null);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
-  const courseDetails = [
-    ['COMP3121', 'Title', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
-    ],
-    ['COMP4121', 'moo', 'PG', '2', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
-    ],
-    ['COMP2121', 'hoo', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
-    ],
-    ['COMP3121', 'Title', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
-    ],
-    ['COMP4121', 'moo', 'PG', '2', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
-    ],
-    ['COMP2121', 'hoo', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
-    ],
-    ['COMP3121', 'Title', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
-    ],
-    ['COMP4121', 'moo', 'PG', '2', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
-    ],
-    ['COMP2121', 'hoo', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
-    ],
-  ]
+  // const courseDetails = [
+  //   ['COMP3121', 'Title', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+  //   ],
+  //   ['COMP4121', 'moo', 'PG', '2', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+  //   ],
+  //   ['COMP2121', 'hoo', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+  //   ],
+  //   ['COMP3121', 'Title', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+  //   ],
+  //   ['COMP4121', 'moo', 'PG', '2', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+  //   ],
+  //   ['COMP2121', 'hoo', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+  //   ],
+  //   ['COMP3121', 'Title', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+  //   ],
+  //   ['COMP4121', 'moo', 'PG', '2', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+  //   ],
+  //   ['COMP2121', 'hoo', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+  //   ],
+  // ]
 
   const handleAddCourseCode = (e, code) => {
     const codePattern = /^[A-Za-z]{4}\d{4}$/;
@@ -56,16 +56,16 @@ function CourseOutlines() {
     setError('');
   };
 
-  // const fetchCourseDetails = async () => {
-  //   try {
-  //     const response = await axios.get('http://localhost:5000/api/courses');
-  //     console.log(response)
-  //     setCourseDetails(response.data.course_details);
-  //   } catch (err) {
-  //     setError('Error fetching course details. Please try again.');
-  //     setBloomsLabels(null);
-  //   }
-  // }
+  const fetchCourseDetails = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/courses');
+      console.log(response)
+      setCourseDetails(response.data.course_details);
+    } catch (err) {
+      setError('Error fetching course details. Please try again.');
+      setBloomsLabels(null);
+    }
+  }
 
   const handleFetchBloomsCount = async () => {
     if (courseCodes.length === 0) {
@@ -90,7 +90,7 @@ function CourseOutlines() {
   };
 
   React.useEffect(() => {
-    // fetchCourseDetails();
+    fetchCourseDetails();
   }, []); 
 
   const handleClick = async () => {
