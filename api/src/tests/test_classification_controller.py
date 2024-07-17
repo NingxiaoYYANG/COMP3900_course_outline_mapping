@@ -19,7 +19,7 @@ class TestClassifyCLOsFromPdf:
     # TODO: Add test logic
     def test_can_classify_exam_questions(self):
         questions = get_exam_questions()
-        pass
+        assert any(questions.values())
 
 # TODO: Add test cases
 class TestMatchVerbsByAI:
