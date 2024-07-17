@@ -5,13 +5,17 @@ from flask_cors import CORS  # Import CORS from flask_cors
 import json
 
 # imported files
-from classification_controller import classify_clos_from_pdf, mergeBloomsCount, check_code_format, match_clos
+from classification_controller import classify_clos_from_pdf, mergeBloomsCount, check_code_format, match_clos, initialize_classifier
 from database import add_clos, get_clos, add_course_detail, get_all_course_details
 from blooms_levels import BLOOMS_TAXONOMY
 from extract_helper import course_details_from_pdf, get_coID_from_code, extract_clos_from_coID, course_details_from_coID
 
 app = APIFlask(__name__, title='Successful Outcomes F11A', version = '0.1')
 CORS(app)  # Apply CORS to your app
+
+@app.before_request
+def setup():
+    initialize_classifier()
 
 @app.get('/')
 def index():
@@ -66,6 +70,15 @@ def upload_course_outline_pdf():
     except Exception as e:
         print(e)
         return jsonify({'error': e}), 400
+
+@app.route('/api/upload_exam', methods=['POST'])
+def upload_exam():
+    exam_contents = request.form['exam_contents']
+
+    blooms_count = match_clos(exam_contents)
+    
+    #TO-DO
+    return jsonify({'message': 'TODO!'}), 200
 
 @app.route('/api/classify_clos', methods=['POST'])
 def classify_learning_outcome_route():

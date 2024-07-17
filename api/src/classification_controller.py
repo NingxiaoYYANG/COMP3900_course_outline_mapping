@@ -7,8 +7,13 @@ from extract_helper import extract_clos_from_pdf
 from blooms_levels import BLOOMS_TAXONOMY
 from known_verbs import KNOWN_VERBS
 
-# Load a pre-trained model for text classification
-classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
+# Define a global variable for the classifier
+classifier = None
+
+def initialize_classifier():
+    global classifier
+    if classifier is None:
+        classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
 
 # Define the regular expression pattern
 pattern = r'[^\w]+'
