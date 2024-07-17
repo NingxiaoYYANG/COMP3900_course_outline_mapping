@@ -276,6 +276,8 @@ def course_details_from_coID(coID):
         course_level = "UG"
     elif data["integrat_career"] == "Postgraduate":
         course_level = "PG"
+    else:
+        course_level = "UG/PG"
     
     course_details = {
         "course_code": data["integrat_coursecode"],

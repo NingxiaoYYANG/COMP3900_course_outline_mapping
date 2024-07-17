@@ -9,12 +9,16 @@ class TestClassifyCLOsFromPdf:
     def test_can_classify_clos_from_pdf(self):
         pdf_binaries = get_pdf_binaries()
         for i in range(len(VALID_PDFS)):
-            extracted_clos = classifier.classify_clos_from_pdf(pdf_binaries[i])
+            blooms_count, extracted_clos, word_to_blooms = classifier.classify_clos_from_pdf(pdf_binaries[i])
             
             # We can't be for sure what the correct classification is.
             # Just check that the classification is valid and not empty.
-            assert set(extracted_clos.keys()) == set(BLOOMS_LEVELS)
-            assert any(extracted_clos.values())
+            assert set(blooms_count.keys()) == set(BLOOMS_LEVELS)
+            assert any(blooms_count.values())
+
+            # Can imporve test logic here with exact clos from each PDF
+            assert any(extracted_clos)
+            assert any(word_to_blooms)
     
     # TODO: Add test logic
     def test_can_classify_exam_questions(self):
