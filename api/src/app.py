@@ -13,9 +13,14 @@ from extract_helper import course_details_from_pdf, get_coID_from_code, extract_
 app = APIFlask(__name__, title='Successful Outcomes F11A', version = '0.1')
 CORS(app)  # Apply CORS to your app
 
+classifier_initialized = False
+
 @app.before_request
 def setup():
-    initialize_classifier()
+    global classifier_initialized
+    if not classifier_initialized:
+        initialize_classifier()
+        classifier_initialized = True
 
 @app.get('/')
 def index():
