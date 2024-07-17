@@ -1,20 +1,19 @@
-FROM node:18 as build
+FROM node:18
 
-LABEL maintainer="22587474+psharma04@users.noreply.github.com"
+USER node
 
-WORKDIR /app
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
-COPY package*.json ./
+WORKDIR /home/node/app
+
+COPY --chown=node:node package*.json ./
 
 RUN npm install
 
-COPY public ./public
-COPY src ./src
-
-FROM gcr.io/distroless/nodejs:18
-
-COPY --from=build /app /
+COPY --chown=node:node . .
 
 EXPOSE 3000
+
+LABEL maintainer="22587474+psharma04@users.noreply.github.com"
 
 CMD ["npm", "start"]

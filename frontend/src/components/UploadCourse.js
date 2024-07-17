@@ -50,7 +50,7 @@ function UploadCourse() {
     console.log('Uploading course code:', formData);
 
     try {
-      const response = await axios.post('http://127.0.0.1:5000/api/upload_course_code', formData);
+      const response = await axios.post('/api/upload_course_code', formData);
       if (response.status === 200) {
         alert('corse code uploaded successfully!');
         // Clear form state
@@ -76,7 +76,7 @@ function UploadCourse() {
     console.log('Uploading PDF:', formData);
 
     try {
-      const response = await axios.post('http://127.0.0.1:5000/api/upload_pdf', formData, {
+      const response = await axios.post('/api/upload_pdf', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

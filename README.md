@@ -3,6 +3,14 @@
 ### Prerequisites
 - Docker
 
+## Installation in production
+
+```sh
+mkdir -p ~/coursemapper
+cd ~/coursemapper
+https://raw.githubusercontent.com/unsw-cse-comp99-3900-24t1/capstone-project-3900f11adroptablestudents/main/docker-compose.yml && docker-compose up -d
+```
+
 ### Set up instructions when developing in localhost:
 
 1. Create/Activate venv:

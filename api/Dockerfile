@@ -26,5 +26,7 @@ HEALTHCHECK --interval=60s --start-period=60s --timeout=5s CMD curl -f http://lo
 
 EXPOSE 5000
 
+LABEL maintainer="22587474+psharma04@users.noreply.github.com"
+
 # Set the command to run the application
 CMD ["python3", "app.py"]

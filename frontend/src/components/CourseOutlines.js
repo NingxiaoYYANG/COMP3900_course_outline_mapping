@@ -49,7 +49,7 @@ function CourseOutlines() {
 
   const fetchCourseDetails = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/courses');
+      const response = await axios.get('/api/courses');
       console.log(response)
       setCourseDetails(response.data.course_details);
     } catch (err) {
@@ -69,7 +69,7 @@ function CourseOutlines() {
       formData.append('course_codes', JSON.stringify(courseCodes));
       formData.append('course_codes', JSON.stringify(courseCodes));
 
-      const response = await axios.post('http://localhost:5000/api/classify_clos', formData);
+      const response = await axios.post('/api/classify_clos', formData);
       setBloomsLabels(response.data.blooms_count);
       setError('');
       return response.data.blooms_count;

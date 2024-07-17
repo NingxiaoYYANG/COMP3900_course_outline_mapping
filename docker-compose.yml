@@ -8,17 +8,42 @@ services:
       - 3306:3306
     volumes:
       - ./database:/var/lib/mysql
+    networks:
+      - f11a-p16-network
+    restart: unless-stopped
 
   api:
     container_name: f11a-p16-api
     image: f11adts/coursemapper-api:latest
+    ports:
+      - 5000:5000
     depends_on:
       - database
+    networks:
+      - f11a-p16-network
+    restart: unless-stopped
 
   frontend:
     container_name: f11a-p16-frontend
     image: f11adts/coursemapper-frontend:latest
     ports:
-      - 8080:8080
+      - 3000:3000
     depends_on:
       - api
+    networks:
+      - f11a-p16-network
+    restart: unless-stopped
+
+  webserver:
+    container_name: f11a-p16-webserver
+    image: nginx:alpine
+    networks:
+      - f11a-p16-network
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 80:80
+
+networks:
+  f11a-p16-network:
+    driver: bridge
