@@ -1,4 +1,5 @@
 #  imported libs
+import re
 from apiflask import APIFlask
 from flask import request, jsonify
 from flask_cors import CORS  # Import CORS from flask_cors
@@ -34,14 +35,12 @@ def upload_course_outline_by_code():
         return "Invalid course code format", 400
     else:
         coID = get_coID_from_code(code)
-        # print(coID + "!!!!!!!!!!!!!!!!!\n\n\n\n\n\n\n\n\n\n\n\n")
+        # print(coID)
         clos = extract_clos_from_coID(coID)
         # print(clos)
         blooms_count = match_clos(clos)
         # print(blooms_count)
         course_details = course_details_from_coID(coID)
-        # print(course_details)
-        # return jsonify({'message': 'Success!'}), 200
         try:
             add_clos(course_details["course_code"], blooms_count["Remember"], blooms_count["Understand"], blooms_count["Apply"], blooms_count["Analyse"], blooms_count["Evaluate"], blooms_count["Create"])
             add_course_detail(course_details)
@@ -80,10 +79,16 @@ def upload_course_outline_pdf():
 def upload_exam():
     exam_contents = request.form['exam_contents']
 
-    blooms_count = match_clos(exam_contents)
+    # Split exam contents into individual questions based on numbering
+    pattern = r'\d+\.\s+'
+    exam_questions = re.split(pattern, exam_contents)
     
-    #TO-DO
-    return jsonify({'message': 'TODO!'}), 200
+    # Filter out any empty strings resulting from the split
+    exam_questions = [q for q in exam_questions if q.strip()]
+
+    blooms_count = match_clos(exam_questions)
+    
+    return jsonify({'blooms_count': blooms_count}), 200
 
 @app.route('/api/classify_clos', methods=['POST'])
 def classify_learning_outcome_route():

@@ -1,5 +1,5 @@
 import classification_controller as classifier
-from tests.helper import get_pdf_binaries, extract_test_clos, CLOS_FILES, VALID_PDFS, BLOOMS_LEVELS
+from tests.helper import get_pdf_binaries, extract_test_clos, get_exam_questions, CLOS_FILES, VALID_PDFS, BLOOMS_LEVELS
 
 class TestClassifyCLOsFromPdf:
     @classmethod
@@ -15,6 +15,11 @@ class TestClassifyCLOsFromPdf:
             # Just check that the classification is valid and not empty.
             assert set(extracted_clos.keys()) == set(BLOOMS_LEVELS)
             assert any(extracted_clos.values())
+    
+    # TODO: Add test logic
+    def test_can_classify_exam_questions(self):
+        questions = get_exam_questions()
+        pass
 
 # TODO: Add test cases
 class TestMatchVerbsByAI:
