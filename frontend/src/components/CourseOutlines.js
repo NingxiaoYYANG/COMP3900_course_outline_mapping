@@ -49,7 +49,7 @@ function CourseOutlines() {
 
   const fetchCourseDetails = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:5000/api/courses');
+      const response = await axios.get('/api/courses');
       console.log(response)
       setCourseDetails(response.data.course_details);
     } catch (err) {
@@ -68,7 +68,7 @@ function CourseOutlines() {
       const formData = new FormData();
       formData.append('course_codes', JSON.stringify(courseCodes));
 
-      const response = await axios.post('http://127.0.0.1:5000/api/classify_clos', formData);
+      const response = await axios.post('/api/classify_clos', formData);
       // console.log(response)
       setClassifyResults(response.data.classify_results);
 
