@@ -14,7 +14,7 @@ import SelectField from './SelectField';
 function CourseOutlines() {
   const [courseCodes, setCourseCodes] = useState([]);
   const [courseDetails, setCourseDetails] = useState([]);
-  const [bloomsLabels, setBloomsLabels] = useState(null);
+  const [classifyResults, setClassifyResults] = useState(null);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
@@ -63,11 +63,11 @@ function CourseOutlines() {
       setCourseDetails(response.data.course_details);
     } catch (err) {
       setError('Error fetching course details. Please try again.');
-      setBloomsLabels(null);
+      setClassifyResults(null);
     }
   }
 
-  const handleFetchBloomsCount = async () => {
+  const handleFetchClassifyResults = async () => {
     if (courseCodes.length === 0) {
       setError('Please add at least one course code.');
       return;
@@ -76,15 +76,15 @@ function CourseOutlines() {
     try {
       const formData = new FormData();
       formData.append('course_codes', JSON.stringify(courseCodes));
-      formData.append('course_codes', JSON.stringify(courseCodes));
 
       const response = await axios.post('http://127.0.0.1:5000/api/classify_clos', formData);
-      setBloomsLabels(response.data.blooms_count);
+      // console.log(response)
+      setClassifyResults(response.data.classify_results);
       setError('');
-      return response.data.blooms_count;
+      return response.data.classify_results;
     } catch (err) {
       setError('Error fetching Bloom\'s taxonomy counts. Please try again.');
-      setBloomsLabels(null);
+      setClassifyResults(null);
       return null
     }
   };
@@ -95,11 +95,11 @@ function CourseOutlines() {
   }, []); 
 
   const handleClick = async () => {
-    const bloomsCounts = await handleFetchBloomsCount();
-    console.log('Bloom\'s Counts before navigating:', bloomsCounts);
-    if (bloomsCounts) {
+    const classifyResults = await handleFetchClassifyResults();
+    console.log('classifyResults before navigating:', classifyResults);
+    if (classifyResults) {
       console.log('here')
-      navigate('/courseoutlines/builddegree', { state: { bloomsLabels: bloomsCounts } });  // Pass data to the next page
+      navigate('/courseoutlines/builddegree', { state: { classifyResults: classifyResults,  } });  // Pass data to the next page
     }
   };
 
@@ -267,12 +267,12 @@ function CourseOutlines() {
           <div className='courseoutline-selection'>
             {filteredCourseDetails.map((detail, index) => (
               <div className={`courseoutline-box`} key={index}>
-                <div><Checkbox onChange={(e) => handleAddCourseCode(e, detail[0])} /></div>
+                <div><Checkbox onChange={(e) => handleAddCourseCode(e, detail.course_code)} /></div>
                 <div>
-                  <strong>{detail[0]}</strong><br />
-                  <strong>Course Name:</strong> {detail[1]}<br />
-                  <strong>Level:</strong> {detail[2]}<br />
-                  <strong>Semester:</strong> {detail[3]}
+                  <strong>{detail.course_code}</strong><br />
+                  <strong>Course Name:</strong> {detail.course_name}<br />
+                  <strong>Level:</strong> {detail.course_level}<br />
+                  <strong>Semester:</strong> {detail.course_term}
                 </div>
               </div>
             ))}

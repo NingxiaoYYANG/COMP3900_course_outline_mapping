@@ -7,8 +7,13 @@ from extract_helper import extract_clos_from_pdf
 from blooms_levels import BLOOMS_TAXONOMY
 from known_verbs import KNOWN_VERBS
 
-# Load a pre-trained model for text classification
-classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
+# Define a global variable for the classifier
+classifier = None
+
+def initialize_classifier():
+    global classifier
+    if classifier is None:
+        classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
 
 # Define the regular expression pattern
 pattern = r'[^\w]+'
@@ -31,22 +36,23 @@ def classify_clos_from_pdf(file):
     extracted_clos = extract_clos_from_pdf(file)
     
     # Match clo to blooms by dict
-    blooms_count = match_clos(extracted_clos)
+    blooms_count, word_to_blooms = match_clos(extracted_clos)
 
     # print(blooms_count)
 
-    return blooms_count
+    return blooms_count, extracted_clos, word_to_blooms
 
 def match_clos(clos):
-     # Define the Bloom's taxonomy levels
+    # Define the Bloom's taxonomy levels
     bloom_levels = [level for level in BLOOMS_TAXONOMY]
-    bloom_count = {level: 0 for level in BLOOMS_TAXONOMY}
+    blooms_count = {level: 0 for level in BLOOMS_TAXONOMY}
+    word_to_blooms = {}  # Initialize dictionary to store word to Bloom's level mapping
+
     for clo in clos:
         tokens = word_tokenize(clo)
         tagged = pos_tag(tokens)
         for word, tag in tagged:
             is_verb = check_is_verb(word, tag)
-            # print(word, is_verb)
             if is_verb:  # Checks if the word is a verb
                 # Turn word to lowercase for consistency
                 word = word.lower()
@@ -55,21 +61,20 @@ def match_clos(clos):
                 matched_by_dict = False
                 for level, keywords in BLOOMS_TAXONOMY.items():
                     # If the verb is in the keywords list, increment the count for the level
-                    if word in keywords: # match by dict
-                        bloom_count[level] += 1
-                        # print("1 " + word + ", " + level)
+                    if word in keywords:  # match by dict
+                        blooms_count[level] += 1
+                        word_to_blooms[word] = level  # Add to word_to_blooms
                         matched_by_dict = True
-                        continue
-                
+                        break
+
                 if not matched_by_dict:
                     # match by AI
                     result = classifier(word, bloom_levels)
                     best_match = result['labels'][0]
-                    # print("2 " + word + ", " + best_match)
-                    bloom_count[best_match] += 1
-                    # print(bloom_count)
+                    blooms_count[best_match] += 1
+                    word_to_blooms[word] = best_match  # Add to word_to_blooms
     
-    return bloom_count
+    return blooms_count, word_to_blooms
 
 # legacy version, use as backup in case match_clos fails
 def match_clos_by_dict(clos):
@@ -82,10 +87,10 @@ def match_clos_by_dict(clos):
 
     Outputs
     -------
-    bloom_count : dictionary where keys are Bloom's levels and values are counts of matched verbs.
+    blooms_count : dictionary where keys are Bloom's levels and values are counts of matched verbs.
     '''
     # Initialise a dictionary to count matches for each Bloom's level
-    bloom_count = {level: 0 for level in BLOOMS_TAXONOMY}
+    blooms_count = {level: 0 for level in BLOOMS_TAXONOMY}
 
     # Iterate through the clos
     for clo in clos:
@@ -96,10 +101,10 @@ def match_clos_by_dict(clos):
             for level, keywords in BLOOMS_TAXONOMY.items():
                 # If the verb is in the keywords list, increment the count for the level
                 if word in keywords:
-                    bloom_count[level] += 1
+                    blooms_count[level] += 1
                     # print("LEVEL: " + level + ", WORD: " + word + ", CLO: " + clo)
         
-    return bloom_count
+    return blooms_count
 
 def check_is_verb(word, tag):
     # Correct the POS tag if the word is in the known verbs list

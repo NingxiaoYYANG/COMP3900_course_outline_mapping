@@ -7,13 +7,14 @@ import UploadButton from './UploadButton';
 
 
 function UploadCourse() {
-
   const [selection, setSelection] = useState('courseOutline');
   const [courseCode, setCourseCode] = useState("");
   const [file, setFile] = useState(null);
+  const [examContents, setExamContents] = useState('');
   const [error, setError] = useState('');
+  const [bloomsCount, setBloomsCount] = useState(null); // New state for Bloom's count
   const [showAlert, setShowAlert] = useState(false);
-  
+
   const handleSelectionChange = (selection) => {
     setSelection(selection);
   }
@@ -34,6 +35,10 @@ function UploadCourse() {
 
   const handleTextChange = (e) => {
     setCourseCode(e.target.value);
+  }
+
+  const handleExamTextChange = (e) => {
+    setExamContents(e.target.value);
   }
 
   const handleUploadCourseCode = async () => {
@@ -57,9 +62,10 @@ function UploadCourse() {
     console.log('Uploading course code:', formData);
 
     try {
-      const response = await axios.post('http://127.0.0.1:5000/api/upload_course_code', formData);
+      const response = await axios.post('http://127.0.0.1:5000http://127.0.0.1:5000/api/upload_course_code', formData);
       if (response.status === 200) {
-        alert('course code uploaded successfully!');
+        alert('Course code uploaded successfully!');
+        // Clear form state
         setCourseCode('');
         setError('');
         setShowAlert(false);
@@ -109,11 +115,49 @@ function UploadCourse() {
     }
   };
 
+  const handleUploadExam = async () => {
+    if (!examContents.trim()) {
+      setError('Please provide the exam questions.');
+      alert('Please provide the exam questions.');
+      return;
+    }
+
+    // Validate the exam questions format
+    const questions = examContents.trim().split('\n');
+    const validFormat = questions.every(q => /^\d+\.\s/.test(q));
+
+    if (!validFormat) {
+      setError('Each question must start with a number followed by a period and a space (e.g., 1. Question content).');
+      alert('Each question must start with a number followed by a period and a space (e.g., 1. Question content).');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('exam_contents', examContents);
+    console.log('Uploading exam questions:', formData);
+
+    try {
+      const response = await axios.post('http://127.0.0.1:5000/api/upload_exam', formData);
+      if (response.status === 200) {
+        alert('Exam questions uploaded successfully!');
+        // Clear form state
+        setExamContents('');
+        setError('');
+        setBloomsCount(response.data.blooms_count); // Update the state with Bloom's count
+      } else {
+        setError('Failed to upload exam questions.');
+      }
+    } catch (error) {
+      console.error('Error uploading exam questions:', error);
+      setError('Error uploading exam questions. Please try again later.');
+    }
+  }
   const handleAlertClose = () => {
     setShowAlert(false);
   };
+  
 
-  return (<>
+  return (
     <div className="container">
       <div className="container_inner">
         <div style={{ display: 'flex', alignItems:'center', marginTop: '-15px'}}>
@@ -171,8 +215,7 @@ function UploadCourse() {
         </div>
       </>)}
 
-        {selection === 'examPaper' && (
-        <>
+        {selection === 'examPaper' && (<>
           <div className="upload_form">
             <i className="fas fa-cloud-upload-alt"></i>
             <p>Drop file to upload</p>
@@ -184,15 +227,32 @@ function UploadCourse() {
         <div className="upload_form">
           {/* Input Text */}
           <p>Input Text</p>
-          <TextField multiline rows={2} maxRows={3} fullWidth />
+          <TextField multiline rows={2} maxRows={3} fullWidth value={examContents} onChange={handleExamTextChange} sx={{ marginBottom: '20px'}} />
           {/* <textarea></textarea> */}
+          <UploadButton text="Upload Exam Questions" onclick={handleUploadExam} />
         </div>
-        </>
+            <div className="upload_form">
+              <p>Input Text</p>
+              <textarea value={examContents} onChange={handleExamTextChange}></textarea>
+              <br />
+              <button onClick={handleUploadExam}>Upload Exam Questions</button>
+            </div>
+            {bloomsCount && (
+              <div className="blooms_count">
+                <h3>Bloom's Taxonomy Count:</h3>
+                <ul>
+                  {Object.entries(bloomsCount).map(([level, count]) => (
+                    <li key={level}>{`${level}: ${count}`}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </>
         )}
-        
       </div>
     </div>
-  </>)
+  )
 }
+
 
 export default UploadCourse;

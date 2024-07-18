@@ -1,28 +1,86 @@
-// BuildDegree.js
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Tooltip } from 'react-tooltip';
 import BarChart from './BarChart';
 import './styles/builddegree.css';
 import TextButton from './TextButton';
 
 function BuildDegree() {
   const location = useLocation();
-  const { bloomsLabels } = location.state || {};
+  const { classifyResults } = location.state || {};
 
-  console.log('Received Bloom\'s Counts:', bloomsLabels);
+  console.log('Received Bloom\'s Counts:', classifyResults.blooms_count);
+
+  // Define darker colors for Bloom's levels
+  const bloomsColors = {
+    "Remember": "#800000", // Maroon
+    "Understand": "#000080", // Navy
+    "Apply": "#013220", // Dark Green
+    "Analyse": "#8B4513", // SaddleBrown
+    "Evaluate": "#FF4500", // OrangeRed
+    "Create": "#4B0082" // Indigo
+  };
+
+  // Function to highlight words in CLOs with tooltips
+  const highlightWords = (clo, wordToBlooms) => {
+    const words = clo.split(' ');
+    return words.map((word, index) => {
+      const bloomLevel = wordToBlooms[word.toLowerCase()];
+      const tooltipId = `tooltip-${index}-${word}`;
+      return (
+        <span
+          key={index}
+          style={{ color: bloomLevel ? bloomsColors[bloomLevel] : 'black', fontWeight: bloomLevel ? 'bold' : 'normal' }}
+          data-tooltip-id={bloomLevel ? tooltipId : null}
+        >
+          {word}{' '}
+          {bloomLevel && (
+            <Tooltip id={tooltipId} place="top" effect="solid">
+              {bloomLevel}
+            </Tooltip>
+          )}
+        </span>
+      );
+    });
+  };
 
   return (
     <div className='builddegree-container'>
       <div className="builddegreecontent">
         <div className='builddegree-title'>Build A Degree</div>
         <div className='builddegree-horizontalline'></div>
+        
+        <div className='builddegree-clo'>
+          <h3>Course CLOs:</h3>
+          {Object.entries(classifyResults.courses_info).map(([course_code, info]) => (
+            <div key={course_code}>
+              <h4>{course_code}</h4>
+              <ul>
+                {info.clos.map((clo, index) => (
+                  <li key={index}>
+                    {highlightWords(clo, info.word_to_blooms)}
+                  </li>
+                ))}
+              </ul>
+              <div className='builddegree-labels'>
+                {Object.entries(bloomsColors).map(([level, color]) => (
+                  <span key={level} style={{ color: color, fontWeight: 'bold', marginRight: '10px' }}>
+                    {level}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
         <div className='builddegree-graph'>
-          {bloomsLabels ? (
-            <BarChart data={bloomsLabels} />
+          {classifyResults.blooms_count ? (
+            <BarChart data={classifyResults.blooms_count} />
           ) : (
             <p>No Bloom's Taxonomy counts available.</p>
           )}
         </div>
+        
       </div>
       <Link to='/courseoutlines' className='builddegree-button'>
         <TextButton text='BACK' />
