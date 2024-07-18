@@ -40,8 +40,8 @@ function Navigation() {
               'aria-labelledby': 'basic-button',
             }}
           >
-            <MenuItem onClick={handleClose}><Link to='/' className='nav-list-item'  style={location === '/' ? {borderBottom: '2px solid #070F2B'} : {}}>HOME</Link></MenuItem>
-            <MenuItem onClick={handleClose}><Link to='/courseoutlines' className='nav-list-item' style={location === '/courseoutlines' ? {borderBottom: '2px solid #070F2B'} : {}}>COURSE OUTLINES</Link></MenuItem>
+            <Link to='/' className='burger-navigation-list-item' ><MenuItem className='burger-navigation-list-item-menu' style={location === '/' ? {borderBottom: '2px solid #070F2B'} : {}}>HOME</MenuItem></Link>
+            <Link to='/courseoutlines' className='burger-navigation-list-item' ><MenuItem className='burger-navigation-list-item-menu' style={location === '/courseoutlines' ? {borderBottom: '2px solid #070F2B'} : {}}>COURSE OUTLINES</MenuItem></Link>
           </Menu>
         </div>
         <div className='navigation-list-items'>
