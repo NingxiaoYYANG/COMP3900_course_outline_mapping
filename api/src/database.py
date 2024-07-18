@@ -80,12 +80,22 @@ def get_clos(course_code):
         cursor.close()
         conn.close()
 
-def add_course_detail(course_code, course_name, course_level, course_term):
+def add_course_detail(course_details):
     try:
+        course_code = course_details["course_code"]
+        course_name = course_details["course_name"]
+        course_level = course_details["course_level"]
+        course_term = course_details["course_term"]
+        faculty = course_details["faculty"]
+        delivery_mode = course_details["delivery_mode"]
+        delivery_format = course_details["delivery_format"]
+        delivery_location = course_details["delivery_location"]
+        campus = course_details["campus"]
+        
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        cursor.execute("CREATE TABLE IF NOT EXISTS course_details (course_code VARCHAR(8) PRIMARY KEY, course_name VARCHAR(30), course_level VARCHAR(2), course_term VARCHAR(4))")
+        cursor.execute("CREATE TABLE IF NOT EXISTS course_details (course_code VARCHAR(8) PRIMARY KEY, course_name VARCHAR(30), course_level VARCHAR(2), course_term VARCHAR(4), faculty VARCHAR(30), delivery_mode VARCHAR(30), delivery_format VARCHAR(30), delivery_location VARCHAR(30), campus VARCHAR(30))")
         conn.commit()
 
         cursor.execute("SELECT course_code FROM course_details WHERE course_code = %s", (course_code,))
@@ -95,8 +105,8 @@ def add_course_detail(course_code, course_name, course_level, course_term):
             print(f"Course code {course_code} already exists.")
             return False
 
-        statement = "INSERT INTO course_details (course_code, course_name, course_level, course_term) VALUES (%s, %s, %s, %s)"
-        values = (course_code, course_name, course_level, course_term)
+        statement = "INSERT INTO course_details (course_code, course_name, course_level, course_term, faculty, delivery_mode, delivery_format, delivery_location, campus) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        values = (course_code, course_name, course_level, course_term, faculty, delivery_mode, delivery_format, delivery_location, campus)
         cursor.execute(statement, values)
         conn.commit()
 
@@ -136,7 +146,6 @@ def clear_database():
         cursor = conn.cursor()
 
         cursor.execute("DROP TABLE IF EXISTS clos")
-        cursor.execute("DROP TABLE IF EXISTS course_files")
         cursor.execute("DROP TABLE IF EXISTS course_details")
         conn.commit()
 
@@ -149,3 +158,6 @@ def clear_database():
     finally:
         cursor.close()
         conn.close()
+
+if __name__ == "__main__":
+    clear_database()

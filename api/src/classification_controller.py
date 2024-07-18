@@ -5,6 +5,7 @@ from transformers import pipeline
 
 from extract_helper import extract_clos_from_pdf
 from blooms_levels import BLOOMS_TAXONOMY
+from known_verbs import KNOWN_VERBS
 
 # Load a pre-trained model for text classification
 classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
@@ -32,22 +33,21 @@ def classify_clos_from_pdf(file):
     # Match clo to blooms by dict
     blooms_count = match_clos(extracted_clos)
 
-    print(blooms_count)
+    # print(blooms_count)
 
     return blooms_count
 
-
 def match_clos(clos):
+     # Define the Bloom's taxonomy levels
+    bloom_levels = [level for level in BLOOMS_TAXONOMY]
+    bloom_count = {level: 0 for level in BLOOMS_TAXONOMY}
     for clo in clos:
         tokens = word_tokenize(clo)
         tagged = pos_tag(tokens)
-        
-        # Define the Bloom's taxonomy levels
-        bloom_levels = [level for level in BLOOMS_TAXONOMY]
-        bloom_count = {level: 0 for level in BLOOMS_TAXONOMY}
-
         for word, tag in tagged:
-            if tag.startswith('VB'):  # Checks if the word is a verb
+            is_verb = check_is_verb(word, tag)
+            # print(word, is_verb)
+            if is_verb:  # Checks if the word is a verb
                 # Turn word to lowercase for consistency
                 word = word.lower()
 
@@ -57,15 +57,18 @@ def match_clos(clos):
                     # If the verb is in the keywords list, increment the count for the level
                     if word in keywords: # match by dict
                         bloom_count[level] += 1
+                        # print("1 " + word + ", " + level)
                         matched_by_dict = True
+                        continue
                 
                 if not matched_by_dict:
                     # match by AI
                     result = classifier(word, bloom_levels)
                     best_match = result['labels'][0]
-                    # print(word, best_match)
+                    # print("2 " + word + ", " + best_match)
                     bloom_count[best_match] += 1
-        
+                    # print(bloom_count)
+    
     return bloom_count
 
 # legacy version, use as backup in case match_clos fails
@@ -98,6 +101,12 @@ def match_clos_by_dict(clos):
         
     return bloom_count
 
+def check_is_verb(word, tag):
+    # Correct the POS tag if the word is in the known verbs list
+    if (word.lower() in KNOWN_VERBS) or tag.startswith('VB'):
+        return True
+    return False
+
 def extract_words_from_clo(clo):
     # Split the sentence using the pattern
     words = re.split(pattern, clo)
@@ -124,3 +133,6 @@ def check_code_format(course_code):
 # sentence = "Explain how you would design a new system to solve this problem and evaluate its effectiveness."
 # result = match_clos([sentence])
 # print(result)
+
+if __name__ == "__main__":
+    classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")

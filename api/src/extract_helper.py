@@ -76,7 +76,12 @@ def course_details_from_pdf(file_data):
         "course_code": string,
         "course_name": string,
         "course_level": string,
-        "course_term": string
+        "course_term": string,
+        "faculty": string,
+        "delivery_mode": string,
+        "delivery_format": string,
+        "delivery_location": string,
+        "campus": string
     }
     '''
 
@@ -84,7 +89,12 @@ def course_details_from_pdf(file_data):
         "course_code": "",
         "course_name": "",
         "course_level": "",
-        "course_term": ""
+        "course_term": "",
+        "faculty": "",
+        "delivery_mode": "",
+        "delivery_format": "",
+        "delivery_location": "",
+        "campus": ""
     }
 
     reader = PdfReader(file_data)
@@ -139,6 +149,31 @@ def course_details_from_pdf(file_data):
         if "Term" in term and year:
             term = term[-1]
             course_details["course_term"] = f"{year}T{term}"
+
+    faculty = re.search("Faculty : .+", page_text)
+    if faculty:
+        faculty = faculty.group(0)[len("Faculty :"):].strip()
+        course_details["faculty"] = faculty
+
+    delivery_mode = re.search("Delivery Mode : .+", page_text)
+    if delivery_mode:
+        delivery_mode = delivery_mode.group(0)[len("Delivery Mode :"):].strip()
+        course_details["delivery_mode"] = delivery_mode
+
+    delivery_format = re.search("Delivery Format : .+", page_text)
+    if delivery_format:
+        delivery_format = delivery_format.group(0)[len("Delivery Format :"):].strip()
+        course_details["delivery_format"] = delivery_format
+
+    delivery_location = re.search("Delivery Location : .+", page_text)
+    if delivery_location:
+        delivery_location = delivery_location.group(0)[len("Delivery Location :"):].strip()
+        course_details["delivery_location"] = delivery_location
+
+    campus = re.search("Campus : .+", page_text)
+    if campus:
+        campus = campus.group(0)[len("Campus :"):].strip()
+        course_details["campus"] = campus
 
     return course_details
 
@@ -222,7 +257,12 @@ def course_details_from_coID(coID):
         "course_code": string,
         "course_name": string,
         "course_level": string,
-        "course_term": string
+        "course_term": string,
+        "faculty": string,
+        "delivery_mode": string,
+        "delivery_format": string,
+        "delivery_location": string,
+        "campus": string
     }
     '''
     
@@ -242,6 +282,11 @@ def course_details_from_coID(coID):
         "course_name": data["integrat_coursename"],
         "course_level": course_level,
         "course_term": "24"+data["integrat_teachingperiod"],
+        "faculty": data["integrat_owningfaculty"],
+        "delivery_mode": data["integrat_deliverymode"],
+        "delivery_format": data["integrat_deliveryformat"],
+        "delivery_location": data["integrat_location"],
+        "campus": data["integrat_campus"]
     }
     
     return course_details
@@ -249,11 +294,11 @@ def course_details_from_coID(coID):
 
 if __name__ == "__main__":
     # Can replace with any pdf file for testing
-    course_outline = "C:\\Users\\mbmas\\Desktop\\COMP3900\\capstone-project-3900f11adroptablestudents\\api\\tests\\testFiles\\ACCT2511-2024T1.pdf"
+    course_outline = "C:\\Users\\mbmas\\Desktop\\COMP3900\\capstone-project-3900f11adroptablestudents\\api\\src\\tests\\testFiles\\ACCT2511-2024T1.pdf"
     # course_outline = "C:/Users/20991/Downloads/CO_COMP6771_1_2024_Term2_T2_Multimodal_Standard_Kensington.pdf"
 
-    #with open(course_outline, "rb") as f:
-    #    print(course_details_from_pdf(f))
+    with open(course_outline, "rb") as f:
+        print(course_details_from_pdf(f))
     
     psyc5001 = get_coID_from_code("psyc5001")
     print(psyc5001)
