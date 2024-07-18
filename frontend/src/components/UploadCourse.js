@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import axios from 'axios';
 import './styles/uploadcourse.css';
 import { Alert, Button, FormControl, TextField } from '@mui/material';
 import BrowseFilesButton from './BrowseFilesButton';
 import UploadButton from './UploadButton';
-
 
 function UploadCourse() {
   const [selection, setSelection] = useState('courseOutline');
@@ -118,7 +117,7 @@ function UploadCourse() {
   const handleUploadExam = async () => {
     if (!examContents.trim()) {
       setError('Please provide the exam questions.');
-      alert('Please provide the exam questions.');
+      setShowAlert(true);
       return;
     }
 
@@ -128,7 +127,7 @@ function UploadCourse() {
 
     if (!validFormat) {
       setError('Each question must start with a number followed by a period and a space (e.g., 1. Question content).');
-      alert('Each question must start with a number followed by a period and a space (e.g., 1. Question content).');
+      setShowAlert(true);
       return;
     }
 
@@ -143,6 +142,7 @@ function UploadCourse() {
         // Clear form state
         setExamContents('');
         setError('');
+        setShowAlert(false);
         setBloomsCount(response.data.blooms_count); // Update the state with Bloom's count
       } else {
         setError('Failed to upload exam questions.');
@@ -156,6 +156,12 @@ function UploadCourse() {
     setShowAlert(false);
   };
   
+  const onFileChange = (files) => {
+    console.log(files);
+  }
+
+
+
 
   return (
     <div className="container">
@@ -188,49 +194,41 @@ function UploadCourse() {
             <Alert severity="error" onClose={handleAlertClose} style={{marginBottom: '20px', marginTop: '-10px', display: showAlert ? 'flex' : 'none'}} >
               {error}
             </Alert>
-          <i className="fas fa-cloud-upload-alt"></i>
-          <p>Drop file to upload</p>
-          <p>or</p>
-          <div>
-            <BrowseFilesButton handleChange={handleFileChange}/>
-            {file === null ? 'No file chosen' : file.name}
-          </div>
-          {/* <input type="file" accept=".pdf" onChange={handleFileChange} /> */}
-          <br />
-          <UploadButton text="Upload PDF" onclick={handleUpload} width='160px'/>
-          {/* <Button variant='contained' onClick={handleUpload}>Upload PDF</Button> */}
-
-          <p className='max_size_label'>Max file size: 10MB</p>
-          <p className='supported_file_label'>Supported file types: PDF</p>
-          <br/>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      
-          </div>
-          
-        </div>
-        <div className="upload_form" style={{ display: 'flex', justifyContent: 'center' }}>
-          <TextField type='text' variant="standard" label="Input course code" size='small' onChange={handleTextChange} style={{ width: '140px', marginRight: '30px' }}/>
-            <br/>
-            <UploadButton text="Upload course code" onclick={handleUploadCourseCode} />
-        </div>
-      </>)}
-
-        {selection === 'examPaper' && (<>
-          <div className="upload_form">
             <i className="fas fa-cloud-upload-alt"></i>
             <p>Drop file to upload</p>
             <p>or</p>
-            <BrowseFilesButton handleChange={handleFileChange}/>
+            <div>
+              <BrowseFilesButton handleChange={handleFileChange}/>
+              {file === null ? 'No file chosen' : <div >{file.name}</div>}
+            </div>
+            <br />
+            <UploadButton text="Upload PDF" onclick={handleUpload} width='160px'/>
+
             <p className='max_size_label'>Max file size: 10MB</p>
             <p className='supported_file_label'>Supported file types: PDF</p>
+            <br/>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        
+            </div>
+            
           </div>
-        <div className="upload_form">
-          {/* Input Text */}
-          <p>Input Text</p>
-          <TextField multiline rows={2} maxRows={6} fullWidth value={examContents} onChange={handleExamTextChange} sx={{ marginBottom: '20px'}} />
-          {/* <textarea></textarea> */}
-          <UploadButton text="Upload Exam Questions" onclick={handleUploadExam} />
-        </div>
+          <div className="upload_form" style={{ display: 'flex', justifyContent: 'center' }}>
+            <TextField type='text' variant="standard" label="Input course code" size='small' onChange={handleTextChange} style={{ width: '140px', marginRight: '30px' }}/>
+              <br/>
+              <UploadButton text="Upload course code" onclick={handleUploadCourseCode} />
+          </div>
+        </>)}
+
+        {selection === 'examPaper' && (<>
+          <Alert severity="error" onClose={handleAlertClose} style={{marginBottom: '20px', marginTop: '-10px', display: showAlert ? 'flex' : 'none'}} >
+            {error}
+          </Alert>
+          <div className="upload_form">
+            <p>Input Text</p>
+            <TextField multiline rows={5} maxRows={5} fullWidth value={examContents} onChange={handleExamTextChange} sx={{ marginBottom: '20px'}} />
+            <UploadButton text="Upload Exam Questions" onclick={handleUploadExam} />
+          </div>
+          <div className="upload_form">
             {bloomsCount && (
               <div className="blooms_count">
                 <h3>Bloom's Taxonomy Count:</h3>
@@ -241,6 +239,7 @@ function UploadCourse() {
                 </ul>
               </div>
             )}
+          </div>
           </>
         )}
       </div>
