@@ -227,16 +227,10 @@ function UploadCourse() {
         <div className="upload_form">
           {/* Input Text */}
           <p>Input Text</p>
-          <TextField multiline rows={2} maxRows={3} fullWidth value={examContents} onChange={handleExamTextChange} sx={{ marginBottom: '20px'}} />
+          <TextField multiline rows={2} maxRows={6} fullWidth value={examContents} onChange={handleExamTextChange} sx={{ marginBottom: '20px'}} />
           {/* <textarea></textarea> */}
           <UploadButton text="Upload Exam Questions" onclick={handleUploadExam} />
         </div>
-            <div className="upload_form">
-              <p>Input Text</p>
-              <textarea value={examContents} onChange={handleExamTextChange}></textarea>
-              <br />
-              <button onClick={handleUploadExam}>Upload Exam Questions</button>
-            </div>
             {bloomsCount && (
               <div className="blooms_count">
                 <h3>Bloom's Taxonomy Count:</h3>

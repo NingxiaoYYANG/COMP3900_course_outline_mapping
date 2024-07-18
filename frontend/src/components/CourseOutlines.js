@@ -133,8 +133,8 @@ function CourseOutlines() {
 
 
   const filteredCourseDetails = courseDetails.filter((detail) => {
-    const matchesSearchQuery = detail[0].toLowerCase().includes(searchQuery.toLowerCase()) ||
-                               detail[1].toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearchQuery = detail.course_code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    detail.course_name.toLowerCase().includes(searchQuery.toLowerCase())
     // const matchesYear = selectedYear === '' || detail[4] === selectedYear;
     const matchesTerm = selectedTerm === '' || detail[3] === selectedTerm;
     const matchesDeliveryMode = selectedDeliveryMode === '' || detail[5] === selectedDeliveryMode;
