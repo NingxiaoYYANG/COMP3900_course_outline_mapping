@@ -1,9 +1,12 @@
 .container {
-    margin-top: 3rem;
+    margin-top: 6rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-bottom: 30px;
+    padding-bottom: 20px;
+    height: 80vh;
+    justify-content: center;
+    min-height: 400px;
 }
 
 .container_inner {
@@ -50,31 +53,30 @@ h1 {
 }
 
 .button_group button.active {
-    background-color: #C14A61;
+    background-color: #AB1748;
     color: #FFFFFF; 
 }
 
 .button_group button {
     background-color: #E5E7EB;
-    color: #C14A61;
+    color: #AB1748;
     border: 0;
 }
 
 .upload_form {
-    padding: 2rem; 
+    padding: 1rem; 
     border-radius: 0.5rem; 
-    border-width: 2px; 
-    border-color: #D1D5DB; 
-    border-style: dashed; 
+    border: 2px dashed #D1D5DB;
     text-align: center; 
     max-width: 100%;
+    margin-top: 2px;
 }
 
 i {
     margin-bottom: 1rem; 
     font-size: 2.25rem;
     line-height: 2.5rem; 
-    color: #DB2777; 
+    color: #AB1748; 
 }
 
 p {
@@ -82,9 +84,9 @@ p {
 }
 
 .max_size_label {
-    margin-top: 1rem; 
+    /* margin-top: 1rem;  */
     font-size: 0.875rem;
-    line-height: 1.25rem; 
+    /* line-height: 1.25rem;  */
     color: #6B7280; 
     margin-bottom: 0;
 }
@@ -94,4 +96,8 @@ p {
     line-height: 1.25rem; 
     color: #6B7280; 
     margin-bottom: 0;
+}
+
+.fa-cloud-upload-alt {
+    padding-top: 10px;
 }

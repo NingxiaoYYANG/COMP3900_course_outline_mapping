@@ -4,8 +4,8 @@
   color: #FCD3CA;
   display: flex;
   flex-direction: row;
-  position: absolute;
-  width: 100vw;
+  position: relative;
+  width: 100%;
 }
 
 .navigation-text-container {
@@ -47,11 +47,20 @@
 .nav-list-item-hover {
   border-bottom: 2px solid #FCD3CA;
 }
-.nav-list-item:hover {
-  border-bottom: 2px solid #FCD3CA;
+
+.burger-navigation {
+  position: absolute;
+  width: 90vw;
 }
 
+.burger-navigation-list-item {
+  text-decoration: none;
+  color: #070F2B;
+}
 
+.burger-navigation-list-item-menu:hover {
+  border-bottom: 2px solid #070F2B;
+}
 
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 600px) {
@@ -61,10 +70,31 @@
   .vertical-line {
     height: 80px;
   }
+  .burger-navigation {
+    display: block;
+    text-align: right;
+  }
+  .navigation-list-items {
+    display: none;
+  }
+  .nav-list-item {
+    color: #070F2B;
+  }
+  .nav-list-item-hover {
+    border-bottom: 2px solid #070F2B;
+  }
+  .nav-list-item:hover {
+    border-bottom: 2px solid #070F2B;
+  }
 }
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
- 
+  .burger-navigation {
+    display: none;
+  }
+  .navigation-list-items {
+    display: flex;
+  }
 }
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) {
