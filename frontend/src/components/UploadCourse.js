@@ -10,17 +10,13 @@ function UploadCourse() {
 
   const [selection, setSelection] = useState('courseOutline');
   const [courseCode, setCourseCode] = useState("");
-
-  const [courseCode, setCourseCode] = useState("");
-
-  const handleSelectionChange = (selection) => {
-    setSelection(selection);
-  }
-
   const [file, setFile] = useState(null);
   const [error, setError] = useState('');
   const [showAlert, setShowAlert] = useState(false);
-
+  
+  const handleSelectionChange = (selection) => {
+    setSelection(selection);
+  }
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -28,6 +24,7 @@ function UploadCourse() {
       if (selectedFile.name.endsWith('.pdf')) {
         setFile(selectedFile);
         setError('');
+        setShowAlert(false);
       } else {
         setError('Invalid file format. Please upload a PDF file.');
         setShowAlert(true)
@@ -39,7 +36,7 @@ function UploadCourse() {
     setCourseCode(e.target.value);
   }
 
-  const handleUploadCourseCode = async (e) => {
+  const handleUploadCourseCode = async () => {
     if (!courseCode) {
       setError('Please provide the course code.')
       setShowAlert(true)
@@ -60,14 +57,15 @@ function UploadCourse() {
     console.log('Uploading course code:', formData);
 
     try {
-      const response = await axios.post('/api/upload_course_code', formData);
+      const response = await axios.post('http://127.0.0.1:5000/api/upload_course_code', formData);
       if (response.status === 200) {
         alert('course code uploaded successfully!');
-        // Clear form state
         setCourseCode('');
         setError('');
+        setShowAlert(false);
       } else {
         setError('Failed to upload course code.');
+        setShowAlert(true);
       }
     } catch (error) {
       console.error('Error uploading course code:', error);
@@ -88,7 +86,7 @@ function UploadCourse() {
     console.log('Uploading PDF:', formData);
 
     try {
-      const response = await axios.post('/api/upload_pdf', formData, {
+      const response = await axios.post('http://127.0.0.1:5000/api/upload_pdf', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -99,8 +97,10 @@ function UploadCourse() {
         // Clear form state
         setFile(null);
         setError('');
+        setShowAlert(false);
       } else {
         setError('Failed to upload PDF file.');
+        setShowAlert(true);
       }
     } catch (error) {
       console.error('Error uploading PDF:', error);

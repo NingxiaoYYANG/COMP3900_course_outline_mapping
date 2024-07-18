@@ -14,7 +14,6 @@ import SelectField from './SelectField';
 function CourseOutlines() {
   const [courseCodes, setCourseCodes] = useState([]);
   const [courseDetails, setCourseDetails] = useState([]);
-  const [courseDetails, setCourseDetails] = useState([]);
   const [bloomsLabels, setBloomsLabels] = useState(null);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -59,7 +58,7 @@ function CourseOutlines() {
 
   const fetchCourseDetails = async () => {
     try {
-      const response = await axios.get('/api/courses');
+      const response = await axios.get('http://127.0.0.1:5000/api/courses');
       console.log(response)
       setCourseDetails(response.data.course_details);
     } catch (err) {
@@ -79,7 +78,7 @@ function CourseOutlines() {
       formData.append('course_codes', JSON.stringify(courseCodes));
       formData.append('course_codes', JSON.stringify(courseCodes));
 
-      const response = await axios.post('/api/classify_clos', formData);
+      const response = await axios.post('http://127.0.0.1:5000/api/classify_clos', formData);
       setBloomsLabels(response.data.blooms_count);
       setError('');
       return response.data.blooms_count;
