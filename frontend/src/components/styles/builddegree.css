@@ -1,23 +1,23 @@
 /* builddegree.css */
 .builddegree-container {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 100%;
-  margin-top: 50px;
+  height: 90vh;
+  min-height: 500px;
 }
 
-.builddegreecontent {
-  width: 80%;
-  height: 80vh;
-  display: flex;
-  flex-direction: column;
-  /* justify-content: center;
-  align-items: center; */
+.builddegree-content {
   background-color: white;
   padding: 20px;
   border-radius: 8px;
+  width: 80%;
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden; /* Ensure content does not overflow the box */
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 3px 10px 0 rgba(0, 0, 0, 0.05);
 }
 
 .builddegree-title {
@@ -31,20 +31,69 @@
 .builddegree-horizontalline {
   border-bottom: 2px solid #FCD3CA;
   width: 100%;
-  padding:  5px 30px;
+  padding: 5px 30px;
   margin-left: -20px;
+}
+
+.builddegree-maintext {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1; /* Allow this container to grow */
+  overflow: auto; /* Allow scrolling within the box */
+}
+
+.builddegree-clo {
+  width: 100%;
+}
+
+.builddegree-labels {
+  margin-top: 10px;
 }
 
 .builddegree-graph {
   width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  margin-top: 20px;
+  flex-grow: 1; /* Allow the graph to grow and fill available space */
+  min-height: 400px; /* Minimum height of the graph */
+  padding-bottom: 70px;
 }
 
-.builddegree-button {
-  align-self: flex-start;
-  margin-top: -20px;
-  margin-left: 30px;
+.builddegree-button-container {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+  .builddegree-content {
+    width: 85%;
+    margin-top: 30px;
+  }
+}
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+  .builddegree-content {
+    width: 80%;
+  }
+}
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+  .builddegree-content {
+    width: 65%;
+  }
+}
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+  .builddegree-content {
+    width: 80%;
+  }
+}
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+  .builddegree-content {
+    height: 90%;
+    width: 75%;
+  }
 }

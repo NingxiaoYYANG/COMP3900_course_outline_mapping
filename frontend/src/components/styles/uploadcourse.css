@@ -1,97 +1,138 @@
 .container {
-    margin-top: 3rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-bottom: 30px;
+  margin-top: 6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 20px;
+  height: 80vh;
+  justify-content: center;
 }
 
 .container_inner {
-    background-color: #FFFFFF;
-    border-radius: 10px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); 
-    min-width: 200px;
-    width: 60vw;
-    max-width: 600px;
+  background-color: #FFFFFF;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); 
+  min-width: 200px;
+  width: 60vw;
+  max-width: 600px;
+  min-height: 570px; /* Fixed height */
+  max-height: 1000px;
+  display: flex;
+  flex-direction: column;
+  overflow: auto; /* Ensure content is scrollable if it overflows */
 }
 
 h1 {
-    margin-bottom: 1rem; 
-    font-size: 1.5rem;
-    line-height: 2rem; 
-    font-weight: 700; 
+  margin-bottom: 1rem; 
+  font-size: 1.5rem;
+  line-height: 2rem; 
+  font-weight: 700; 
 }
 
 .button_group {
-    display: flex; 
-    /* margin-bottom: 1.5rem;      */
-    margin-left: 30px;
+  display: flex; 
+  margin-left: 30px;
 }
 
 #button_outline {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem; 
-    padding-left: 1rem;
-    padding-right: 1rem; 
-    border-top-left-radius: 9999px;
-    border-bottom-left-radius: 9999px; 
-    cursor: pointer; 
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem; 
+  padding-left: 1rem;
+  padding-right: 1rem; 
+  border-top-left-radius: 9999px;
+  border-bottom-left-radius: 9999px; 
+  cursor: pointer; 
 }
 
 #button_exam {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem; 
-    padding-left: 1rem;
-    padding-right: 1rem; 
-    border-top-right-radius: 9999px;
-    border-bottom-right-radius: 9999px; 
-    cursor: pointer; 
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem; 
+  padding-left: 1rem;
+  padding-right: 1rem; 
+  border-top-right-radius: 9999px;
+  border-bottom-right-radius: 9999px; 
+  cursor: pointer; 
 }
 
 .button_group button.active {
-    background-color: #C14A61;
-    color: #FFFFFF; 
+  background-color: #AB1748;
+  color: #FFFFFF; 
 }
 
 .button_group button {
-    background-color: #E5E7EB;
-    color: #C14A61;
-    border: 0;
+  background-color: #E5E7EB;
+  color: #AB1748;
+  border: 0;
 }
 
 .upload_form {
-    padding: 2rem; 
-    border-radius: 0.5rem; 
-    border-width: 2px; 
-    border-color: #D1D5DB; 
-    border-style: dashed; 
-    text-align: center; 
-    max-width: 100%;
+  padding: 1rem; 
+  border-radius: 0.5rem; 
+  border: 2px dashed #D1D5DB;
+  text-align: center; 
+  max-width: 100%;
+  margin-top: 2px;
+  flex-grow: 1;
 }
 
 i {
-    margin-bottom: 1rem; 
-    font-size: 2.25rem;
-    line-height: 2.5rem; 
-    color: #DB2777; 
+  margin-bottom: 1rem; 
+  font-size: 2.25rem;
+  line-height: 2.5rem; 
+  color: #AB1748; 
 }
 
 p {
-    margin-bottom: 1rem; 
+  margin-bottom: 1rem; 
 }
 
 .max_size_label {
-    margin-top: 1rem; 
-    font-size: 0.875rem;
-    line-height: 1.25rem; 
-    color: #6B7280; 
-    margin-bottom: 0;
+  /* margin-top: 1rem;  */
+  font-size: 0.875rem;
+  /* line-height: 1.25rem;  */
+  color: #6B7280; 
+  margin-bottom: 0;
 }
 
 .supported_file_label {
-    font-size: 0.875rem;
-    line-height: 1.25rem; 
-    color: #6B7280; 
-    margin-bottom: 0;
+  font-size: 0.875rem;
+  line-height: 1.25rem; 
+  color: #6B7280; 
+  margin-bottom: 0;
+}
+
+.fa-cloud-upload-alt {
+  padding-top: 10px;
+}
+.drop-file-input {
+  position: relative;
+  width: 100%;
+  height: 100px;
+  /* border: 2px dashed #D1D5DB; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.drop-file-input.dragover {
+  background-color: #f0f0f0;
+}
+
+.drop-file-input__label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.drop-file-input__label i {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  color: #AB1748;
+}
+
+.drop-file-input__label p {
+  margin-top: 0.5rem;
+  color: #6B7280;
 }

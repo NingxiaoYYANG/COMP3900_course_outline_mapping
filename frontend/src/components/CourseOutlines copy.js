@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Checkbox from '@mui/material/Checkbox';
 import './styles/courseoutlines.css'
 import TextButton from './TextButton';
-import { IconButton, InputAdornment, TextField } from '@mui/material';
+import ArrowForwardIosNewIcon from '@mui/icons-material/ArrowForwardIos';
+import { FormControl, IconButton, InputAdornment, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import SelectField from './SelectField';
@@ -13,10 +14,30 @@ import SelectField from './SelectField';
 function CourseOutlines() {
   const [courseCodes, setCourseCodes] = useState([]);
   const [courseDetails, setCourseDetails] = useState([]);
-  const [classifyResults, setClassifyResults] = useState(null);
+  const [bloomsLabels, setBloomsLabels] = useState(null);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  // const courseDetails = [
+  //   ['COMP3121', 'Title', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+  //   ],
+  //   ['COMP4121', 'moo', 'PG', '2', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+  //   ],
+  //   ['COMP2121', 'hoo', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+  //   ],
+  //   ['COMP3121', 'Title', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+  //   ],
+  //   ['COMP4121', 'moo', 'PG', '2', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+  //   ],
+  //   ['COMP2121', 'hoo', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+  //   ],
+  //   ['COMP3121', 'Title', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+  //   ],
+  //   ['COMP4121', 'moo', 'PG', '2', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+  //   ],
+  //   ['COMP2121', 'hoo', 'UG', '1', 'faculty', 'delivery mode', 'delivery format', 'delivery location', 'campus'
+  //   ],
+  // ]
 
   const handleAddCourseCode = (e, code) => {
     const codePattern = /^[A-Za-z]{4}\d{4}$/;
@@ -31,21 +52,22 @@ function CourseOutlines() {
     } else if (!checked &&courseCodes.includes(code)) {
       setCourseCodes(courseCodes.filter(c => c !== code));
     }
+    // setCourseCode('');  // Clear the input field
     setError('');
   };
 
   const fetchCourseDetails = async () => {
     try {
-      const response = await axios.get('/api/courses');
+      const response = await axios.get('http://localhost:5000/api/courses');
       console.log(response)
       setCourseDetails(response.data.course_details);
     } catch (err) {
       setError('Error fetching course details. Please try again.');
-      setClassifyResults(null);
+      setBloomsLabels(null);
     }
   }
 
-  const handleFetchClassifyResults = async () => {
+  const handleFetchBloomsCount = async () => {
     if (courseCodes.length === 0) {
       setError('Please add at least one course code.');
       return;
@@ -54,30 +76,29 @@ function CourseOutlines() {
     try {
       const formData = new FormData();
       formData.append('course_codes', JSON.stringify(courseCodes));
+      formData.append('course_codes', JSON.stringify(courseCodes));
 
-      const response = await axios.post('/api/classify_clos', formData);
-      // console.log(response)
-      setClassifyResults(response.data.classify_results);
+      const response = await axios.post('http://localhost:5000/api/classify_clos', formData);
+      setBloomsLabels(response.data.blooms_count);
       setError('');
-      return response.data.classify_results;
+      return response.data.blooms_count;
     } catch (err) {
       setError('Error fetching Bloom\'s taxonomy counts. Please try again.');
-      setClassifyResults(null);
+      setBloomsLabels(null);
       return null
     }
   };
 
   React.useEffect(() => {
     fetchCourseDetails();
-    fetchCourseDetails();
   }, []); 
 
   const handleClick = async () => {
-    const classifyResults = await handleFetchClassifyResults();
-    console.log('classifyResults before navigating:', classifyResults);
-    if (classifyResults) {
+    const bloomsCounts = await handleFetchBloomsCount();
+    console.log('Bloom\'s Counts before navigating:', bloomsCounts);
+    if (bloomsCounts) {
       console.log('here')
-      navigate('/courseoutlines/builddegree', { state: { classifyResults: classifyResults,  } });  // Pass data to the next page
+      navigate('/courseoutlines/builddegree', { state: { bloomsLabels: bloomsCounts } });  // Pass data to the next page
     }
   };
 
@@ -100,24 +121,27 @@ function CourseOutlines() {
   const [selectedStudyLevel, setSelectedStudyLevel] = useState('');
   const [selectedCampus, setSelectedCampus] = useState('');
 
-  const uniqueTerms = [...new Set(courseDetails.map(course => course.course_term))].sort();
-  const uniqueDeliveryMode = [...new Set(courseDetails.map(course => course.delivery_mode))].sort();
-  const uniqueDeliveryFormat = [...new Set(courseDetails.map(course => course.delivery_format))].sort();
-  const uniqueLocation = [...new Set(courseDetails.map(course => course.delivery_location))].sort();
-  const uniqueFaculty = [...new Set(courseDetails.map(course => course.faculty))].sort();
-  const uniqueStudyLevel = [...new Set(courseDetails.map(course => course.course_level))].sort();
-  const uniqueCampus = [...new Set(courseDetails.map(course => course.campus))].sort();
+  // const uniqueYears = Array.from(new Set(courseDetails.map(course => course[4]))).sort((a, b) => b - a);
+  const uniqueTerms = [...new Set(courseDetails.map(course => course[3]))].sort();
+  const uniqueDeliveryMode = [...new Set(courseDetails.map(course => course[5]))].sort();
+  const uniqueDeliveryFormat = [...new Set(courseDetails.map(course => course[6]))].sort();
+  const uniqueLocation = [...new Set(courseDetails.map(course => course[7]))].sort();
+  const uniqueFaculty = [...new Set(courseDetails.map(course => course[4]))].sort();
+  const uniqueStudyLevel = [...new Set(courseDetails.map(course => course[2]))].sort();
+  const uniqueCampus = [...new Set(courseDetails.map(course => course[8]))].sort();
+
 
   const filteredCourseDetails = courseDetails.filter((detail) => {
-    const matchesSearchQuery = detail.course_code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    detail.course_name.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesTerm = selectedTerm === '' || detail.course_term === selectedTerm;
-    const matchesDeliveryMode = selectedDeliveryMode === '' || detail.delivery_mode === selectedDeliveryMode;
-    const matchesDeliveryFormat = selectedDeliveryFormat === '' || detail.delivery_format=== selectedDeliveryFormat;
-    const matchesLocation = selectedLocation === '' || detail.delivery_location === selectedLocation;
-    const matchesFaculty = selectedFaculty === '' || detail.faculty === selectedFaculty;
-    const matchesStudyLevel = selectedStudyLevel === '' || detail.faculty === selectedStudyLevel;
-    const matchesCampus = selectedCampus === '' || detail.campus === selectedCampus;
+    const matchesSearchQuery = detail[0].toLowerCase().includes(searchQuery.toLowerCase()) ||
+                               detail[1].toLowerCase().includes(searchQuery.toLowerCase());
+    // const matchesYear = selectedYear === '' || detail[4] === selectedYear;
+    const matchesTerm = selectedTerm === '' || detail[3] === selectedTerm;
+    const matchesDeliveryMode = selectedDeliveryMode === '' || detail[5] === selectedDeliveryMode;
+    const matchesDeliveryFormat = selectedDeliveryFormat === '' || detail[6] === selectedDeliveryFormat;
+    const matchesLocation = selectedLocation === '' || detail[7] === selectedLocation;
+    const matchesFaculty = selectedFaculty === '' || detail[7] === selectedFaculty;
+    const matchesStudyLevel = selectedStudyLevel === '' || detail[2] === selectedStudyLevel;
+    const matchesCampus = selectedCampus === '' || detail[8] === selectedCampus;
 
     return matchesSearchQuery && matchesTerm && matchesDeliveryMode && matchesDeliveryFormat && matchesLocation && matchesFaculty && matchesStudyLevel && matchesCampus;
   });
@@ -155,6 +179,13 @@ function CourseOutlines() {
                   />
                 </div>
                 <h5>Filter</h5>
+                  {/* <SelectField 
+                    label="Year"
+                    id="year-select"
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(e.target.value)}
+                    options={uniqueYears}
+                  /> */}
                   <SelectField
                     label="Term"
                     id="term-select"
@@ -235,12 +266,12 @@ function CourseOutlines() {
           <div className='courseoutline-selection'>
             {filteredCourseDetails.map((detail, index) => (
               <div className={`courseoutline-box`} key={index}>
-                <div><Checkbox onChange={(e) => handleAddCourseCode(e, detail.course_code)} /></div>
+                <div><Checkbox onChange={(e) => handleAddCourseCode(e, detail[0])} /></div>
                 <div>
-                  <strong>{detail.course_code}</strong><br />
-                  <strong>Course Name:</strong> {detail.course_name}<br />
-                  <strong>Level:</strong> {detail.course_level}<br />
-                  <strong>Semester:</strong> {detail.course_term}
+                  <strong>{detail[0]}</strong><br />
+                  <strong>Course Name:</strong> {detail[1]}<br />
+                  <strong>Level:</strong> {detail[2]}<br />
+                  <strong>Semester:</strong> {detail[3]}
                 </div>
               </div>
             ))}
