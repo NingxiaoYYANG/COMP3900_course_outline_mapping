@@ -4,6 +4,8 @@ import './styles/uploadcourse.css';
 import { Alert, Button, FormControl, TextField } from '@mui/material';
 import BrowseFilesButton from './BrowseFilesButton';
 import UploadButton from './UploadButton';
+import Loader from './Loader';
+
 
 function UploadCourse() {
   const [selection, setSelection] = useState('courseOutline');
@@ -13,6 +15,8 @@ function UploadCourse() {
   const [error, setError] = useState('');
   const [bloomsCount, setBloomsCount] = useState(null); // New state for Bloom's count
   const [showAlert, setShowAlert] = useState(false);
+  const [isLoading, setIsLoading] = useState('false'); // New state for loading
+
 
   const handleSelectionChange = (selection) => {
     setSelection(selection);
@@ -60,8 +64,10 @@ function UploadCourse() {
     formData.append('course_code', courseCode);
     console.log('Uploading course code:', formData);
 
+    setIsLoading('uploadingCode'); // Start loading
+
     try {
-      const response = await axios.post('http://127.0.0.1:5000http://127.0.0.1:5000/api/upload_course_code', formData);
+      const response = await axios.post('http://127.0.0.1:5000/api/upload_course_code', formData);
       if (response.status === 200) {
         alert('Course code uploaded successfully!');
         // Clear form state
@@ -76,6 +82,8 @@ function UploadCourse() {
       console.error('Error uploading course code:', error);
       setError('Error uploading course code. Please try again later.');
       setShowAlert(true)
+    } finally {
+      setIsLoading('false'); // End loading
     }
   }
 
@@ -89,6 +97,8 @@ function UploadCourse() {
     const formData = new FormData();
     formData.append('file', file);
     console.log('Uploading PDF:', formData);
+
+    setIsLoading('uploadingPDF'); // Start loading
 
     try {
       const response = await axios.post('http://127.0.0.1:5000/api/upload_pdf', formData, {
@@ -111,6 +121,8 @@ function UploadCourse() {
       console.error('Error uploading PDF:', error);
       setError('Error uploading PDF. Please try again later.');
       setShowAlert(true)
+    } finally {
+      setIsLoading(false); // End loading
     }
   };
 
@@ -135,6 +147,8 @@ function UploadCourse() {
     formData.append('exam_contents', examContents);
     console.log('Uploading exam questions:', formData);
 
+    setIsLoading('uploadingExam'); // Start loading
+
     try {
       const response = await axios.post('http://127.0.0.1:5000/api/upload_exam', formData);
       if (response.status === 200) {
@@ -150,6 +164,8 @@ function UploadCourse() {
     } catch (error) {
       console.error('Error uploading exam questions:', error);
       setError('Error uploading exam questions. Please try again later.');
+    } finally {
+      setIsLoading('false'); // End loading
     }
   }
   const handleAlertClose = () => {
@@ -186,7 +202,6 @@ function UploadCourse() {
           </div>
         </div>
 
-        
 
         {selection === 'courseOutline' && (<>
           
@@ -202,7 +217,12 @@ function UploadCourse() {
               {file === null ? 'No file chosen' : <div >{file.name}</div>}
             </div>
             <br />
-            <UploadButton text="Upload PDF" onclick={handleUpload} width='160px'/>
+
+            {isLoading === 'uploadingPDF' ? (
+              <Loader />
+            ) : (
+              <UploadButton text="Upload PDF" onclick={handleUpload} width='160px'/>
+            )}
 
             <p className='max_size_label'>Max file size: 10MB</p>
             <p className='supported_file_label'>Supported file types: PDF</p>
@@ -215,7 +235,12 @@ function UploadCourse() {
           <div className="upload_form" style={{ display: 'flex', justifyContent: 'center' }}>
             <TextField type='text' variant="standard" label="Input course code" size='small' onChange={handleTextChange} style={{ width: '140px', marginRight: '30px' }}/>
               <br/>
+            {isLoading === 'uploadingCode' ? (
+              <Loader />
+            ) : (
               <UploadButton text="Upload course code" onclick={handleUploadCourseCode} />
+            )}
+              
           </div>
         </>)}
 
@@ -226,7 +251,13 @@ function UploadCourse() {
           <div className="upload_form">
             <p>Input Text</p>
             <TextField multiline rows={5} maxRows={5} fullWidth value={examContents} onChange={handleExamTextChange} sx={{ marginBottom: '20px'}} />
-            <UploadButton text="Upload Exam Questions" onclick={handleUploadExam} />
+
+            {isLoading === 'uploadingExam' ? (
+              <Loader />
+            ) : (
+              <UploadButton text="Upload Exam Questions" onclick={handleUploadExam} />
+            )}
+
           </div>
           <div className="upload_form">
             {bloomsCount && (
