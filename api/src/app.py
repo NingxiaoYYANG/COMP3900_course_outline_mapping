@@ -39,13 +39,13 @@ def upload_course_outline_by_code():
         clos = extract_clos_from_coID(coID)
         # print(clos)
         blooms_count, word_to_blooms = match_clos(clos)
-        print(blooms_count)
+        # print(blooms_count)
         course_details = course_details_from_coID(coID)
 
         # Add extracted_clos and word_to_blooms to course_details
         course_details["course_clos"] = clos
         course_details["word_to_blooms"] = word_to_blooms
-        print(course_details)
+        # print(course_details)
         try:
             if add_clos(course_details["course_code"], blooms_count) and add_course_detail(course_details):
                 return jsonify({'message': 'Success!'}), 200
@@ -140,7 +140,7 @@ def classify_learning_outcome_route():
         result["courses_info"][course_code]["clos"] = course_detail["course_clos"]
         result["courses_info"][course_code]["word_to_blooms"] = course_detail["word_to_blooms"]
 
-        print(blooms_count_additive)
+        # print(blooms_count_additive)
         if blooms_count_additive:
             blooms_count_sum = mergeBloomsCount(blooms_count_sum, blooms_count_additive)
         else:
@@ -149,17 +149,17 @@ def classify_learning_outcome_route():
     # Add blooms_count_sum to result
     result["blooms_count"] = blooms_count_sum
 
-    print(result)
+    # print(result)
     
     return jsonify({'classify_results': result})
 
 @app.route('/api/courses', methods=['GET'])
 def get_courses():
     course_details = get_all_course_details()
-    print(course_details)
+    # print(course_details)
 
     return jsonify({'course_details': course_details})
     
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(port=5000, debug=True)
