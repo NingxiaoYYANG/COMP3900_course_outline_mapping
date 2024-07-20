@@ -7,7 +7,7 @@ import json
 
 # imported files
 from classification_controller import classify_clos_from_pdf, mergeBloomsCount, check_code_format, match_clos, initialize_classifier
-from database import add_clos, get_clos, add_course_detail, get_all_course_details, get_course_detail
+from database import add_clos, get_clos, add_course_detail, get_all_course_details, get_course_detail, delete_course  
 from blooms_levels import BLOOMS_TAXONOMY
 from extract_helper import course_details_from_pdf, get_coID_from_code, extract_clos_from_coID, course_details_from_coID
 
@@ -159,6 +159,24 @@ def get_courses():
     # print(course_details)
 
     return jsonify({'course_details': course_details})
+
+@app.route('/api/delete_course', methods=['DELETE'])
+def delete_course_api():
+    data = request.get_json()
+    course_code = data.get('course_code')
+    print(course_code)
+
+    if not course_code or not check_code_format(course_code):
+        return jsonify({'error': 'Invalid course code format'}), 400
+
+    try:
+        if delete_course(course_code):
+            return jsonify({'message': 'Course deleted successfully'}), 200
+        else:
+            return jsonify({'error': 'Failed to delete course'}), 400
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 500
     
 
 if __name__ == '__main__':

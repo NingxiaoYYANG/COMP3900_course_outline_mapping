@@ -268,6 +268,27 @@ def get_all_course_details():
         cursor.close()
         conn.close()
 
+def delete_course(course_code):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Delete from both tables
+        cursor.execute("DELETE FROM clos WHERE course_code = %s", (course_code,))
+        cursor.execute("DELETE FROM course_details WHERE course_code = %s", (course_code,))
+        conn.commit()
+
+        return True
+    
+    except Exception as e:
+        print(e)
+        return False
+    
+    finally:
+        cursor.close()
+        conn.close()
+
+
 # debug only
 def clear_database():
     try:
