@@ -97,9 +97,9 @@ def upload_exam():
     # Filter out any empty strings resulting from the split
     exam_questions = [q for q in exam_questions if q.strip()]
 
-    blooms_count = match_clos(exam_questions)
+    blooms_count, word_to_blooms = match_clos(exam_questions)
     
-    return jsonify({'blooms_count': blooms_count}), 200
+    return jsonify({'blooms_count': blooms_count, 'word_to_blooms': word_to_blooms}), 200
 
 
 ### classify_results = {

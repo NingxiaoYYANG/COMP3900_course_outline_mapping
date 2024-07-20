@@ -14,6 +14,7 @@ function UploadCourse() {
   const [examContents, setExamContents] = useState('');
   const [error, setError] = useState('');
   const [bloomsCount, setBloomsCount] = useState(null); // New state for Bloom's count
+  const [wordToBloom, setWordToBloom] = useState(null); 
   const [showAlert, setShowAlert] = useState(false);
   const [isLoading, setIsLoading] = useState('false'); // New state for loading
 
@@ -158,6 +159,8 @@ function UploadCourse() {
         setError('');
         setShowAlert(false);
         setBloomsCount(response.data.blooms_count); // Update the state with Bloom's count
+        setWordToBloom(response.data.word_to_blooms)
+        console.log(response.data.word_to_blooms)
       } else {
         setError('Failed to upload exam questions.');
       }
@@ -175,9 +178,6 @@ function UploadCourse() {
   const onFileChange = (files) => {
     console.log(files);
   }
-
-
-
 
   return (
     <div className="container">

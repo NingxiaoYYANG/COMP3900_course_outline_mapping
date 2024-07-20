@@ -50,34 +50,37 @@ def match_clos(clos):
     new_entries = {level: [] for level in bloom_levels}  # To store new words for updating BLOOMS_TAXONOMY
 
     for clo in clos:
+        verb_set = set()  # Initialize a set to store unique verbs for the current CLO
         tokens = word_tokenize(clo)
         tagged = pos_tag(tokens)
         for word, tag in tagged:
             is_verb = check_is_verb(word, tag)
             if is_verb:  # Checks if the word is a verb
-                word = word.lower()
+                verb_set.add(word.lower())  # Add the verb to the set
 
-                # Check each Bloom's level
-                matched_by_dict = False
-                for level, keywords in get_blooms_taxonomy().items():
-                    if word in keywords:  # match by dict
-                        blooms_count[level] += 1
-                        word_to_blooms[word] = level  # Add to word_to_blooms
-                        matched_by_dict = True
-                        break
+        for word in verb_set:
+            # Check each Bloom's level
+            matched_by_dict = False
+            for level, keywords in get_blooms_taxonomy().items():
+                if word in keywords:  # match by dict
+                    blooms_count[level] += 1
+                    word_to_blooms[word] = level  # Add to word_to_blooms
+                    matched_by_dict = True
+                    break
 
-                if not matched_by_dict:
-                    # match by AI
-                    result = classifier(word, bloom_levels)
-                    best_match = result['labels'][0]
-                    blooms_count[best_match] += 1
-                    word_to_blooms[word] = best_match  # Add to word_to_blooms
-                    new_entries[best_match].append(word)  # Collect new entries
+            if not matched_by_dict:
+                # match by AI
+                result = classifier(word, bloom_levels)
+                best_match = result['labels'][0]
+                blooms_count[best_match] += 1
+                word_to_blooms[word] = best_match  # Add to word_to_blooms
+                new_entries[best_match].append(word)  # Collect new entries
 
     # Update BLOOMS_TAXONOMY with new entries
     update_blooms_taxonomy_db(new_entries)
 
     return blooms_count, word_to_blooms
+
 
 # legacy version, use as backup in case match_clos fails
 def match_clos_by_dict(clos):
