@@ -23,7 +23,9 @@ function App() {
   return (
     <Router>
       <div className='app-container'>
-        <Navigation />
+        <div className='app-nav' style={{zIndex: '1'}}>
+          <Navigation />
+        </div>
         <div className='app-content'>
           <Routing />
         </div>

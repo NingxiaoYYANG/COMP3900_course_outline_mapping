@@ -138,9 +138,8 @@ function CourseOutlines() {
   });
 
   return (
-    <div>
+    <div className='courseoutline-wrapper'>
       <div className='courseoutline-container'>
-        <div className="coursecontent">
           <div className='course-title-content'>
             <div className='course-title'>Course Outlines</div>
             <div className='filter-button-container'>
@@ -274,7 +273,6 @@ function CourseOutlines() {
               </div>
             ))}
           </div>
-        </div>
       </div>      
     </div>
   );
