@@ -109,10 +109,12 @@ def upload_exam():
 ###               "COMP3900": {
 ###                     "clos": ["clo1", "clo2"], 
 ###                     "word_to_blooms": {"verb1": "Remember", "verb2": "Create"}
+###                     "blooms_count": {}
 ###               },
 ###               "COMP6080": {
 ###                     "clos": ["clo1", "clo2"], 
 ###                     "word_to_blooms": {"verb1": "Remember", "verb2": "Create"}
+###                     "blooms_count": {}
 ###               }  
 ###         }            
 ### }
