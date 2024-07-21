@@ -179,6 +179,15 @@ function UploadCourse() {
     console.log(files);
   }
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleUploadCourseCode();
+    }
+  }
+
+
+
+
   return (
     <div className='upload-wrapper'>
       <div className="container">
@@ -234,7 +243,7 @@ function UploadCourse() {
               
             </div>
             <div className="upload_form" style={{ display: 'flex', justifyContent: 'center' }}>
-              <TextField type='text' variant="standard" label="Input course code" size='small' onChange={handleTextChange} style={{ width: '140px', marginRight: '30px' }}/>
+              <TextField type='text' variant="standard" label="Input course code" size='small' onChange={handleTextChange} onKeyDown={handleKeyPress} style={{ width: '140px', marginRight: '30px' }}/>
                 <br/>
               {isLoading === 'uploadingCode' ? (
                 <Loader />
