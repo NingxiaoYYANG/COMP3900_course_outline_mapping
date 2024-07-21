@@ -56,11 +56,12 @@
 }
 
 .builddegree-graph {
-  width: 100%;
+  width: 90%;
   margin-top: 20px;
   flex-grow: 1; /* Allow the graph to grow and fill available space */
   min-height: 400px; /* Minimum height of the graph */
   padding-bottom: 70px;
+  align-self: center;
 }
 
 .builddegree-button-container {

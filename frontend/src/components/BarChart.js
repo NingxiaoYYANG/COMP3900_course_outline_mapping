@@ -13,8 +13,10 @@ ChartJS.register(
 );
 
 const BarChart = ({ data }) => {
+
+  const taxonomyOrder = ['Remember', 'Understand', 'Apply', 'Analyse', 'Evaluate', 'Create'];
   // Convert data object to array and sort it in descending order
-  const sortedData = Object.entries(data).sort(([, a], [, b]) => b - a);
+  const sortedData = taxonomyOrder.map(level => [level, data[level] || 0]);
   
   // Extract sorted labels and values
   const labels = sortedData.map(([key]) => key);
@@ -28,7 +30,7 @@ const BarChart = ({ data }) => {
         backgroundColor: 'rgba(171, 23, 82, 0.2)',
         borderColor: 'rgba(171, 23, 82, 1)',
         borderWidth: 1,
-        label: false // Remove the label here
+        label: false
       }
     ]
   };
