@@ -146,7 +146,6 @@ function CourseOutlines() {
               <IconButton aria-label='filter' onClick={handleFilterClick} style={{ marginRight: '20px' }}>
                 <FilterListIcon />
               </IconButton>
-              
               {isBoxVisible && <div className='box'>
                 <div style={{ width: '90%', margin: '0 auto'}}>
                 <h5 className="search-bar-filter">Search</h5>
