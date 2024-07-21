@@ -127,7 +127,7 @@ def classify_learning_outcome_route():
     result = {
         "blooms_count": {level: 0 for level in BLOOMS_TAXONOMY},
         "courses_info": {
-            course_code: {"clos":[], "word_to_blooms": {}} for course_code in course_codes
+            course_code: {"clos":[], "word_to_blooms": {}, "blooms_count": {}} for course_code in course_codes
         }
     }    
 
@@ -139,6 +139,7 @@ def classify_learning_outcome_route():
         # Add clos and word_to_blooms into courses_info
         result["courses_info"][course_code]["clos"] = course_detail["course_clos"]
         result["courses_info"][course_code]["word_to_blooms"] = course_detail["word_to_blooms"]
+        result["courses_info"][course_code]["blooms_count"] = blooms_count_additive
 
         # print(blooms_count_additive)
         if blooms_count_additive:
