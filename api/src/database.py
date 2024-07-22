@@ -81,7 +81,11 @@ def get_blooms_taxonomy():
         
         cursor.execute("SELECT * FROM blooms_taxonomy")
         result = cursor.fetchall()
-        blooms_taxonomy = {row[0]: json.loads(row[1]) for row in result}
+        blooms_taxonomy = {}
+        if not result:
+            initialize_blooms_taxonomy()
+        else:
+            blooms_taxonomy = {row[0]: json.loads(row[1]) for row in result}
         return blooms_taxonomy
     
     except Exception as e:
