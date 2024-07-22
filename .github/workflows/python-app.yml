@@ -22,6 +22,22 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.11", "3.12"]
+    services:
+      mariadb:
+        image: mariadb:11
+        ports: 
+          - 3306:3306
+        env:
+          MARIADB_RANDOM_ROOT_PASSWORD: 1
+          MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 1
+          MARIADB_DATABASE: f11ap16
+          MARIADB_USER: backend
+          MARIADB_PASSWORD: bb11a381f2c1bd26e64a1ba76c32b4ea
+        options: >-
+          --health-cmd "healthcheck.sh --connect --innodb_initialized"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 3
 
     steps:
       - uses: actions/checkout@v4

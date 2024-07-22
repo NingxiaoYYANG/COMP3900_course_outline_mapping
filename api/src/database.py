@@ -6,10 +6,10 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-username = os.getenv('MARIADB_USER')
-password = os.getenv('MARIADB_PASSWORD')
-host = "localhost"
-database_name = os.getenv('MARIADB_DATABASE')
+username = os.getenv('MARIADB_USER', 'backend')
+password = os.getenv('MARIADB_PASSWORD', 'bb11a381f2c1bd26e64a1ba76c32b4ea')
+host = os.getenv('MARIADB_HOST', 'localhost')
+database_name = os.getenv('MARIADB_DATABASE', 'f11ap16')
 
 def get_db_connection():
     return database.connect(
