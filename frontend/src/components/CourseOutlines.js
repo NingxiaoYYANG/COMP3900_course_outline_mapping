@@ -225,7 +225,7 @@ function CourseOutlines() {
               <TextButton text='NEXT' handleclick={handleClick}/>
             </div>
           </div>
-          <div style={{fontSize: '10pt', color: error ? '#AB1748' : courseCodes.length === 0 ? '#fff' : '#AB1748'}}>
+          <div style={{fontSize: '10pt', color: error ? '#372768' : courseCodes.length === 0 ? '#F4F7F3' : '#372768'}}>
             {error || `Selected ${courseCodes.length} outlines...`}
           </div>
           <div className='course-horizontalline'></div>

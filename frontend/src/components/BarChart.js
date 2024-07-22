@@ -27,8 +27,8 @@ const BarChart = ({ data }) => {
     datasets: [
       {
         data: values,
-        backgroundColor: 'rgba(171, 23, 82, 0.2)',
-        borderColor: 'rgba(171, 23, 82, 1)',
+        backgroundColor: 'rgba(55, 39, 104, 0.2)',
+        borderColor: 'rgba(55, 39, 104, 1)',
         borderWidth: 1,
         label: false
       }

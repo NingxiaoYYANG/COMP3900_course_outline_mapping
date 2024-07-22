@@ -3,19 +3,21 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  padding-top: 90px;
   box-sizing: border-box;
+  align-items: flex-start;
+  padding-top: 150px;
+  padding-bottom: 110px;
 }
 
 .courseoutline-container {
-  background-color: white;
+  background-color: #F4F7F3;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   padding: 1.5rem;
-  width: 90%;
   box-sizing: border-box;
   min-height: 570px;
-  height: 80vh;
+  height: calc(85vh - 130px);
+  margin-top: -20px;
   overflow-y: auto;
 }
 
@@ -27,7 +29,7 @@
 }
 
 .course-horizontalline {
-  border-bottom: 2px solid #FCD3CA;
+  border-bottom: 2px solid #5F634F;
   width: calc(100% + 3rem);
   margin: 0 -1.5rem;
   box-sizing: content-box;
@@ -52,18 +54,10 @@
   display: flex;
   align-items: center;
   padding: 5px;
-  border: 3px dashed #FCD3CA;
+  border: 3px dashed #5F634F;
   width: 95%;
   /* min-height: 120px; */
-  height: 120px;
-}
-
-.button {
-  
-}
-
-.button:hover {
-  background-color: #7d062e;
+  height: 130px;
 }
 
 .box {
@@ -77,6 +71,7 @@
   overflow-y: scroll;
   overflow-x: hidden;
   margin-left: -20px;
+  border-radius: 5px;
 }
 
 .filter-button-container {
@@ -90,8 +85,8 @@
 @media (max-height: 660px) {
   .courseoutline-wrapper {
     align-items: flex-start;
-    padding-top: 100px;
-    padding-bottom: 60px;
+    padding-top: 140px;
+    padding-bottom: 110px;
   }
 }
 
