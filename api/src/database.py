@@ -13,13 +13,35 @@ password = os.getenv('MARIADB_PASSWORD', 'bb11a381f2c1bd26e64a1ba76c32b4ea')
 host = os.getenv('MARIADB_HOST', 'localhost')
 database_name = os.getenv('MARIADB_DATABASE', 'f11ap16')
 
+db_initialised = False
+
 def get_db_connection():
-    return database.connect(
+    global db_initialised
+    connection = database.connect(
         user=username,
         password=password,
         host=host,
         database=database_name
     )
+
+    if not db_initialised:
+        cursor = connection.cursor()
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS blooms_taxonomy (
+            level VARCHAR(50) PRIMARY KEY,
+            words TEXT
+        )
+        """)
+        connection.commit()
+        cursor.execute("CREATE TABLE IF NOT EXISTS clos (course_code VARCHAR(8) PRIMARY KEY, remember INT, understand INT, apply INT, analyse INT, evaluate INT, `create` INT)")
+        connection.commit()
+        cursor.execute("CREATE TABLE IF NOT EXISTS course_details (course_code VARCHAR(8) PRIMARY KEY, course_name VARCHAR(255), course_level VARCHAR(5), course_term VARCHAR(4), faculty VARCHAR(255), delivery_mode VARCHAR(255), delivery_format VARCHAR(255), delivery_location VARCHAR(255), campus VARCHAR(255), course_clos TEXT, word_to_blooms TEXT)")
+        connection.commit()
+
+        cursor.close()
+        db_initialised = True
+
+    return connection
 
 def initialize_blooms_taxonomy():
     try:
@@ -47,10 +69,7 @@ def initialize_blooms_taxonomy():
     
     except Exception as e:
         print(e)
-    
-    finally:
-        cursor.close()
-        conn.close()
+
 
 def update_blooms_taxonomy_db(new_entries):
     try:
@@ -70,9 +89,7 @@ def update_blooms_taxonomy_db(new_entries):
     except Exception as e:
         print(e)
     
-    finally:
-        cursor.close()
-        conn.close()
+
 
 def get_blooms_taxonomy():
     try:
@@ -82,15 +99,15 @@ def get_blooms_taxonomy():
         cursor.execute("SELECT * FROM blooms_taxonomy")
         result = cursor.fetchall()
         blooms_taxonomy = {row[0]: json.loads(row[1]) for row in result}
+        if not blooms_taxonomy:
+            initialize_blooms_taxonomy()
+            blooms_taxonomy = get_blooms_taxonomy()
         return blooms_taxonomy
     
     except Exception as e:
         print(e)
         return {}
 
-    finally:
-        cursor.close()
-        conn.close()
 
 
 def add_clos(course_code, blooms_count):
@@ -119,9 +136,6 @@ def add_clos(course_code, blooms_count):
         print(e)
         return False
     
-    finally:
-        cursor.close()
-        conn.close()
 
 def get_clos(course_code):
     try:
@@ -150,9 +164,6 @@ def get_clos(course_code):
         print(e)
         return False
 
-    finally:
-        cursor.close()
-        conn.close()
 
 def add_course_detail(course_details):
     try:
@@ -192,10 +203,7 @@ def add_course_detail(course_details):
     except Exception as e:
         print(e)
         return False
-    
-    finally:
-        cursor.close()
-        conn.close()
+
 
 def get_course_detail(course_code):
     try:
@@ -229,9 +237,6 @@ def get_course_detail(course_code):
         print(e)
         return []
 
-    finally:
-        cursor.close()
-        conn.close()
 
 def get_all_course_details():
     try:
@@ -264,9 +269,6 @@ def get_all_course_details():
         print(e)
         return []
 
-    finally:
-        cursor.close()
-        conn.close()
 
 def delete_course(course_code):
     try:
@@ -284,9 +286,6 @@ def delete_course(course_code):
         print(e)
         return False
     
-    finally:
-        cursor.close()
-        conn.close()
 
 
 # debug only
@@ -305,9 +304,6 @@ def clear_database():
         print(e)
         return False
 
-    finally:
-        cursor.close()
-        conn.close()
 
 if __name__ == "__main__":
     clear_database()
