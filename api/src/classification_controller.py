@@ -2,6 +2,7 @@ import re
 from nltk import pos_tag
 from nltk.tokenize import word_tokenize
 from transformers import pipeline
+import torch
 
 from extract_helper import extract_clos_from_pdf
 from known_verbs import KNOWN_VERBS
@@ -13,7 +14,16 @@ classifier = None
 def initialize_classifier():
     global classifier
     if classifier is None:
-        classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
+        if torch.cuda.is_available():
+            device = torch.device('cuda')
+            print(f'CUDA Acceleration enabled: {torch.cuda.get_device_name()}')
+        elif torch.backends.mps.is_available():
+            device = torch.device('mps')
+            print('MacOS Metal Acceleration enabled')
+        else:
+            device = torch.device('cpu')
+            print('No GPU available, using CPU')
+        classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli", device=device)
 
 # Define the regular expression pattern
 pattern = r'[^\w]+'
@@ -45,6 +55,7 @@ def match_clos(clos):
 
     # Define the Bloom's taxonomy levels
     bloom_levels = list(get_blooms_taxonomy().keys())
+    print(f'Bloom levels: {bloom_levels}')
     blooms_count = {level: 0 for level in bloom_levels}
     word_to_blooms = {}  # Initialize dictionary to store word to Bloom's level mapping
     new_entries = {level: [] for level in bloom_levels}  # To store new words for updating BLOOMS_TAXONOMY
