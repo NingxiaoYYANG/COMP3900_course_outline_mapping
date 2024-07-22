@@ -8,7 +8,7 @@ import Home from './components/Home';
 import CourseOutlines from './components/CourseOutlines';
 import BuildDegree from './components/BuildDegree';
 import Navigation from './components/Navigation';
-
+import bottomImage from './components/images/repeat.png'
 function Routing() {
   return (
     <Routes>
@@ -28,6 +28,11 @@ function App() {
         </div>
         <div className='app-content'>
           <Routing />
+        </div>
+        <div className="bottom-center-container">
+          <div className="bottom-center-image-container">
+            <img src={bottomImage} alt="Description of the image" className="bottom-center-image" />
+          </div>
         </div>
       </div>
     </Router>

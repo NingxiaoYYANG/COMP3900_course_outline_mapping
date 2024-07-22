@@ -8,7 +8,7 @@
 }
 
 .container {
-  background-color: white;
+  background-color: #F4F7F3;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   padding: 1.5rem;
@@ -29,6 +29,7 @@ h1 {
   font-size: 1.5rem;
   line-height: 2rem; 
   font-weight: 700; 
+  color: #010B14;
 }
 
 .button_group {
@@ -57,13 +58,13 @@ h1 {
 }
 
 .button_group button.active {
-  background-color: #AB1748;
+  background-color: #372768;
   color: #FFFFFF; 
 }
 
 .button_group button {
   background-color: #E5E7EB;
-  color: #AB1748;
+  color: #372768;
   border: 0;
 }
 
@@ -81,7 +82,7 @@ i {
   margin-bottom: 1rem; 
   font-size: 2.25rem;
   line-height: 2.5rem; 
-  color: #AB1748; 
+  color: #372768; 
 }
 
 p {
@@ -130,7 +131,7 @@ p {
 .drop-file-input__label i {
   font-size: 2.25rem;
   line-height: 2.5rem;
-  color: #AB1748;
+  color: #372768;
 }
 
 .drop-file-input__label p {
@@ -144,6 +145,6 @@ p {
   .upload-wrapper {
     align-items: flex-start;
     padding-top: 110px;
-    padding-bottom: 30px;
+    padding-bottom: 130px;
   }
 }
