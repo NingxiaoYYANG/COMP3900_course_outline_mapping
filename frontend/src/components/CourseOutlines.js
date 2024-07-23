@@ -68,7 +68,6 @@ function CourseOutlines() {
 
   React.useEffect(() => {
     fetchCourseDetails();
-    fetchCourseDetails();
   }, []); 
 
   const handleClick = async () => {

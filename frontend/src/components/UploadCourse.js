@@ -5,6 +5,7 @@ import { Alert, Button, FormControl, TextField } from '@mui/material';
 import BrowseFilesButton from './BrowseFilesButton';
 import UploadButton from './UploadButton';
 import Loader from './Loader';
+import { useNavigate } from 'react-router-dom';
 
 
 function UploadCourse() {
@@ -16,7 +17,7 @@ function UploadCourse() {
   const [bloomsCount, setBloomsCount] = useState(null); // New state for Bloom's count
   const [showAlert, setShowAlert] = useState(false);
   const [isLoading, setIsLoading] = useState('false'); // New state for loading
-
+  const navigate = useNavigate()
 
   const handleSelectionChange = (selection) => {
     setSelection(selection);
@@ -153,11 +154,11 @@ function UploadCourse() {
       const response = await axios.post('http://127.0.0.1:5000/api/upload_exam', formData);
       if (response.status === 200) {
         alert('Exam questions uploaded successfully!');
-        // Clear form state
         setExamContents('');
         setError('');
         setShowAlert(false);
-        setBloomsCount(response.data.blooms_count); // Update the state with Bloom's count
+        setBloomsCount(response.data.blooms_count);
+        navigate('/buildexam', { state: { bloomsCount: bloomsCount,  } });  // Pass data to the next page
       } else {
         setError('Failed to upload exam questions.');
       }
@@ -165,7 +166,7 @@ function UploadCourse() {
       console.error('Error uploading exam questions:', error);
       setError('Error uploading exam questions. Please try again later.');
     } finally {
-      setIsLoading('false'); // End loading
+      setIsLoading('false');
     }
   }
   const handleAlertClose = () => {

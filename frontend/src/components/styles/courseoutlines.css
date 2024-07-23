@@ -10,7 +10,7 @@
 }
 
 .courseoutline-container {
-  background-color: #F4F7F3;
+  background-color: #ffffff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   padding: 1.5rem;
@@ -24,7 +24,7 @@
 .course-title {
   font-size: 25pt;
   font-weight: 700;
-  color: #070F2B;
+  color: #010B14;
   text-wrap: nowrap;
 }
 
