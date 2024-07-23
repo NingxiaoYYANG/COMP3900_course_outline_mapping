@@ -34,9 +34,24 @@ function CourseOutlines() {
     setError('');
   };
 
+  const handleDeleteCourse = async (course_code) => {
+    try {
+      const response = await axios.delete('/api/delete_course', { data: { course_code } });
+      if (response.status === 200) {
+        alert('Course deleted successfully!');
+        // Remove the deleted course from the state
+        setCourseDetails(courseDetails.filter(course => course.course_code !== course_code));
+      } else {
+        setError('Failed to delete course.');
+      }
+    } catch (error) {
+      setError('Error deleting course. Please try again later.');
+    }
+  };
+
   const fetchCourseDetails = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:5000/api/courses');
+      const response = await axios.get('/api/courses');
       console.log(response)
       setCourseDetails(response.data.course_details);
     } catch (err) {
@@ -55,7 +70,8 @@ function CourseOutlines() {
       const formData = new FormData();
       formData.append('course_codes', JSON.stringify(courseCodes));
 
-      const response = await axios.post('http://127.0.0.1:5000/api/classify_clos', formData);
+      const response = await axios.post('/api/classify_clos', formData);
+      // console.log(response)
       setClassifyResults(response.data.classify_results);
       setError('');
       return response.data.classify_results;
@@ -240,6 +256,20 @@ function CourseOutlines() {
                   <strong>Course Name:</strong> {detail.course_name}<br />
                   <strong>Level:</strong> {detail.course_level}<br />
                   <strong>Semester:</strong> {detail.course_term}
+                  <button
+                    style={{
+                      backgroundColor: 'red',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '3px',
+                      cursor: 'pointer',
+                      padding: '5px',
+                      marginLeft: '10px'
+                    }}
+                    onClick={() => handleDeleteCourse(detail.course_code)}
+                  >
+                    X
+                  </button>
                 </div>
               </div>
             ))}
