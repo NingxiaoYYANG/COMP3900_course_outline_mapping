@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#372768',
+      main: '#4F3894',
     },
     secondary: {
       main: '#FCD3CA'

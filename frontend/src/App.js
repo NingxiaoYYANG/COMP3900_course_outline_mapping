@@ -9,12 +9,15 @@ import CourseOutlines from './components/CourseOutlines';
 import BuildDegree from './components/BuildDegree';
 import Navigation from './components/Navigation';
 import bottomImage from './components/images/repeat.png'
+import EvaluateExam from './components/EvaluateExam';
+
 function Routing() {
   return (
     <Routes>
       <Route exact path='/' element={<Home/>}/>
       <Route path='/courseoutlines' element={<CourseOutlines/>}/>
       <Route path='/courseoutlines/builddegree' element={<BuildDegree/>} />
+      <Route path='/buildexam' element={<EvaluateExam/>} />
     </Routes>
   )
 }
