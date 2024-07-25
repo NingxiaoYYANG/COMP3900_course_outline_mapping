@@ -3,21 +3,110 @@ import os
 import json
 from dotenv import load_dotenv
 
+from blooms_levels import BLOOMS_TAXONOMY
+
 # Load environment variables from .env file
 load_dotenv()
 
-username = os.getenv('MARIADB_USER')
-password = os.getenv('MARIADB_PASSWORD')
-host = "localhost"
-database_name = os.getenv('MARIADB_DATABASE')
+username = os.getenv('MARIADB_USER', 'backend')
+password = os.getenv('MARIADB_PASSWORD', 'bb11a381f2c1bd26e64a1ba76c32b4ea')
+host = os.getenv('MARIADB_HOST', 'localhost')
+database_name = os.getenv('MARIADB_DATABASE', 'f11ap16')
+
+db_initialised = False
 
 def get_db_connection():
-    return database.connect(
+    global db_initialised
+    connection = database.connect(
         user=username,
         password=password,
         host=host,
         database=database_name
     )
+
+    if not db_initialised:
+        cursor = connection.cursor()
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS blooms_taxonomy (
+            level VARCHAR(50) PRIMARY KEY,
+            words TEXT
+        )
+        """)
+        connection.commit()
+        cursor.execute("CREATE TABLE IF NOT EXISTS clos (course_code VARCHAR(8) PRIMARY KEY, remember INT, understand INT, apply INT, analyse INT, evaluate INT, `create` INT)")
+        connection.commit()
+        cursor.execute("CREATE TABLE IF NOT EXISTS course_details (course_code VARCHAR(8) PRIMARY KEY, course_name VARCHAR(255), course_level VARCHAR(5), course_term VARCHAR(4), faculty VARCHAR(255), delivery_mode VARCHAR(255), delivery_format VARCHAR(255), delivery_location VARCHAR(255), campus VARCHAR(255), course_clos TEXT, word_to_blooms TEXT)")
+        connection.commit()
+        initialize_blooms_taxonomy()
+
+        cursor.close()
+        db_initialised = True
+
+    return connection
+
+def initialize_blooms_taxonomy():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Create the blooms_taxonomy table
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS blooms_taxonomy (
+            level VARCHAR(50) PRIMARY KEY,
+            words TEXT
+        )
+        """)
+        conn.commit()
+
+        # Initialize with default values if the table is empty
+        cursor.execute("SELECT COUNT(*) FROM blooms_taxonomy")
+        if cursor.fetchone()[0] == 0:
+            blooms_taxonomy = BLOOMS_TAXONOMY
+            for level, words in blooms_taxonomy.items():
+                cursor.execute("INSERT INTO blooms_taxonomy (level, words) VALUES (%s, %s)", (level, json.dumps(words)))
+            conn.commit()
+
+        print("Blooms taxonomy initialized successfully.")
+    
+    except Exception as e:
+        print(e)
+
+
+def update_blooms_taxonomy_db(new_entries):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        for level, examples in new_entries.items():
+            cursor.execute("SELECT words FROM blooms_taxonomy WHERE level = %s", (level,))
+            words = cursor.fetchone()[0]
+            words_list = json.loads(words) if words else []
+            for example in examples:
+                if example not in words_list:
+                    words_list.append(example)
+            cursor.execute("UPDATE blooms_taxonomy SET words = %s WHERE level = %s", (json.dumps(words_list), level))
+        conn.commit()
+    
+    except Exception as e:
+        print(e)
+    
+
+
+def get_blooms_taxonomy():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT * FROM blooms_taxonomy")
+        result = cursor.fetchall()
+        blooms_taxonomy = {row[0]: json.loads(row[1]) for row in result}
+        return blooms_taxonomy
+    
+    except Exception as e:
+        print(e)
+        return {}
+
+
 
 def add_clos(course_code, blooms_count):
     try:
@@ -45,9 +134,6 @@ def add_clos(course_code, blooms_count):
         print(e)
         return False
     
-    finally:
-        cursor.close()
-        conn.close()
 
 def get_clos(course_code):
     try:
@@ -76,9 +162,6 @@ def get_clos(course_code):
         print(e)
         return False
 
-    finally:
-        cursor.close()
-        conn.close()
 
 def add_course_detail(course_details):
     try:
@@ -97,7 +180,7 @@ def add_course_detail(course_details):
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        cursor.execute("CREATE TABLE IF NOT EXISTS course_details (course_code VARCHAR(8) PRIMARY KEY, course_name VARCHAR(30), course_level VARCHAR(5), course_term VARCHAR(4), faculty VARCHAR(30), delivery_mode VARCHAR(30), delivery_format VARCHAR(30), delivery_location VARCHAR(30), campus VARCHAR(30), course_clos TEXT, word_to_blooms TEXT)")
+        cursor.execute("CREATE TABLE IF NOT EXISTS course_details (course_code VARCHAR(8) PRIMARY KEY, course_name VARCHAR(255), course_level VARCHAR(5), course_term VARCHAR(4), faculty VARCHAR(255), delivery_mode VARCHAR(255), delivery_format VARCHAR(255), delivery_location VARCHAR(255), campus VARCHAR(255), course_clos TEXT, word_to_blooms TEXT)")
         conn.commit()
 
         cursor.execute("SELECT course_code FROM course_details WHERE course_code = %s", (course_code,))
@@ -118,10 +201,7 @@ def add_course_detail(course_details):
     except Exception as e:
         print(e)
         return False
-    
-    finally:
-        cursor.close()
-        conn.close()
+
 
 def get_course_detail(course_code):
     try:
@@ -155,9 +235,6 @@ def get_course_detail(course_code):
         print(e)
         return []
 
-    finally:
-        cursor.close()
-        conn.close()
 
 def get_all_course_details():
     try:
@@ -190,9 +267,24 @@ def get_all_course_details():
         print(e)
         return []
 
-    finally:
-        cursor.close()
-        conn.close()
+
+def delete_course(course_code):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Delete from both tables
+        cursor.execute("DELETE FROM clos WHERE course_code = %s", (course_code,))
+        cursor.execute("DELETE FROM course_details WHERE course_code = %s", (course_code,))
+        conn.commit()
+
+        return True
+    
+    except Exception as e:
+        print(e)
+        return False
+    
+
 
 # debug only
 def clear_database():
@@ -210,9 +302,7 @@ def clear_database():
         print(e)
         return False
 
-    finally:
-        cursor.close()
-        conn.close()
 
 if __name__ == "__main__":
     clear_database()
+    # initialize_blooms_taxonomy()

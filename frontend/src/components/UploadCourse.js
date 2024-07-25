@@ -15,6 +15,7 @@ function UploadCourse() {
   const [examContents, setExamContents] = useState('');
   const [error, setError] = useState('');
   const [bloomsCount, setBloomsCount] = useState(null); // New state for Bloom's count
+  const [wordToBloom, setWordToBloom] = useState(null); 
   const [showAlert, setShowAlert] = useState(false);
   const [isLoading, setIsLoading] = useState('false'); // New state for loading
   const navigate = useNavigate()
@@ -68,7 +69,7 @@ function UploadCourse() {
     setIsLoading('uploadingCode'); // Start loading
 
     try {
-      const response = await axios.post('http://127.0.0.1:5000/api/upload_course_code', formData);
+      const response = await axios.post('/api/upload_course_code', formData);
       if (response.status === 200) {
         alert('Course code uploaded successfully!');
         // Clear form state
@@ -102,7 +103,7 @@ function UploadCourse() {
     setIsLoading('uploadingPDF'); // Start loading
 
     try {
-      const response = await axios.post('http://127.0.0.1:5000/api/upload_pdf', formData, {
+      const response = await axios.post('/api/upload_pdf', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -151,14 +152,16 @@ function UploadCourse() {
     setIsLoading('uploadingExam'); // Start loading
 
     try {
-      const response = await axios.post('http://127.0.0.1:5000/api/upload_exam', formData);
+      const response = await axios.post('/api/upload_exam', formData);
       if (response.status === 200) {
         alert('Exam questions uploaded successfully!');
         setExamContents('');
         setError('');
         setShowAlert(false);
-        setBloomsCount(response.data.blooms_count);
-        navigate('/buildexam', { state: { bloomsCount: bloomsCount,  } });  // Pass data to the next page
+        setBloomsCount(response.data.blooms_count); // Update the state with Bloom's count
+        setWordToBloom(response.data.word_to_blooms)
+        console.log(response.data.word_to_blooms)
+        navigate('/buildexam', { state: { bloomsCount: bloomsCount,  } });
       } else {
         setError('Failed to upload exam questions.');
       }
@@ -182,8 +185,6 @@ function UploadCourse() {
       handleUploadCourseCode();
     }
   }
-
-
 
 
   return (

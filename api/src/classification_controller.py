@@ -2,10 +2,11 @@ import re
 from nltk import pos_tag
 from nltk.tokenize import word_tokenize
 from transformers import pipeline
+import torch
 
 from extract_helper import extract_clos_from_pdf
-from blooms_levels import BLOOMS_TAXONOMY
 from known_verbs import KNOWN_VERBS
+from database import update_blooms_taxonomy_db, get_blooms_taxonomy  # Import the database functions
 
 # Define a global variable for the classifier
 classifier = None
@@ -13,7 +14,19 @@ classifier = None
 def initialize_classifier():
     global classifier
     if classifier is None:
-        classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
+        if torch.cuda.is_available() & torch.backends.cudnn.is_available():
+            device = torch.device('cuda')
+            print(f'CUDA Acceleration enabled: {torch.cuda.get_device_name()}')
+        elif torch.backends.mps.is_available():
+            device = torch.device('mps')
+            print('MacOS Metal Acceleration enabled')
+        elif torch.xpu.is_available():
+            device = torch.device('xpu')
+            print('Intel GPU Acceleration enabled')
+        else:
+            device = torch.device('cpu')
+            print('No GPU available, using CPU')
+        classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli", device=device)
 
 # Define the regular expression pattern
 pattern = r'[^\w]+'
@@ -38,43 +51,50 @@ def classify_clos_from_pdf(file):
     # Match clo to blooms by dict
     blooms_count, word_to_blooms = match_clos(extracted_clos)
 
-    # print(blooms_count)
-
     return blooms_count, extracted_clos, word_to_blooms
 
 def match_clos(clos):
+    initialize_classifier()  # Ensure the classifier is initialized
+
     # Define the Bloom's taxonomy levels
-    bloom_levels = [level for level in BLOOMS_TAXONOMY]
-    blooms_count = {level: 0 for level in BLOOMS_TAXONOMY}
+    bloom_levels = list(get_blooms_taxonomy().keys())
+    print(f'Bloom levels: {bloom_levels}')
+    blooms_count = {level: 0 for level in bloom_levels}
     word_to_blooms = {}  # Initialize dictionary to store word to Bloom's level mapping
+    new_entries = {level: [] for level in bloom_levels}  # To store new words for updating BLOOMS_TAXONOMY
 
     for clo in clos:
+        verb_set = set()  # Initialize a set to store unique verbs for the current CLO
         tokens = word_tokenize(clo)
         tagged = pos_tag(tokens)
         for word, tag in tagged:
             is_verb = check_is_verb(word, tag)
             if is_verb:  # Checks if the word is a verb
-                # Turn word to lowercase for consistency
-                word = word.lower()
+                verb_set.add(word.lower())  # Add the verb to the set
 
-                # Check each Bloom's level
-                matched_by_dict = False
-                for level, keywords in BLOOMS_TAXONOMY.items():
-                    # If the verb is in the keywords list, increment the count for the level
-                    if word in keywords:  # match by dict
-                        blooms_count[level] += 1
-                        word_to_blooms[word] = level  # Add to word_to_blooms
-                        matched_by_dict = True
-                        break
+        for word in verb_set:
+            # Check each Bloom's level
+            matched_by_dict = False
+            for level, keywords in get_blooms_taxonomy().items():
+                if word in keywords:  # match by dict
+                    blooms_count[level] += 1
+                    word_to_blooms[word] = level  # Add to word_to_blooms
+                    matched_by_dict = True
+                    break
 
-                if not matched_by_dict:
-                    # match by AI
-                    result = classifier(word, bloom_levels)
-                    best_match = result['labels'][0]
-                    blooms_count[best_match] += 1
-                    word_to_blooms[word] = best_match  # Add to word_to_blooms
-    
+            if not matched_by_dict:
+                # match by AI
+                result = classifier(word, bloom_levels)
+                best_match = result['labels'][0]
+                blooms_count[best_match] += 1
+                word_to_blooms[word] = best_match  # Add to word_to_blooms
+                new_entries[best_match].append(word)  # Collect new entries
+
+    # Update BLOOMS_TAXONOMY with new entries
+    update_blooms_taxonomy_db(new_entries)
+
     return blooms_count, word_to_blooms
+
 
 # legacy version, use as backup in case match_clos fails
 def match_clos_by_dict(clos):
@@ -90,25 +110,24 @@ def match_clos_by_dict(clos):
     blooms_count : dictionary where keys are Bloom's levels and values are counts of matched verbs.
     '''
     # Initialise a dictionary to count matches for each Bloom's level
-    blooms_count = {level: 0 for level in BLOOMS_TAXONOMY}
+    blooms_count = {level: 0 for level in get_blooms_taxonomy().keys()}
 
     # Iterate through the clos
     for clo in clos:
-        # split to words
         words = extract_words_from_clo(clo)
         for word in words:
             # Check each Bloom's level
-            for level, keywords in BLOOMS_TAXONOMY.items():
-                # If the verb is in the keywords list, increment the count for the level
+            for level, keywords in get_blooms_taxonomy().items():
                 if word in keywords:
                     blooms_count[level] += 1
-                    # print("LEVEL: " + level + ", WORD: " + word + ", CLO: " + clo)
         
     return blooms_count
 
 def check_is_verb(word, tag):
     # Correct the POS tag if the word is in the known verbs list
-    if (word.lower() in KNOWN_VERBS) or tag.startswith('VB'):
+    if (word.lower() in KNOWN_VERBS and KNOWN_VERBS[word.lower()].startswith('VB')) or tag.startswith('VB'):
+        if word.lower() in KNOWN_VERBS and KNOWN_VERBS[word.lower()].startswith('NULL'):
+            return False
         return True
     return False
 
@@ -120,7 +139,6 @@ def extract_words_from_clo(clo):
     words = [word.lower() for word in words if word]
 
     return words
-
 
 def mergeBloomsCount(count1, count2):
     # Add blooms_count to result
@@ -134,10 +152,5 @@ def check_code_format(course_code):
 
     return re.match(pattern, course_code)
 
-
-# sentence = "Explain how you would design a new system to solve this problem and evaluate its effectiveness."
-# result = match_clos([sentence])
-# print(result)
-
 if __name__ == "__main__":
-    classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
+    initialize_classifier()

@@ -7,7 +7,7 @@ import json
 
 # imported files
 from classification_controller import classify_clos_from_pdf, mergeBloomsCount, check_code_format, match_clos, initialize_classifier
-from database import add_clos, get_clos, add_course_detail, get_all_course_details, get_course_detail
+from database import add_clos, get_clos, add_course_detail, get_all_course_details, get_course_detail, delete_course  
 from blooms_levels import BLOOMS_TAXONOMY
 from extract_helper import course_details_from_pdf, get_coID_from_code, extract_clos_from_coID, course_details_from_coID
 
@@ -39,13 +39,13 @@ def upload_course_outline_by_code():
         clos = extract_clos_from_coID(coID)
         # print(clos)
         blooms_count, word_to_blooms = match_clos(clos)
-        print(blooms_count)
+        # print(blooms_count)
         course_details = course_details_from_coID(coID)
 
         # Add extracted_clos and word_to_blooms to course_details
         course_details["course_clos"] = clos
         course_details["word_to_blooms"] = word_to_blooms
-        print(course_details)
+        # print(course_details)
         try:
             if add_clos(course_details["course_code"], blooms_count) and add_course_detail(course_details):
                 return jsonify({'message': 'Success!'}), 200
@@ -97,9 +97,9 @@ def upload_exam():
     # Filter out any empty strings resulting from the split
     exam_questions = [q for q in exam_questions if q.strip()]
 
-    blooms_count = match_clos(exam_questions)
+    blooms_count, word_to_blooms = match_clos(exam_questions)
     
-    return jsonify({'blooms_count': blooms_count}), 200
+    return jsonify({'blooms_count': blooms_count, 'word_to_blooms': word_to_blooms}), 200
 
 
 ### classify_results = {
@@ -127,7 +127,7 @@ def classify_learning_outcome_route():
     result = {
         "blooms_count": {level: 0 for level in BLOOMS_TAXONOMY},
         "courses_info": {
-            course_code: {"clos":[], "word_to_blooms": {}} for course_code in course_codes
+            course_code: {"clos":[], "word_to_blooms": {}, "blooms_count": {}} for course_code in course_codes
         }
     }    
 
@@ -139,8 +139,9 @@ def classify_learning_outcome_route():
         # Add clos and word_to_blooms into courses_info
         result["courses_info"][course_code]["clos"] = course_detail["course_clos"]
         result["courses_info"][course_code]["word_to_blooms"] = course_detail["word_to_blooms"]
+        result["courses_info"][course_code]["blooms_count"] = blooms_count_additive
 
-        print(blooms_count_additive)
+        # print(blooms_count_additive)
         if blooms_count_additive:
             blooms_count_sum = mergeBloomsCount(blooms_count_sum, blooms_count_additive)
         else:
@@ -149,16 +150,34 @@ def classify_learning_outcome_route():
     # Add blooms_count_sum to result
     result["blooms_count"] = blooms_count_sum
 
-    print(result)
+    # print(result)
     
     return jsonify({'classify_results': result})
 
 @app.route('/api/courses', methods=['GET'])
 def get_courses():
     course_details = get_all_course_details()
-    print(course_details)
+    # print(course_details)
 
     return jsonify({'course_details': course_details})
+
+@app.route('/api/delete_course', methods=['DELETE'])
+def delete_course_api():
+    data = request.get_json()
+    course_code = data.get('course_code')
+    print(course_code)
+
+    if not course_code or not check_code_format(course_code):
+        return jsonify({'error': 'Invalid course code format'}), 400
+
+    try:
+        if delete_course(course_code):
+            return jsonify({'message': 'Course deleted successfully'}), 200
+        else:
+            return jsonify({'error': 'Failed to delete course'}), 400
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 500
     
 
 if __name__ == '__main__':
