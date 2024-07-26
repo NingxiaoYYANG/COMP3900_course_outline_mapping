@@ -22,7 +22,7 @@ Knowledge
 20.	How much time did he took to build a house
 21.	How much water does an elephant drink
 22.	Identify a phrase as a simile
-23.	Identify a property (commutative, additive, etc(
+23.	Identify a property (commutative, additive, etc)
 24.	Identify fractions from a pictorial representation
 25.	Identify ordinal positions
 26.	Identify the correct definition of osmosis.
@@ -99,7 +99,7 @@ Knowledge
 97.	who is the founder of the kingdom of saudi Arabia
 98.	who was the first man on the moon
 99.	who was the first to compose in the arts of makamat
-100.	Who was the writer of the Hamilton 
+100. Who was the writer of the Hamilton 
 
  
 Comprehension
