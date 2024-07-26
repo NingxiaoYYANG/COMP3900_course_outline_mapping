@@ -260,9 +260,16 @@ function UploadCourse() {
             <Alert severity="error" onClose={handleAlertClose} style={{marginBottom: '20px', marginTop: '-10px', display: showAlert ? 'flex' : 'none'}} >
               {error}
             </Alert>
-            <div className="upload_form">
-              <p>Input Text</p>
-              <TextField multiline rows={5} maxRows={5} fullWidth value={examContents} onChange={handleExamTextChange} sx={{ marginBottom: '20px'}} />
+            <div className="upload_form" style={{ minHeight: '430px' }}> 
+              <h4>Input Text</h4>
+              <TextField 
+                multiline 
+                rows={12} 
+                maxRows={12} 
+                fullWidth 
+                value={examContents} 
+                onChange={handleExamTextChange} 
+                sx={{ marginBottom: '20px'}} />
 
               {isLoading === 'uploadingExam' ? (
                 <Loader />
@@ -271,7 +278,7 @@ function UploadCourse() {
               )}
 
             </div>
-            <div className="upload_form">
+            {/* <div className="upload_form">
               {bloomsCount && (
                 <div className="blooms_count">
                   <h3>Bloom's Taxonomy Count:</h3>
@@ -282,7 +289,7 @@ function UploadCourse() {
                   </ul>
                 </div>
               )}
-            </div>
+            </div> */}
             </>
           )}
         </div>
