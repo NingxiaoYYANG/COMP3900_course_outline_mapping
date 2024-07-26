@@ -16,13 +16,14 @@ function UploadCourse() {
   const [examContents, setExamContents] = useState('');
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('')
-  const [bloomsCount, setBloomsCount] = useState(null); // New state for Bloom's count
+  const [bloomsCount, setBloomsCount] = useState(null); 
   const [wordToBloom, setWordToBloom] = useState(null); 
   const [showAlert, setShowAlert] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [isLoading, setIsLoading] = useState('false'); // New state for loading
+  const [isLoading, setIsLoading] = useState('false');
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const dropZoneRef = useRef(null);
 
   const handleSelectionChange = (selection) => {
     setSelection(selection);
@@ -199,10 +200,28 @@ function UploadCourse() {
     }
   }
 
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const droppedFiles = e.dataTransfer.files;
+    if (droppedFiles.length > 0) {
+      handleFileChange({ target: { files: droppedFiles } });
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
 
   return (
-    <div className='upload-wrapper'>
-      <div className="container">
+    <div className={`upload-wrapper ${showAlert || showSuccess ? 'alert-active' : ''}`}>
+      <div className='container'>
         <div className="container_inner">
           
           <div style={{ display: 'flex', alignItems:'center', marginTop: '-15px'}}>
@@ -229,18 +248,27 @@ function UploadCourse() {
           {selection === 'courseOutline' && (<>
             
             <div className="upload_form">
-              <Alert severity="error" onClose={handleAlertClose} style={{marginBottom: '20px', marginTop: '-10px', display: showAlert ? 'flex' : 'none'}} >
+              <Alert severity="error" onClose={handleAlertClose} style={{display: showAlert ? 'flex' : 'none'}} className='alert' >
                 {error}
               </Alert>
-              <Alert severity="success" onClose={handleAlertClose} style={{marginBottom: '20px', marginTop: '-10px', display: showSuccess ? 'flex' : 'none'}} >
+              <Alert severity="success" onClose={handleAlertClose} style={{marginBottom: '20px', marginTop: '-10px', display: showSuccess ? 'flex' : 'none',}} >
                 {successMessage}
               </Alert>
-              <i className="fas fa-cloud-upload-alt"></i>
+              <div
+                ref={dropZoneRef}
+                className="drop-zone"
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onDragEnter={handleDragEnter}
+              >
+                <i className="fas fa-cloud-upload-alt"></i>
+              </div>
               <p>Drop file to upload</p>
               <p>or</p>
               <div>
                 <BrowseFilesButton handleChange={handleFileChange}/>
-                {file === null ? 'No file chosen' : <div >{file.name}</div>}
+                {file === null ? 'No file chosen' : <div>{file.name.length > 30 ? file.name.substring(0, 30) + '...' : file.name}</div>}
+
               </div>
               <br />
 

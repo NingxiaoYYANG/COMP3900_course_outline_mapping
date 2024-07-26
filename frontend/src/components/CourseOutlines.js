@@ -244,7 +244,7 @@ function CourseOutlines() {
               
             
               <div className="search-bar" style={{justifySelf: 'flex-end'}}>
-                <TextField 
+                <StyledTextField
                   label="Search by code or name" 
                   variant='outlined' 
                   type='text'
