@@ -25,10 +25,32 @@ class TestClassifyCLOsFromPdf:
         questions = get_exam_questions()
         assert(questions)
 
+
 # TODO: Add test cases
 class TestMatchVerbsByAI:
     def test_match_verbs_by_ai(self):
         pass
+
+
+class TestMatchCLOsByDict:
+    def test_can_match_clos_by_dict(self):
+        expected_clos = extract_test_clos()
+        for i in range(len(CLOS_FILES)):
+            classification = classifier.match_clos_by_dict(expected_clos[i])
+            
+            # We can't be for sure what the correct classification is.
+            # Just check that the classification is valid and not empty.
+            assert set(classification.keys()) == set(BLOOMS_LEVELS)
+            assert any(classification.values())
+
+
+class TestCheckVerbs:
+    def test_can_identify_verbs(self):
+        pass
+    
+    def test_can_identify_nonverbs(self):
+        pass
+
 
 class TestExtractWordsFromCLO:
     def test_can_extract_words_from_clo(self):
@@ -44,13 +66,15 @@ class TestExtractWordsFromCLO:
         assert classifier.extract_words_from_clo(clo2) == clo2_expected
         assert classifier.extract_words_from_clo(clo3) == clo3_expected
 
-class TestMatchCLOsByDict:
-    def test_can_match_clos_by_dict(self):
-        expected_clos = extract_test_clos()
-        for i in range(len(CLOS_FILES)):
-            classification = classifier.match_clos_by_dict(expected_clos[i])
-            
-            # We can't be for sure what the correct classification is.
-            # Just check that the classification is valid and not empty.
-            assert set(classification.keys()) == set(BLOOMS_LEVELS)
-            assert any(classification.values())
+
+class TestMergeBloomsCount:
+    def test_can_merge_blooms_count(self):
+        pass
+
+
+class TestCheckCodeFormat:
+    def test_can_check_correct_formats(self):
+        pass
+    
+    def test_can_check_incorrect_formats(self):
+        pass
