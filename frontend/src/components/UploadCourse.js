@@ -6,6 +6,7 @@ import BrowseFilesButton from './BrowseFilesButton';
 import UploadButton from './UploadButton';
 import Loader from './Loader';
 import { useNavigate } from 'react-router-dom';
+import StyledTextField from './StyledTextField';
 
 
 function UploadCourse() {
@@ -14,10 +15,13 @@ function UploadCourse() {
   const [file, setFile] = useState(null);
   const [examContents, setExamContents] = useState('');
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('')
   const [bloomsCount, setBloomsCount] = useState(null); // New state for Bloom's count
   const [wordToBloom, setWordToBloom] = useState(null); 
   const [showAlert, setShowAlert] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState('false'); // New state for loading
+
   const navigate = useNavigate()
 
   const handleSelectionChange = (selection) => {
@@ -71,6 +75,8 @@ function UploadCourse() {
     try {
       const response = await axios.post('/api/upload_course_code', formData);
       if (response.status === 200) {
+        setShowSuccess(true)
+        setSuccessMessage('Course code uploaded successfully!')
         alert('Course code uploaded successfully!');
         // Clear form state
         setCourseCode('');
@@ -175,7 +181,12 @@ function UploadCourse() {
     }
   }
   const handleAlertClose = () => {
-    setShowAlert(false);
+    if (showAlert) {
+      setShowAlert(false);
+    }
+    if (showSuccess) {
+      setShowSuccess(false);
+    }
   };
   
   const onFileChange = (files) => {
@@ -221,6 +232,9 @@ function UploadCourse() {
               <Alert severity="error" onClose={handleAlertClose} style={{marginBottom: '20px', marginTop: '-10px', display: showAlert ? 'flex' : 'none'}} >
                 {error}
               </Alert>
+              <Alert severity="success" onClose={handleAlertClose} style={{marginBottom: '20px', marginTop: '-10px', display: showSuccess ? 'flex' : 'none'}} >
+                {successMessage}
+              </Alert>
               <i className="fas fa-cloud-upload-alt"></i>
               <p>Drop file to upload</p>
               <p>or</p>
@@ -245,7 +259,15 @@ function UploadCourse() {
               
             </div>
             <div className="upload_form" style={{ display: 'flex', justifyContent: 'center' }}>
-              <TextField type='text' variant="standard" label="Input course code" size='small' onChange={handleTextChange} onKeyDown={handleKeyPress} style={{ width: '140px', marginRight: '30px' }}/>
+              <StyledTextField 
+                type='text' 
+                variant="standard" 
+                label="Input course code" 
+                size='small' 
+                onChange={handleTextChange} 
+                onKeyDown={handleKeyPress} 
+                style={{ width: '140px', marginRight: '30px' }}
+              />
                 <br/>
               {isLoading === 'uploadingCode' ? (
                 <Loader />
@@ -262,14 +284,15 @@ function UploadCourse() {
             </Alert>
             <div className="upload_form" style={{ minHeight: '430px' }}> 
               <h4>Input Text</h4>
-              <TextField 
+              <StyledTextField
                 multiline 
                 rows={12} 
                 maxRows={12} 
                 fullWidth 
                 value={examContents} 
                 onChange={handleExamTextChange} 
-                sx={{ marginBottom: '20px'}} />
+                sx={{ marginBottom: '20px'}}
+              />
 
               {isLoading === 'uploadingExam' ? (
                 <Loader />

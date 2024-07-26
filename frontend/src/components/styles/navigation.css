@@ -1,5 +1,5 @@
 .navigation-container {
-  background-color: #475e49;
+  background-color: #475E49;
   height: 90px;
   color: #F4F7F3;
   display: flex;
@@ -21,6 +21,7 @@
 
 .navigation-title {
   padding-right: 15px;
+  padding-left: 15px;
   font-weight: 700;
   font-size: 14pt
 }

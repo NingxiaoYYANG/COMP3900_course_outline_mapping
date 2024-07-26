@@ -3,6 +3,7 @@ import './styles/navigation.css'
 import React from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Button, IconButton, Menu, MenuItem } from '@mui/material';
+import logo from './images/logo.png'
 
 function Navigation() {
   const location = useLocation().pathname;
@@ -18,7 +19,9 @@ function Navigation() {
   return (
     <div className='navigation-container'>
       <div className='navigation-text-container'>
-        <div className='navigation-title'>CourseMapper</div>
+        <div className='navigation-title'>
+          CourseMapper
+        </div>
         <div className='vertical-line'></div>
         <div className='burger-navigation'>
           <IconButton

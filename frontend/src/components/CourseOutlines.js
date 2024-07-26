@@ -4,10 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import Checkbox from '@mui/material/Checkbox';
 import './styles/courseoutlines.css'
 import TextButton from './TextButton';
-import { IconButton, InputAdornment, TextField } from '@mui/material';
+import { Button, IconButton, InputAdornment, Popover, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import SelectField from './SelectField';
+import StyledTextField from './StyledTextField';
 
 
 function CourseOutlines() {
@@ -26,7 +27,7 @@ function CourseOutlines() {
       setError('Please enter course code in correct format (e.g., ABCD1234).');
       return;
     }
-    if (checked &&!courseCodes.includes(code)) {
+    if (checked && !courseCodes.includes(code)) {
       setCourseCodes([...courseCodes, code])
     } else if (!checked &&courseCodes.includes(code)) {
       setCourseCodes(courseCodes.filter(c => c !== code));
@@ -136,88 +137,111 @@ function CourseOutlines() {
     return matchesSearchQuery && matchesTerm && matchesDeliveryMode && matchesDeliveryFormat && matchesLocation && matchesFaculty && matchesStudyLevel && matchesCampus;
   });
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handlePopClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'filter-popover' : undefined;
+
   return (
     <div className='courseoutline-wrapper'>
       <div className='courseoutline-container'>
           <div className='course-title-content'>
             <div className='course-title'>Course Outlines</div>
             <div className='filter-button-container'>
-              <IconButton aria-label='filter' onClick={handleFilterClick} style={{ marginRight: '20px' }}>
-                <FilterListIcon />
-              </IconButton>
-              {isBoxVisible && <div className='box'>
-                <div style={{ width: '90%', margin: '0 auto'}}>
-                <h5 className="search-bar-filter">Search</h5>
-                <div className="search-bar-filter">
-                  <TextField 
-                    label="Search by code or name" 
-                    variant='outlined' 
-                    type='text'
-                    value={searchQuery}
-                    onChange={handleSearchQueryChange}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <SearchIcon />
-                        </InputAdornment>
-                      ),
-                    }}
-                    style={{ marginRight: '20px' }}
-                    fullWidth
-                  />
-                </div>
-                <h5>Filter</h5>
-                  <SelectField
-                    label="Term"
-                    id="term-select"
-                    value={selectedTerm}
-                    onChange={(e) => setSelectedTerm(e.target.value)}
-                    options={uniqueTerms}
-                  />
-                  <SelectField
-                    label="Delivery Mode"
-                    id="deliveryMode-select"
-                    value={selectedDeliveryMode}
-                    onChange={(e) => setSelectedDeliveryMode(e.target.value)}
-                    options={uniqueDeliveryMode}
-                  />
-                  <SelectField
-                    label="Delivery Format"
-                    id="deliveryFormat-select"
-                    value={selectedDeliveryFormat}
-                    onChange={(e) => setSelectedDeliveryFormat(e.target.value)}
-                    options={uniqueDeliveryFormat}
-                  />
-                  <SelectField
-                    label="Location"
-                    id="location-select"
-                    value={selectedLocation}
-                    onChange={(e) => setSelectedLocation(e.target.value)}
-                    options={uniqueLocation}
-                  />
-                  <SelectField
-                    label="Faculty"
-                    id="faculty-select"
-                    value={selectedFaculty}
-                    onChange={(e) => setSelectedFaculty(e.target.value)}
-                    options={uniqueFaculty}
-                  />
-                  <SelectField
-                    label="Study Level"
-                    id="studyLevel-select"
-                    value={selectedStudyLevel}
-                    onChange={(e) => setSelectedStudyLevel(e.target.value)}
-                    options={uniqueStudyLevel}
-                  />
-                  <SelectField
-                    label="Campus"
-                    id="campus-select"
-                    value={selectedCampus}
-                    onChange={(e) => setSelectedCampus(e.target.value)}
-                    options={uniqueCampus}
-                  />
-                </div>
-              </div>}
+            <Button variant="text" aria-describedby={id} onClick={handlePopClick} sx={{ color: 'grey', borderRadius: '30%', }}>
+              <FilterListIcon />
+              </Button>
+              <Popover
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+              >
+                <div className='box'>
+                  <h5 className="search-bar-filter">Search</h5>
+                  <div className="search-bar-filter">
+                    <StyledTextField
+                      label="Search by code or name" 
+                      variant='outlined' 
+                      type='text'
+                      value={searchQuery}
+                      onChange={handleSearchQueryChange}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <SearchIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                      fullWidth
+                    />
+                  </div>
+                  <h5>Filter</h5>
+                    <SelectField
+                      label="Term"
+                      id="term-select"
+                      value={selectedTerm}
+                      onChange={(e) => setSelectedTerm(e.target.value)}
+                      options={uniqueTerms}
+                    />
+                    <SelectField
+                      label="Delivery Mode"
+                      id="deliveryMode-select"
+                      value={selectedDeliveryMode}
+                      onChange={(e) => setSelectedDeliveryMode(e.target.value)}
+                      options={uniqueDeliveryMode}
+                    />
+                    <SelectField
+                      label="Delivery Format"
+                      id="deliveryFormat-select"
+                      value={selectedDeliveryFormat}
+                      onChange={(e) => setSelectedDeliveryFormat(e.target.value)}
+                      options={uniqueDeliveryFormat}
+                    />
+                    <SelectField
+                      label="Location"
+                      id="location-select"
+                      value={selectedLocation}
+                      onChange={(e) => setSelectedLocation(e.target.value)}
+                      options={uniqueLocation}
+                    />
+                    <SelectField
+                      label="Faculty"
+                      id="faculty-select"
+                      value={selectedFaculty}
+                      onChange={(e) => setSelectedFaculty(e.target.value)}
+                      options={uniqueFaculty}
+                    />
+                    <SelectField
+                      label="Study Level"
+                      id="studyLevel-select"
+                      value={selectedStudyLevel}
+                      onChange={(e) => setSelectedStudyLevel(e.target.value)}
+                      options={uniqueStudyLevel}
+                    />
+                    <SelectField
+                      label="Campus"
+                      id="campus-select"
+                      value={selectedCampus}
+                      onChange={(e) => setSelectedCampus(e.target.value)}
+                      options={uniqueCampus}
+                    />
+                  </div>
+              </Popover>
+                
+              
             
               <div className="search-bar" style={{justifySelf: 'flex-end'}}>
                 <TextField 
@@ -235,19 +259,34 @@ function CourseOutlines() {
                   }}
                   style={{ marginRight: '20px',}}
                   size='small'
+                  sx={{
+                    color: '#693E6A',
+                  }}
                 />
               </div>
               <TextButton text='NEXT' handleclick={handleClick}/>
             </div>
           </div>
-          <div style={{fontSize: '10pt', color: error ? '#372768' : courseCodes.length === 0 ? '#F4F7F3' : '#372768'}}>
+          <div style={{fontSize: '10pt', color: error ? 'red' : courseCodes.length === 0 ? '#fff' : '#693E6A'}}>
             {error || `Selected ${courseCodes.length} outlines...`}
           </div>
           <div className='course-horizontalline'></div>
           <div className='courseoutline-selection'>
             {filteredCourseDetails.map((detail, index) => (
               <div className={`courseoutline-box`} key={index}>
-                <div><Checkbox onChange={(e) => handleAddCourseCode(e, detail.course_code)} /></div>
+                <div>
+                  <Checkbox 
+                    checked={courseCodes.includes(detail.course_code)} 
+                    onChange={(e) => handleAddCourseCode(e, detail.course_code)} 
+                    sx={{
+                      color: '#693E6A',
+                      '&.Mui-checked': {
+                        color: '#693E6A',
+                      },
+                    }}
+                  />
+
+                  </div>
                 <div>
                   <strong>{detail.course_code}</strong><br />
                   <strong>Course Name:</strong> {detail.course_name}<br />
