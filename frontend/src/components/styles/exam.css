@@ -10,15 +10,19 @@
 }
 
 .exam-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   background-color: #ffffff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   padding: 1.5rem;
+  width: 90%;
   box-sizing: border-box;
   min-height: 570px;
   height: calc(85vh - 130px);
   margin-top: -20px;
-  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .exam-title {
@@ -42,6 +46,19 @@
   align-items: left;
   width: 100%;
   flex-grow: 1;
+}
+
+.exam-questions {
+  width: 100%;
+}
+
+.exam-graph {
+  width: 90%;
+  margin-top: 20px;
+  flex-grow: 1; /* Allow the graph to grow and fill available space */
+  min-height: 400px; /* Minimum height of the graph */
+  padding-bottom: 70px;
+  align-self: center;
 }
 
 /* Media query for smaller viewports */

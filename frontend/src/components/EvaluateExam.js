@@ -1,8 +1,10 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import './styles/exam.css';
 import BarChart from "./BarChart";
+import TextButton from "./TextButton";
 function EvaluateExam() {
   const location = useLocation();
+  const navigate = useNavigate();
   // const { bloomsCount } = location.state || {};
 
   const bloomsCount =  
@@ -71,6 +73,10 @@ function EvaluateExam() {
       count[level]++;
     }
   });
+
+  const handleClick = () => {
+    navigate('/');  
+  };
   
   return (<>
   <div className="exam-wrapper">
@@ -78,19 +84,24 @@ function EvaluateExam() {
       <div className="exam-title">Evaluate Exam Paper</div>
       <div className='exam-horizontalline'></div>
       <div className='exam-content'>
-        {questions.map((question, index) => (
-          <div key={index}>
-            <ColoredText text={question} />
-            <br />
-          </div>
-        ))}
-        <div className='builddegree-graph'>
+        <div className='exam-questions'>
+          {questions.map((question, index) => (
+            <div key={index}>
+              <ColoredText text={question} />
+              <br />
+            </div>
+          ))}
+        </div>
+        <div className='exam-graph'>
             {count ? (
               <BarChart data={count} />
             ) : (
               <p>No Bloom's Taxonomy counts available.</p>
             )}
-          </div>
+        </div>
+        <div className='builddegree-button-container'>
+          <TextButton text='BACK' handleclick={handleClick} />
+        </div>
       </div>
     </div>
   </div>
