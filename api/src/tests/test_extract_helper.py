@@ -66,9 +66,9 @@ class TestExtractCourseDetailsFromCoID:
         assert course_details['campus'] == 'Sydney'
         
         coID2 = extract_helper.get_coID_from_code("comp9900")
-        course_details2 = extract_helper.course_details_from_coID(coID)
+        course_details2 = extract_helper.course_details_from_coID(coID2)
         assert course_details2['course_level'] == 'PG'
         
         coID3 = extract_helper.get_coID_from_code("COMP6080")
-        course_details3 = extract_helper.course_details_from_coID(coID)
+        course_details3 = extract_helper.course_details_from_coID(coID3)
         assert course_details3['course_level'] == 'UG/PG'
