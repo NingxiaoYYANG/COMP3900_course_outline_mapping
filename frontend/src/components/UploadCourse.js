@@ -162,6 +162,7 @@ function UploadCourse() {
         setWordToBloom(response.data.word_to_blooms)
         console.log(response.data.word_to_blooms)
         navigate('/buildexam', { state: { bloomsCount: bloomsCount,  } });  // Pass data to the next page
+        navigate('/buildexam', { state: { bloomsCount: bloomsCount,  } });
       } else {
         setError('Failed to upload exam questions.');
       }
@@ -169,6 +170,7 @@ function UploadCourse() {
       console.error('Error uploading exam questions:', error);
       setError('Error uploading exam questions. Please try again later.');
     } finally {
+      setIsLoading('false');
       setIsLoading('false');
     }
   }
@@ -187,12 +189,11 @@ function UploadCourse() {
   }
 
 
-
-
   return (
     <div className='upload-wrapper'>
       <div className="container">
         <div className="container_inner">
+          
           <div style={{ display: 'flex', alignItems:'center', marginTop: '-15px'}}>
             <h1 >Upload</h1>
             <div className="button_group">
@@ -287,6 +288,7 @@ function UploadCourse() {
         </div>
       </div>
     </div>
+    
   )
 }
 
