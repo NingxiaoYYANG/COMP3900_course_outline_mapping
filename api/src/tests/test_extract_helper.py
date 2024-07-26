@@ -1,5 +1,7 @@
 import extract_helper
 import tests.helper as test_helper
+import requests
+import json
 
 def test_can_extract_clo_from_pdf():
     expected_clos = test_helper.extract_test_clos()
@@ -18,3 +20,39 @@ def test_can_extract_course_details_from_pdf():
     assert course_details['course_name'] == 'Financial Accounting Fundamentals'
     assert course_details['course_level'] == 'UG'
     assert course_details['course_term'] == '24T1'
+    assert course_details['faculty'] == 'UNSW Business School'
+    assert course_details['delivery_mode'] == 'In Person'
+    assert course_details['delivery_format'] == 'Standard'
+    assert course_details['delivery_location'] == 'Kensington'
+    assert course_details['campus'] == 'Sydney'
+
+def test_can_get_coID_from_code():
+    coID = extract_helper.get_coID_from_code("acct2511")
+    
+    url = f"https://courseoutlines.unsw.edu.au/v1/publicsitecourseoutlines/detail?coId={coID}"
+    
+    r = requests.get(url)
+    data = json.loads(r.text)
+    
+    assert data["integrat_coursename"] == 'Financial Accounting Fundamentals'
+
+def test_can_extract_clos_from_coID():
+    coID = extract_helper.get_coID_from_code("acct2511")
+    extracted_clos = extract_helper.extract_clos_from_coID(coID)
+    expected_clos = test_helper.extract_test_clos()[0]
+    
+    assert extracted_clos == expected_clos
+
+def test_can_extract_course_details_from_coID():
+    coID = extract_helper.get_coID_from_code("acct2511")
+    course_details = extract_helper.course_details_from_coID(coID)
+    
+    assert course_details['course_code'] == 'ACCT2511'
+    assert course_details['course_name'] == 'Financial Accounting Fundamentals'
+    assert course_details['course_level'] == 'UG'
+    assert course_details['course_term'] # Newest course outline is pulled, so this can change value depending on time tested.
+    assert course_details['faculty'] == 'UNSW Business School'
+    assert course_details['delivery_mode'] == 'In Person'
+    assert course_details['delivery_format'] == 'Standard'
+    assert course_details['delivery_location'] == 'Kensington'
+    assert course_details['campus'] == 'Sydney'
