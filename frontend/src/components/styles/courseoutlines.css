@@ -29,7 +29,7 @@
 }
 
 .course-horizontalline {
-  border-bottom: 2px solid #5F634F;
+  border-bottom: 2px solid #475e49;
   width: calc(100% + 3rem);
   margin: 0 -1.5rem;
   box-sizing: content-box;
@@ -54,7 +54,7 @@
   display: flex;
   align-items: center;
   padding: 5px;
-  border: 3px dashed #5F634F;
+  border: 3px dashed #475e49;
   width: 95%;
   /* min-height: 120px; */
   height: 130px;
