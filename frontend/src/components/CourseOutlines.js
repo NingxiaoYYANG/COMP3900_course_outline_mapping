@@ -84,7 +84,6 @@ function CourseOutlines() {
 
   React.useEffect(() => {
     fetchCourseDetails();
-    fetchCourseDetails();
   }, []); 
 
   const handleClick = async () => {
@@ -138,16 +137,14 @@ function CourseOutlines() {
   });
 
   return (
-    <div>
+    <div className='courseoutline-wrapper'>
       <div className='courseoutline-container'>
-        <div className="coursecontent">
           <div className='course-title-content'>
             <div className='course-title'>Course Outlines</div>
             <div className='filter-button-container'>
               <IconButton aria-label='filter' onClick={handleFilterClick} style={{ marginRight: '20px' }}>
                 <FilterListIcon />
               </IconButton>
-              
               {isBoxVisible && <div className='box'>
                 <div style={{ width: '90%', margin: '0 auto'}}>
                 <h5 className="search-bar-filter">Search</h5>
@@ -243,7 +240,7 @@ function CourseOutlines() {
               <TextButton text='NEXT' handleclick={handleClick}/>
             </div>
           </div>
-          <div style={{fontSize: '10pt', color: error ? '#AB1748' : courseCodes.length === 0 ? '#fff' : '#AB1748'}}>
+          <div style={{fontSize: '10pt', color: error ? '#372768' : courseCodes.length === 0 ? '#F4F7F3' : '#372768'}}>
             {error || `Selected ${courseCodes.length} outlines...`}
           </div>
           <div className='course-horizontalline'></div>
@@ -274,7 +271,6 @@ function CourseOutlines() {
               </div>
             ))}
           </div>
-        </div>
       </div>      
     </div>
   );

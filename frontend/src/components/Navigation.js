@@ -45,8 +45,8 @@ function Navigation() {
           </Menu>
         </div>
         <div className='navigation-list-items'>
-          <div className='nav-list-item-container'><Link to='/' className='nav-list-item'  style={location === '/' ? {borderBottom: '2px solid #FCD3CA'} : {}}>HOME</Link></div>
-          <div className='nav-list-item-container'><Link to='/courseoutlines' className='nav-list-item' style={location === '/courseoutlines' ? {borderBottom: '2px solid #FCD3CA'} : {}}>COURSE OUTLINES</Link></div>
+          <div className='nav-list-item-container'><Link to='/' className='nav-list-item'  style={location === '/' ? {borderBottom: '2px solid #F4F7F3'} : {}}>HOME</Link></div>
+          <div className='nav-list-item-container'><Link to='/courseoutlines' className='nav-list-item' style={location === '/courseoutlines' ? {borderBottom: '2px solid #F4F7F3'} : {}}>COURSE OUTLINES</Link></div>
         </div>
       </div>
     </div>

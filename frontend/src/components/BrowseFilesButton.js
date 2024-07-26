@@ -1,17 +1,4 @@
-import { ThemeProvider, createTheme } from '@mui/material';
-import Button from '@mui/material/Button';
 import { useRef } from 'react';
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#AB1748',
-    },
-    secondary: {
-      main: '#FCD3CA'
-    }
-  }
-})
 
 function BrowseFilesButton (props) {
 
@@ -22,12 +9,12 @@ function BrowseFilesButton (props) {
       <button 
         onClick={()=>fileInputRef.current.click()}
         style={{
-          border: '2px solid #AB1748',
+          border: '2px solid #5E475C',
           height: '35px',
           width: '160px',
           borderRadius: '25px',
           backgroundColor: 'white',
-          color: '#AB1748',
+          color: '#5E475C',
           fontSize: '12pt',
           cursor: 'pointer'
         }}
