@@ -244,33 +244,42 @@ function CourseOutlines() {
             {error || `Selected ${courseCodes.length} outlines...`}
           </div>
           <div className='course-horizontalline'></div>
-          <div className='courseoutline-selection'>
-            {filteredCourseDetails.map((detail, index) => (
-              <div className={`courseoutline-box`} key={index}>
-                <div><Checkbox onChange={(e) => handleAddCourseCode(e, detail.course_code)} /></div>
-                <div>
-                  <strong>{detail.course_code}</strong><br />
-                  <strong>Course Name:</strong> {detail.course_name}<br />
-                  <strong>Level:</strong> {detail.course_level}<br />
-                  <strong>Semester:</strong> {detail.course_term}
-                  <button
-                    style={{
-                      backgroundColor: 'red',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '3px',
-                      cursor: 'pointer',
-                      padding: '5px',
-                      marginLeft: '10px'
-                    }}
-                    onClick={() => handleDeleteCourse(detail.course_code)}
-                  >
-                    X
-                  </button>
+
+          {courseDetails.length === 0 ? (
+            <div style={{ textAlign: 'center', marginTop: '165px' }}>
+              <i className="fa-solid fa-file"></i>
+              <p>No course outlines available.</p>
+              <p><a href='http://localhost:3000/'>Upload</a> some!</p>
+            </div>
+          ) : (
+            <div className='courseoutline-selection'>
+              {filteredCourseDetails.map((detail, index) => (
+                <div className={`courseoutline-box`} key={index}>
+                  <div><Checkbox onChange={(e) => handleAddCourseCode(e, detail.course_code)} /></div>
+                  <div>
+                    <strong>{detail.course_code}</strong><br />
+                    <strong>Course Name:</strong> {detail.course_name}<br />
+                    <strong>Level:</strong> {detail.course_level}<br />
+                    <strong>Semester:</strong> {detail.course_term}
+                    <button
+                      style={{
+                        backgroundColor: 'red',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '3px',
+                        cursor: 'pointer',
+                        padding: '5px',
+                        marginLeft: '10px'
+                      }}
+                      onClick={() => handleDeleteCourse(detail.course_code)}
+                    >
+                      X
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
       </div>      
     </div>
   );

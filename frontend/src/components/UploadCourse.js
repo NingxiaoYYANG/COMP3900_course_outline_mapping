@@ -262,7 +262,7 @@ function UploadCourse() {
             </Alert>
             <div className="upload_form">
               <p>Input Text</p>
-              <TextField multiline rows={5} maxRows={5} fullWidth value={examContents} onChange={handleExamTextChange} sx={{ marginBottom: '20px'}} />
+              <TextField multiline rows={5} fullWidth value={examContents} onChange={handleExamTextChange} sx={{ marginBottom: '20px'}} />
 
               {isLoading === 'uploadingExam' ? (
                 <Loader />
