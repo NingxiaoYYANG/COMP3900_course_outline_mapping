@@ -8,6 +8,7 @@
   width: 100%;
   /* border-bottom: 2px solid #3D3556; */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  position: fixed;
 }
 
 .navigation-text-container {
