@@ -7,5 +7,13 @@ KNOWN_VERBS = {
     "do" : "NULL",
     "is based" : "NULL",
     "websites" : "NULL",
+    "\u2026" : "NULL",
+    "\u2013" : "NULL",
+    "...." : "NULL",
+    "<" : "NULL",
+    "[" : "NULL",
+    "k" : "NULL",
+    "=" : "NULL",
+    "s" : "NULL",
     # Add more known verbs and their correct POS tags if needed
 }
