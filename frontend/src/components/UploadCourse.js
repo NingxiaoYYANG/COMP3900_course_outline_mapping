@@ -82,8 +82,12 @@ function UploadCourse() {
       }
     } catch (error) {
       console.error('Error uploading course code:', error);
-      setError('Error uploading course code. Please try again later.');
-      setShowAlert(true)
+      if (error.response && error.response.data.error) {
+        alert(error.response.data.error);  // Display the custom error message in an alert
+    } else {
+        setError('Error uploading course code. Please try again later.');
+        setShowAlert(true);
+    }
     } finally {
       setIsLoading('false'); // End loading
     }
