@@ -84,7 +84,7 @@ def upload_course_outline_pdf():
             return jsonify({'message': 'Database Error!'}), 400
     except Exception as e:
         print(e)
-        return jsonify({'error': e}), 400
+        return jsonify({'error': str(e), 'course_code': course_details.get("course_code")}), 409 
 
 @app.route('/api/upload_exam', methods=['POST'])
 def upload_exam():
