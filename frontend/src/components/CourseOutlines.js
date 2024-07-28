@@ -8,6 +8,8 @@ import { IconButton, InputAdornment, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import SelectField from './SelectField';
+import ArrowForwardIosNewIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 
 function CourseOutlines() {
@@ -17,10 +19,21 @@ function CourseOutlines() {
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate()
+  // pagination hooks
+  const [currentPage, setCurrentPage] = useState(1); // Default to first page
+  const [itemsPerPage, ] = useState(10); // Set how many items you want per page
+
+  // Initialize state to keep track of selected courses
+  const [selectedCourses, setSelectedCourses] = useState({});
+
 
   const handleAddCourseCode = (e, code) => {
     const codePattern = /^[A-Za-z]{4}\d{4}$/;
     const checked = e.target.checked;
+    setSelectedCourses(prevState => ({
+      ...prevState,
+      [code]: checked, // Toggle the selected state for this specific course code
+    }));
     if (!codePattern.test(code)) {
       console.log(code)
       setError('Please enter course code in correct format (e.g., ABCD1234).');
@@ -135,6 +148,25 @@ function CourseOutlines() {
 
     return matchesSearchQuery && matchesTerm && matchesDeliveryMode && matchesDeliveryFormat && matchesLocation && matchesFaculty && matchesStudyLevel && matchesCampus;
   });
+
+
+  // PAGINATION STUFF
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredCourseDetails.slice(indexOfFirstItem, indexOfLastItem);
+
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(filteredCourseDetails.length / itemsPerPage); i++) {
+    pageNumbers.push(i);
+  }
+
+  const nextPage = () => {
+    setCurrentPage(prevPageNumber => prevPageNumber + 1);
+  };
+  
+  const prevPage = () => {
+    setCurrentPage(prevPageNumber => prevPageNumber - 1);
+  };
 
   return (
     <div className='courseoutline-wrapper'>
@@ -252,10 +284,15 @@ function CourseOutlines() {
               <p><a href='http://localhost:3000/'>Upload</a> some!</p>
             </div>
           ) : (
+            <>
             <div className='courseoutline-selection'>
-              {filteredCourseDetails.map((detail, index) => (
+              {currentItems.map((detail, index) => (
                 <div className={`courseoutline-box`} key={index}>
-                  <div><Checkbox onChange={(e) => handleAddCourseCode(e, detail.course_code)} /></div>
+                  <div>
+                    <Checkbox 
+                          checked={!!selectedCourses[detail.course_code]} // Check if the course code exists in the selectedCourses state
+                          onChange={(e) => handleAddCourseCode(e, detail.course_code)} />
+                  </div>
                   <div>
                     <strong>{detail.course_code}</strong><br />
                     <strong>Course Name:</strong> {detail.course_name}<br />
@@ -279,6 +316,14 @@ function CourseOutlines() {
                 </div>
               ))}
             </div>
+            <div className="pagination">
+              <button className="pag-nav-button" onClick={prevPage} disabled={currentPage === 1}><ArrowBackIosNewIcon className='icon' fontSize="20px"/></button>
+              {pageNumbers.map(number => (
+                <button className={`pagination-button ${currentPage === number ? 'active' : ''}`} key={number} onClick={() => setCurrentPage(number)}>{number}</button>
+              ))}
+              <button className="pag-nav-button" onClick={nextPage} disabled={currentPage === pageNumbers.length}><ArrowForwardIosNewIcon className='icon' fontSize="20px"/></button>
+            </div>
+            </>
           )}
       </div>      
     </div>
