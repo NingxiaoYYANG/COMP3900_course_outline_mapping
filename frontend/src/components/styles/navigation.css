@@ -1,5 +1,5 @@
 .navigation-container {
-  background-color: #475e49;
+  background-color: #475E49;
   height: 90px;
   color: #F4F7F3;
   display: flex;
@@ -8,6 +8,7 @@
   width: 100%;
   /* border-bottom: 2px solid #3D3556; */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  position: fixed;
 }
 
 .navigation-text-container {
@@ -20,6 +21,7 @@
 
 .navigation-title {
   padding-right: 15px;
+  padding-left: 15px;
   font-weight: 700;
   font-size: 14pt
 }
@@ -92,7 +94,7 @@
   }
 }
 /* Small devices (portrait tablets and large phones, 600px and up) */
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 601px) {
   .burger-navigation {
     display: none;
   }

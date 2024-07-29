@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Checkbox from '@mui/material/Checkbox';
 import './styles/courseoutlines.css'
 import TextButton from './TextButton';
-import { IconButton, InputAdornment, TextField } from '@mui/material';
+import { Button, IconButton, InputAdornment, MenuItem, Popover, Select, TextField, Tooltip } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import SelectField from './SelectField';
+import StyledTextField from './StyledTextField';
+import ClearIcon from '@mui/icons-material/Clear';
 import ArrowForwardIosNewIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
@@ -21,11 +23,10 @@ function CourseOutlines() {
   const navigate = useNavigate()
   // pagination hooks
   const [currentPage, setCurrentPage] = useState(1); // Default to first page
-  const [itemsPerPage, ] = useState(10); // Set how many items you want per page
+  const [itemsPerPage, setItemsPerPage] = useState(10); // Set how many items you want per page
 
   // Initialize state to keep track of selected courses
   const [selectedCourses, setSelectedCourses] = useState({});
-
 
   const handleAddCourseCode = (e, code) => {
     const codePattern = /^[A-Za-z]{4}\d{4}$/;
@@ -39,7 +40,7 @@ function CourseOutlines() {
       setError('Please enter course code in correct format (e.g., ABCD1234).');
       return;
     }
-    if (checked &&!courseCodes.includes(code)) {
+    if (checked && !courseCodes.includes(code)) {
       setCourseCodes([...courseCodes, code])
     } else if (!checked &&courseCodes.includes(code)) {
       setCourseCodes(courseCodes.filter(c => c !== code));
@@ -149,6 +150,18 @@ function CourseOutlines() {
     return matchesSearchQuery && matchesTerm && matchesDeliveryMode && matchesDeliveryFormat && matchesLocation && matchesFaculty && matchesStudyLevel && matchesCampus;
   });
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handlePopClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'filter-popover' : undefined;
 
   // PAGINATION STUFF
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -168,91 +181,103 @@ function CourseOutlines() {
     setCurrentPage(prevPageNumber => prevPageNumber - 1);
   };
 
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(Number(e.target.value));
+    setCurrentPage(1); // Reset to first page when items per page changes
+  };
+
   return (
     <div className='courseoutline-wrapper'>
       <div className='courseoutline-container'>
           <div className='course-title-content'>
             <div className='course-title'>Course Outlines</div>
             <div className='filter-button-container'>
-              <IconButton aria-label='filter' onClick={handleFilterClick} style={{ marginRight: '20px' }}>
-                <FilterListIcon />
-              </IconButton>
-              {isBoxVisible && <div className='box'>
-                <div style={{ width: '90%', margin: '0 auto'}}>
-                <h5 className="search-bar-filter">Search</h5>
-                <div className="search-bar-filter">
-                  <TextField 
-                    label="Search by code or name" 
-                    variant='outlined' 
-                    type='text'
-                    value={searchQuery}
-                    onChange={handleSearchQueryChange}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <SearchIcon />
-                        </InputAdornment>
-                      ),
-                    }}
-                    style={{ marginRight: '20px' }}
-                    fullWidth
-                  />
-                </div>
-                <h5>Filter</h5>
-                  <SelectField
-                    label="Term"
-                    id="term-select"
-                    value={selectedTerm}
-                    onChange={(e) => setSelectedTerm(e.target.value)}
-                    options={uniqueTerms}
-                  />
-                  <SelectField
-                    label="Delivery Mode"
-                    id="deliveryMode-select"
-                    value={selectedDeliveryMode}
-                    onChange={(e) => setSelectedDeliveryMode(e.target.value)}
-                    options={uniqueDeliveryMode}
-                  />
-                  <SelectField
-                    label="Delivery Format"
-                    id="deliveryFormat-select"
-                    value={selectedDeliveryFormat}
-                    onChange={(e) => setSelectedDeliveryFormat(e.target.value)}
-                    options={uniqueDeliveryFormat}
-                  />
-                  <SelectField
-                    label="Location"
-                    id="location-select"
-                    value={selectedLocation}
-                    onChange={(e) => setSelectedLocation(e.target.value)}
-                    options={uniqueLocation}
-                  />
-                  <SelectField
-                    label="Faculty"
-                    id="faculty-select"
-                    value={selectedFaculty}
-                    onChange={(e) => setSelectedFaculty(e.target.value)}
-                    options={uniqueFaculty}
-                  />
-                  <SelectField
-                    label="Study Level"
-                    id="studyLevel-select"
-                    value={selectedStudyLevel}
-                    onChange={(e) => setSelectedStudyLevel(e.target.value)}
-                    options={uniqueStudyLevel}
-                  />
-                  <SelectField
-                    label="Campus"
-                    id="campus-select"
-                    value={selectedCampus}
-                    onChange={(e) => setSelectedCampus(e.target.value)}
-                    options={uniqueCampus}
-                  />
-                </div>
-              </div>}
-            
+            <Button variant="text" aria-describedby={id} onClick={handlePopClick} sx={{ color: 'grey', borderRadius: '30%', }}>
+              <FilterListIcon />
+              </Button>
+              <Popover
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+              >
+                <div className='box'>
+                  <h5 className="search-bar-filter">Search</h5>
+                  <div className="search-bar-filter">
+                    <StyledTextField
+                      label="Search by code or name" 
+                      variant='outlined' 
+                      type='text'
+                      value={searchQuery}
+                      onChange={handleSearchQueryChange}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <SearchIcon />
+                          </InputAdornment>
+                        ),
+                      }}
+                      fullWidth
+                    />
+                  </div>
+                  <h5>Filter</h5>
+                    <SelectField
+                      label="Term"
+                      id="term-select"
+                      value={selectedTerm}
+                      onChange={(e) => setSelectedTerm(e.target.value)}
+                      options={uniqueTerms}
+                    />
+                    <SelectField
+                      label="Delivery Mode"
+                      id="deliveryMode-select"
+                      value={selectedDeliveryMode}
+                      onChange={(e) => setSelectedDeliveryMode(e.target.value)}
+                      options={uniqueDeliveryMode}
+                    />
+                    <SelectField
+                      label="Delivery Format"
+                      id="deliveryFormat-select"
+                      value={selectedDeliveryFormat}
+                      onChange={(e) => setSelectedDeliveryFormat(e.target.value)}
+                      options={uniqueDeliveryFormat}
+                    />
+                    <SelectField
+                      label="Location"
+                      id="location-select"
+                      value={selectedLocation}
+                      onChange={(e) => setSelectedLocation(e.target.value)}
+                      options={uniqueLocation}
+                    />
+                    <SelectField
+                      label="Faculty"
+                      id="faculty-select"
+                      value={selectedFaculty}
+                      onChange={(e) => setSelectedFaculty(e.target.value)}
+                      options={uniqueFaculty}
+                    />
+                    <SelectField
+                      label="Study Level"
+                      id="studyLevel-select"
+                      value={selectedStudyLevel}
+                      onChange={(e) => setSelectedStudyLevel(e.target.value)}
+                      options={uniqueStudyLevel}
+                    />
+                    <SelectField
+                      label="Campus"
+                      id="campus-select"
+                      value={selectedCampus}
+                      onChange={(e) => setSelectedCampus(e.target.value)}
+                      options={uniqueCampus}
+                    />
+                  </div>
+              </Popover>
               <div className="search-bar" style={{justifySelf: 'flex-end'}}>
-                <TextField 
+                <StyledTextField
                   label="Search by code or name" 
                   variant='outlined' 
                   type='text'
@@ -267,12 +292,15 @@ function CourseOutlines() {
                   }}
                   style={{ marginRight: '20px',}}
                   size='small'
+                  sx={{
+                    color: '#693E6A',
+                  }}
                 />
               </div>
               <TextButton text='NEXT' handleclick={handleClick}/>
             </div>
           </div>
-          <div style={{fontSize: '10pt', color: error ? '#372768' : courseCodes.length === 0 ? '#F4F7F3' : '#372768'}}>
+          <div style={{fontSize: '10pt', color: error ? 'red' : courseCodes.length === 0 ? '#fff' : '#693E6A'}}>
             {error || `Selected ${courseCodes.length} outlines...`}
           </div>
           <div className='course-horizontalline'></div>
@@ -281,61 +309,78 @@ function CourseOutlines() {
             <div style={{ textAlign: 'center', marginTop: '165px' }}>
               <i className="fa-solid fa-file"></i>
               <p>No course outlines available.</p>
-              <p><a href='http://localhost:3000/'>Upload</a> some!</p>
+              <p><Link to='/'>Upload</Link> some!</p>
             </div>
           ) : (
             <>
-            <div className='courseoutline-selection'>
-              {currentItems.map((detail, index) => (
-                <div className={`courseoutline-box`} key={index}>
-                  <div>
-                    <Checkbox 
-                          checked={!!selectedCourses[detail.course_code]} // Check if the course code exists in the selectedCourses state
-                          onChange={(e) => handleAddCourseCode(e, detail.course_code)} />
+            <div className='courseoutline-selection-wrap'>
+              <div className='courseoutline-selection'>
+                {currentItems.map((detail, index) => (
+                  <div className={`courseoutline-box`} key={index}>
+                    <div>
+                      <Checkbox 
+                        checked={!!selectedCourses[detail.course_code]} 
+                        onChange={(e) => handleAddCourseCode(e, detail.course_code)} 
+                        sx={{
+                          color: '#693E6A',
+                          '&.Mui-checked': {
+                            color: '#693E6A',
+                          },
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <strong>{detail.course_code}</strong><br />
+                      <strong>Course Name:</strong> {detail.course_name}<br />
+                      <strong>Level:</strong> {detail.course_level}<br />
+                      <strong>Semester:</strong> {detail.course_term}
+                    </div>
+                    <Tooltip title="Delete" placement='top'>
+                      <IconButton 
+                        aria-label='delete-course'
+                        onClick={() => handleDeleteCourse(detail.course_code)}
+                      >
+                        <ClearIcon />
+                      </IconButton>
+                    </Tooltip>            
                   </div>
-                  <div>
-                    <strong>{detail.course_code}</strong><br />
-                    <strong>Course Name:</strong> {detail.course_name}<br />
-                    <strong>Level:</strong> {detail.course_level}<br />
-                    <strong>Semester:</strong> {detail.course_term}
-                    <button
-                      style={{
-                        backgroundColor: 'red',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '3px',
-                        cursor: 'pointer',
-                        padding: '5px',
-                        marginLeft: '10px'
-                      }}
-                      onClick={() => handleDeleteCourse(detail.course_code)}
-                    >
-                      X
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="pagination">
-              <button className="pag-nav-button" onClick={prevPage} disabled={currentPage === 1}>
-                <ArrowBackIosNewIcon className='icon' fontSize="20px"/>
-              </button>
-              {pageNumbers.map(number => (
-                <button 
-                  className={`pagination-button ${currentPage === number ? 'active' : ''}`} 
-                  key={number} 
-                  onClick={() => setCurrentPage(number)}
-                >
-                  {number}
+                ))}
+              </div>
+              <div className="pagination">
+                <button className="pag-nav-button" onClick={prevPage} disabled={currentPage === 1}>
+                  <ArrowBackIosNewIcon className='icon' fontSize="20px"/>
                 </button>
-              ))}
-              <button className="pag-nav-button" onClick={nextPage} disabled={currentPage === pageNumbers.length}>
-                <ArrowForwardIosNewIcon className='icon' fontSize="20px"/>
-              </button>
+                {pageNumbers.map(number => (
+                  <button 
+                    className={`pagination-button ${currentPage === number ? 'active' : ''}`} 
+                    key={number} 
+                    onClick={() => setCurrentPage(number)}
+                  >
+                    {number}
+                  </button>
+                ))}
+                <button className="pag-nav-button" onClick={nextPage} disabled={currentPage === pageNumbers.length}>
+                  <ArrowForwardIosNewIcon className='icon' fontSize="20px"/>
+                </button>
+                <Select
+                  value={itemsPerPage}
+                  onChange={handleItemsPerPageChange}
+                  displayEmpty
+                  inputProps={{ 'aria-label': 'Items per page' }}
+                  sx={{ marginLeft: 2 }}
+                >
+                  {[4, 6, 8, 10, 12, 14, 16].map(count => (
+                    <MenuItem key={count} value={count}>
+                      {count} items
+                    </MenuItem>
+                  ))}
+                </Select>
+              </div>
             </div>
             </>
           )}
       </div>      
+
     </div>
   );
 }

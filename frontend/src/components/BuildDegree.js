@@ -10,16 +10,16 @@ function BuildDegree() {
   const { classifyResults } = location.state || {};
   const navigate = useNavigate();
 
-  console.log('Received Bloom\'s Counts:', classifyResults.blooms_count);
+  console.log('Received Bloom\'s Counts:', classifyResults);
 
   // Define darker colors for Bloom's levels
   const bloomsColors = {
-    "Remember": "#800000", // Maroon
-    "Understand": "#000080", // Navy
-    "Apply": "#013220", // Dark Green
-    "Analyse": "#8B4513", // SaddleBrown
-    "Evaluate": "#FF4500", // OrangeRed
-    "Create": "#4B0082" // Indigo
+    "Remember": "#58745A",
+    "Understand": "#734474", 
+    "Apply": "#D33A22", 
+    "Analyse": "#3D54B8", 
+    "Evaluate": "#FFA10A", 
+    "Create": "#2FC6B0"
   };
 
   const handleClick = () => {
@@ -70,7 +70,7 @@ function BuildDegree() {
                 <div className='builddegree-labels'>
                   {Object.entries(bloomsColors).map(([level, color]) => (
                     <span key={level} style={{ color: color, fontWeight: 'bold', marginRight: '10px' }}>
-                      {level}
+                      {level} : {info.blooms_count[level]}
                     </span>
                   ))}
                 </div>

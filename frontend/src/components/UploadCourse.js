@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import './styles/uploadcourse.css';
 import { Alert, Button, FormControl, TextField } from '@mui/material';
@@ -6,6 +6,7 @@ import BrowseFilesButton from './BrowseFilesButton';
 import UploadButton from './UploadButton';
 import Loader from './Loader';
 import { useNavigate } from 'react-router-dom';
+import StyledTextField from './StyledTextField';
 
 
 function UploadCourse() {
@@ -14,11 +15,16 @@ function UploadCourse() {
   const [file, setFile] = useState(null);
   const [examContents, setExamContents] = useState('');
   const [error, setError] = useState('');
-  const [bloomsCount, setBloomsCount] = useState(null); // New state for Bloom's count
+  const [successMessage, setSuccessMessage] = useState('')
+  const [bloomsCount, setBloomsCount] = useState(null); 
   const [wordToBloom, setWordToBloom] = useState(null); 
   const [showAlert, setShowAlert] = useState(false);
-  const [isLoading, setIsLoading] = useState('false'); // New state for loading
-  const navigate = useNavigate()
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState('false');
+  const [successfulExamUpload, setSuccessfulExamUpload] = useState(false);
+
+  const navigate = useNavigate();
+  const dropZoneRef = useRef(null);
 
   const handleSelectionChange = (selection) => {
     setSelection(selection);
@@ -50,7 +56,6 @@ function UploadCourse() {
     if (!courseCode) {
       setError('Please provide the course code.')
       setShowAlert(true)
-      // alert('Please provide the course code.')
       return;
     }
 
@@ -58,7 +63,6 @@ function UploadCourse() {
     if (!codePattern.test(courseCode)) {
       setError('Please enter course code in correct format (e.g., ABCD1234).');
       setShowAlert(true)
-      // alert('Please enter course code in correct format (e.g., ABCD1234).')
       return;
     }
 
@@ -71,11 +75,12 @@ function UploadCourse() {
     try {
       const response = await axios.post('/api/upload_course_code', formData);
       if (response.status === 200) {
-        alert('Course code uploaded successfully!');
+        setShowAlert(false);
+        setSuccessMessage('Course code uploaded successfully!')
+        setShowSuccess(true)
         // Clear form state
         setCourseCode('');
         setError('');
-        setShowAlert(false);
       } else {
         setError('Failed to upload course code.');
         setShowAlert(true);
@@ -139,7 +144,8 @@ function UploadCourse() {
       });
 
       if (response.status === 200) {
-        alert('PDF file uploaded successfully!');
+        setSuccessMessage("PDF file uploaded successfully!")
+        setShowSuccess(true)
         // Clear form state
         setFile(null);
         setError('');
@@ -190,6 +196,16 @@ function UploadCourse() {
       setIsLoading(false); // End loading
     }
   };
+  
+  useEffect(() => {
+    if (bloomsCount !== null) { // Only navigate if bloomsCount is updated
+      setTimeout(() => {
+        console.log(examContents)
+        navigate('/buildexam', { state: { bloomsCount, examContents } }); // Pass data to the next page
+        setExamContents('');
+      }, 1500);
+    }
+  }, [bloomsCount, navigate]);
 
   const handleUploadExam = async () => {
     if (!examContents.trim()) {
@@ -217,15 +233,13 @@ function UploadCourse() {
     try {
       const response = await axios.post('/api/upload_exam', formData);
       if (response.status === 200) {
-        alert('Exam questions uploaded successfully!');
-        setExamContents('');
+        setSuccessMessage('Exam questions uploaded successfully!');
+        setShowSuccess(true);
         setError('');
         setShowAlert(false);
         setBloomsCount(response.data.blooms_count); // Update the state with Bloom's count
         setWordToBloom(response.data.word_to_blooms)
         console.log(response.data.word_to_blooms)
-        navigate('/buildexam', { state: { bloomsCount: bloomsCount,  } });  // Pass data to the next page
-        navigate('/buildexam', { state: { bloomsCount: bloomsCount,  } });
       } else {
         setError('Failed to upload exam questions.');
       }
@@ -237,8 +251,15 @@ function UploadCourse() {
       setIsLoading('false');
     }
   }
+
+
   const handleAlertClose = () => {
-    setShowAlert(false);
+    if (showAlert) {
+      setShowAlert(false);
+    }
+    if (showSuccess) {
+      setShowSuccess(false);
+    }
   };
   
   const onFileChange = (files) => {
@@ -251,10 +272,28 @@ function UploadCourse() {
     }
   }
 
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const droppedFiles = e.dataTransfer.files;
+    if (droppedFiles.length > 0) {
+      handleFileChange({ target: { files: droppedFiles } });
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
 
   return (
-    <div className='upload-wrapper'>
-      <div className="container">
+    <div className={`upload-wrapper ${showAlert || showSuccess ? 'alert-active' : ''}`}>
+      <div className='container'>
         <div className="container_inner">
           
           <div style={{ display: 'flex', alignItems:'center', marginTop: '-15px'}}>
@@ -281,15 +320,27 @@ function UploadCourse() {
           {selection === 'courseOutline' && (<>
             
             <div className="upload_form">
-              <Alert severity="error" onClose={handleAlertClose} style={{marginBottom: '20px', marginTop: '-10px', display: showAlert ? 'flex' : 'none'}} >
+              <Alert severity="error" onClose={handleAlertClose} style={{display: showAlert ? 'flex' : 'none'}} className='alert' >
                 {error}
               </Alert>
-              <i className="fas fa-cloud-upload-alt"></i>
+              <Alert severity="success" onClose={handleAlertClose} style={{marginBottom: '20px', marginTop: '-10px', display: showSuccess ? 'flex' : 'none',}} >
+                {successMessage}
+              </Alert>
+              <div
+                ref={dropZoneRef}
+                className="drop-zone"
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onDragEnter={handleDragEnter}
+              >
+                <i className="fas fa-cloud-upload-alt"></i>
+              </div>
               <p>Drop file to upload</p>
               <p>or</p>
               <div>
                 <BrowseFilesButton handleChange={handleFileChange}/>
-                {file === null ? 'No file chosen' : <div >{file.name}</div>}
+                {file === null ? 'No file chosen' : <div>{file.name.length > 30 ? file.name.substring(0, 30) + '...' : file.name}</div>}
+
               </div>
               <br />
 
@@ -308,7 +359,15 @@ function UploadCourse() {
               
             </div>
             <div className="upload_form" style={{ display: 'flex', justifyContent: 'center' }}>
-              <TextField type='text' variant="standard" label="Input course code" size='small' onChange={handleTextChange} onKeyDown={handleKeyPress} style={{ width: '140px', marginRight: '30px' }}/>
+              <StyledTextField 
+                type='text' 
+                variant="standard" 
+                label="Input course code" 
+                size='small' 
+                onChange={handleTextChange} 
+                onKeyDown={handleKeyPress} 
+                style={{ width: '140px', marginRight: '30px' }}
+              />
                 <br/>
               {isLoading === 'uploadingCode' ? (
                 <Loader />
@@ -320,12 +379,22 @@ function UploadCourse() {
           </>)}
 
           {selection === 'examPaper' && (<>
-            <Alert severity="error" onClose={handleAlertClose} style={{marginBottom: '20px', marginTop: '-10px', display: showAlert ? 'flex' : 'none'}} >
-              {error}
-            </Alert>
-            <div className="upload_form">
-              <p>Input Text</p>
-              <TextField multiline rows={5} fullWidth value={examContents} onChange={handleExamTextChange} sx={{ marginBottom: '20px'}} />
+            <Alert severity="error" onClose={handleAlertClose} style={{display: showAlert ? 'flex' : 'none'}} className='alert' >
+                {error}
+              </Alert>
+              <Alert severity="success" onClose={handleAlertClose} style={{marginBottom: '20px', marginTop: '-10px', display: showSuccess ? 'flex' : 'none',}} >
+                {successMessage}
+              </Alert>
+            <div className="upload_form" style={{ minHeight: '430px' }}> 
+              <h4>Input Text</h4>
+              <StyledTextField
+                multiline 
+                rows={12} 
+                fullWidth 
+                value={examContents} 
+                onChange={handleExamTextChange} 
+                sx={{ marginBottom: '20px'}}
+              />
 
               {isLoading === 'uploadingExam' ? (
                 <Loader />
@@ -334,7 +403,7 @@ function UploadCourse() {
               )}
 
             </div>
-            <div className="upload_form">
+            {/* <div className="upload_form">
               {bloomsCount && (
                 <div className="blooms_count">
                   <h3>Bloom's Taxonomy Count:</h3>
@@ -345,7 +414,7 @@ function UploadCourse() {
                   </ul>
                 </div>
               )}
-            </div>
+            </div> */}
             </>
           )}
         </div>
