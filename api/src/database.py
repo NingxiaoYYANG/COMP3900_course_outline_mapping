@@ -37,6 +37,7 @@ def get_db_connection():
         connection.commit()
         cursor.execute("CREATE TABLE IF NOT EXISTS course_details (course_code VARCHAR(8) PRIMARY KEY, course_name VARCHAR(255), course_level VARCHAR(5), course_term VARCHAR(4), faculty VARCHAR(255), delivery_mode VARCHAR(255), delivery_format VARCHAR(255), delivery_location VARCHAR(255), campus VARCHAR(255), course_clos TEXT, word_to_blooms TEXT)")
         connection.commit()
+        initialize_blooms_taxonomy()
 
         cursor.close()
         db_initialised = True
@@ -99,9 +100,6 @@ def get_blooms_taxonomy():
         cursor.execute("SELECT * FROM blooms_taxonomy")
         result = cursor.fetchall()
         blooms_taxonomy = {row[0]: json.loads(row[1]) for row in result}
-        if not blooms_taxonomy:
-            initialize_blooms_taxonomy()
-            blooms_taxonomy = get_blooms_taxonomy()
         return blooms_taxonomy
     
     except Exception as e:

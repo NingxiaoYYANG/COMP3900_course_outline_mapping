@@ -14,12 +14,15 @@ classifier = None
 def initialize_classifier():
     global classifier
     if classifier is None:
-        if torch.cuda.is_available():
+        if torch.cuda.is_available() & torch.backends.cudnn.is_available():
             device = torch.device('cuda')
             print(f'CUDA Acceleration enabled: {torch.cuda.get_device_name()}')
         elif torch.backends.mps.is_available():
             device = torch.device('mps')
             print('MacOS Metal Acceleration enabled')
+        elif torch.xpu.is_available():
+            device = torch.device('xpu')
+            print('Intel GPU Acceleration enabled')
         else:
             device = torch.device('cpu')
             print('No GPU available, using CPU')
