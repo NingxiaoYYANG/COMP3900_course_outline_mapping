@@ -4,7 +4,6 @@
   align-items: center;
   min-height: 100vh;
   box-sizing: border-box;
-  align-items: flex-start;
   padding-top: 120px;
   padding-bottom: 110px;
 }
@@ -16,7 +15,7 @@
   padding: 1.5rem;
   box-sizing: border-box;
   min-height: 570px;
-  /* height: calc(85vh - 130px); */
+  height: calc(85vh - 130px);
   margin-top: -20px;
   overflow-y: auto;
   overflow-x: hidden;

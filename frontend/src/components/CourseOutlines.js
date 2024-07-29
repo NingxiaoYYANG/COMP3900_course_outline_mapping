@@ -4,12 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import Checkbox from '@mui/material/Checkbox';
 import './styles/courseoutlines.css'
 import TextButton from './TextButton';
-import { Button, IconButton, InputAdornment, Popover, TextField } from '@mui/material';
+import { Button, IconButton, InputAdornment, Popover, TextField, Tooltip } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import SelectField from './SelectField';
 import StyledTextField from './StyledTextField';
-
+import ClearIcon from '@mui/icons-material/Clear';
 
 function CourseOutlines() {
   const [courseCodes, setCourseCodes] = useState([]);
@@ -285,28 +285,21 @@ function CourseOutlines() {
                       },
                     }}
                   />
-
                   </div>
                 <div>
                   <strong>{detail.course_code}</strong><br />
                   <strong>Course Name:</strong> {detail.course_name}<br />
                   <strong>Level:</strong> {detail.course_level}<br />
                   <strong>Semester:</strong> {detail.course_term}
-                  <button
-                    style={{
-                      backgroundColor: 'red',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '3px',
-                      cursor: 'pointer',
-                      padding: '5px',
-                      marginLeft: '10px'
-                    }}
+                </div>
+                <Tooltip title="Delete" placement='top'>
+                  <IconButton 
+                    aria-label='delete-course'
                     onClick={() => handleDeleteCourse(detail.course_code)}
                   >
-                    X
-                  </button>
-                </div>
+                    <ClearIcon />
+                  </IconButton>
+                </Tooltip>
               </div>
             ))}
           </div>

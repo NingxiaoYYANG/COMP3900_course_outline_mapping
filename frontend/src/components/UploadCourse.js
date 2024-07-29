@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import './styles/uploadcourse.css';
 import { Alert, Button, FormControl, TextField } from '@mui/material';
@@ -21,6 +21,7 @@ function UploadCourse() {
   const [showAlert, setShowAlert] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState('false');
+  const [successfulExamUpload, setSuccessfulExamUpload] = useState(false);
 
   const navigate = useNavigate();
   const dropZoneRef = useRef(null);
@@ -55,7 +56,6 @@ function UploadCourse() {
     if (!courseCode) {
       setError('Please provide the course code.')
       setShowAlert(true)
-      // alert('Please provide the course code.')
       return;
     }
 
@@ -63,7 +63,6 @@ function UploadCourse() {
     if (!codePattern.test(courseCode)) {
       setError('Please enter course code in correct format (e.g., ABCD1234).');
       setShowAlert(true)
-      // alert('Please enter course code in correct format (e.g., ABCD1234).')
       return;
     }
 
@@ -76,9 +75,8 @@ function UploadCourse() {
     try {
       const response = await axios.post('/api/upload_course_code', formData);
       if (response.status === 200) {
-        setShowSuccess(true)
         setSuccessMessage('Course code uploaded successfully!')
-        alert('Course code uploaded successfully!');
+        setShowSuccess(true)
         // Clear form state
         setCourseCode('');
         setError('');
@@ -117,7 +115,8 @@ function UploadCourse() {
       });
 
       if (response.status === 200) {
-        alert('PDF file uploaded successfully!');
+        setSuccessMessage("PDF file uploaded successfully!")
+        setShowSuccess(true)
         // Clear form state
         setFile(null);
         setError('');
@@ -134,6 +133,14 @@ function UploadCourse() {
       setIsLoading(false); // End loading
     }
   };
+  
+  useEffect(() => {
+    if (bloomsCount !== null) { // Only navigate if bloomsCount is updated
+      setTimeout(() => {
+        navigate('/buildexam', { state: { bloomsCount } }); // Pass data to the next page
+      }, 2000);
+    }
+  }, [bloomsCount, navigate]);
 
   const handleUploadExam = async () => {
     if (!examContents.trim()) {
@@ -161,15 +168,14 @@ function UploadCourse() {
     try {
       const response = await axios.post('/api/upload_exam', formData);
       if (response.status === 200) {
-        alert('Exam questions uploaded successfully!');
+        setSuccessMessage('Exam questions uploaded successfully!')
+        setShowSuccess(true)
         setExamContents('');
         setError('');
         setShowAlert(false);
         setBloomsCount(response.data.blooms_count); // Update the state with Bloom's count
         setWordToBloom(response.data.word_to_blooms)
         console.log(response.data.word_to_blooms)
-        navigate('/buildexam', { state: { bloomsCount: bloomsCount,  } });  // Pass data to the next page
-        navigate('/buildexam', { state: { bloomsCount: bloomsCount,  } });
       } else {
         setError('Failed to upload exam questions.');
       }
@@ -181,6 +187,8 @@ function UploadCourse() {
       setIsLoading('false');
     }
   }
+
+
   const handleAlertClose = () => {
     if (showAlert) {
       setShowAlert(false);
@@ -307,9 +315,12 @@ function UploadCourse() {
           </>)}
 
           {selection === 'examPaper' && (<>
-            <Alert severity="error" onClose={handleAlertClose} style={{marginBottom: '20px', marginTop: '-10px', display: showAlert ? 'flex' : 'none'}} >
-              {error}
-            </Alert>
+            <Alert severity="error" onClose={handleAlertClose} style={{display: showAlert ? 'flex' : 'none'}} className='alert' >
+                {error}
+              </Alert>
+              <Alert severity="success" onClose={handleAlertClose} style={{marginBottom: '20px', marginTop: '-10px', display: showSuccess ? 'flex' : 'none',}} >
+                {successMessage}
+              </Alert>
             <div className="upload_form" style={{ minHeight: '430px' }}> 
               <h4>Input Text</h4>
               <StyledTextField
