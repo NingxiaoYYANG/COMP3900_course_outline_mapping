@@ -82,8 +82,37 @@ function UploadCourse() {
       }
     } catch (error) {
       console.error('Error uploading course code:', error);
-      setError('Error uploading course code. Please try again later.');
-      setShowAlert(true)
+      if (error.response && error.response.data.error) {
+        //alert(error.response.data.error);  // Display the custom error message in an alert
+        const userConfirmation = window.confirm(`Course code ${formData.get("course_code")} already exists. Do you want to replace it?`);
+        if (userConfirmation) {
+            try {
+                // Send DELETE request to remove the existing course code
+                await axios.delete(`/api/delete_course`, { data: { course_code: formData.get("course_code") } });
+                
+                // Attempt to add the new course details again
+                const retryResponse = await axios.post('/api/upload_course_code', formData);
+                if (retryResponse.status === 200) {
+                    alert('Course code replaced successfully!');
+                    // Clear form state...
+                } else {
+                    setError('Failed to replace course code.');
+                    setShowAlert(true);
+                }
+            } catch (deleteError) {
+                console.error('Error deleting course code:', deleteError);
+                setError('Failed to delete course code. Please try again later.');
+                setShowAlert(true);
+            }
+        } else {
+            // User chose not to replace, handle accordingly
+            setError('Course code upload cancelled.');
+            setShowAlert(true);
+        }
+    } else {
+        setError('Error uploading course code. Please try again later.');
+        setShowAlert(true);
+    }
     } finally {
       setIsLoading('false'); // End loading
     }
@@ -121,8 +150,42 @@ function UploadCourse() {
       }
     } catch (error) {
       console.error('Error uploading PDF:', error);
-      setError('Error uploading PDF. Please try again later.');
-      setShowAlert(true)
+      if (error.response && error.response.data.error) {
+        //alert(error.response.data.error);  // Display the custom error message in an alert
+        const userConfirmation = window.confirm(`Course code ${error.response.data.course_code} already exists. Do you want to replace it?`);
+        if (userConfirmation) {
+            try {
+                // Send DELETE request to remove the existing course code
+                const courseCodeToDelete = error.response.data.course_code;
+                await axios.delete(`/api/delete_course`, { data: { course_code: courseCodeToDelete } });
+                
+                // Attempt to add the new course details again
+                const retryResponse = await axios.post('/api/upload_pdf', formData, {
+                  headers: {
+                    'Content-Type': 'multipart/form-data'
+                  }
+                });
+                if (retryResponse.status === 200) {
+                    alert('Course code replaced successfully!');
+                    // Clear form state...
+                } else {
+                    setError('Failed to replace course code.');
+                    setShowAlert(true);
+                }
+            } catch (deleteError) {
+                console.error('Error deleting course code:', deleteError);
+                setError('Failed to delete course code. Please try again later.');
+                setShowAlert(true);
+            }
+        } else {
+            // User chose not to replace, handle accordingly
+            setError('Course code upload cancelled.');
+            setShowAlert(true);
+        }
+    } else {
+        setError('Error uploading PDF. Please try again later.');
+        setShowAlert(true);
+    }
     } finally {
       setIsLoading(false); // End loading
     }
@@ -262,7 +325,7 @@ function UploadCourse() {
             </Alert>
             <div className="upload_form">
               <p>Input Text</p>
-              <TextField multiline rows={5} maxRows={5} fullWidth value={examContents} onChange={handleExamTextChange} sx={{ marginBottom: '20px'}} />
+              <TextField multiline rows={5} fullWidth value={examContents} onChange={handleExamTextChange} sx={{ marginBottom: '20px'}} />
 
               {isLoading === 'uploadingExam' ? (
                 <Loader />

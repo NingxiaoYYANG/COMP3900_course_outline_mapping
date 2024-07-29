@@ -81,6 +81,79 @@
   width: 100%;
 }
 
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  height: 28px;
+}
+
+.pagination-button {
+  background-color: #5E475C;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  margin: 0 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: small;
+}
+
+.pagination-button:hover {
+  background-color: #473445;
+}
+
+.pagination-button:active {
+  background-color: #3A242E;
+}
+
+.pagination-button.active {
+  background-color: #251c24;
+}
+
+.pag-nav-button {
+  display: flex;
+  justify-content: center;
+  background-color: #5E475C;
+  color: white;
+  border: none;
+  padding: 7px 7px;
+  margin: 0 5px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: small;
+  text-align: center;
+}
+
+.pag-nav-button:hover {
+  background-color: #473445;
+}
+
+.pag-nav-button:active {
+  background-color: #3A242E;
+}
+
+.pag-nav-button:disabled {
+  background-color: #D1D5DB;
+  color: #6B7280;
+  cursor: not-allowed;
+}
+
+.courseoutline-selection {
+  animation: fadeInAnimation ease 0.5s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeInAnimation {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 /* Media query for smaller viewports */
 @media (max-height: 660px) {
   .courseoutline-wrapper {
