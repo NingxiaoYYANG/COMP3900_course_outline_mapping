@@ -75,12 +75,12 @@ function UploadCourse() {
     try {
       const response = await axios.post('/api/upload_course_code', formData);
       if (response.status === 200) {
+        setShowAlert(false);
         setSuccessMessage('Course code uploaded successfully!')
         setShowSuccess(true)
         // Clear form state
         setCourseCode('');
         setError('');
-        setShowAlert(false);
       } else {
         setError('Failed to upload course code.');
         setShowAlert(true);
@@ -200,8 +200,10 @@ function UploadCourse() {
   useEffect(() => {
     if (bloomsCount !== null) { // Only navigate if bloomsCount is updated
       setTimeout(() => {
-        navigate('/buildexam', { state: { bloomsCount } }); // Pass data to the next page
-      }, 2000);
+        console.log(examContents)
+        navigate('/buildexam', { state: { bloomsCount, examContents } }); // Pass data to the next page
+        setExamContents('');
+      }, 1500);
     }
   }, [bloomsCount, navigate]);
 
@@ -231,9 +233,8 @@ function UploadCourse() {
     try {
       const response = await axios.post('/api/upload_exam', formData);
       if (response.status === 200) {
-        setSuccessMessage('Exam questions uploaded successfully!')
-        setShowSuccess(true)
-        setExamContents('');
+        setSuccessMessage('Exam questions uploaded successfully!');
+        setShowSuccess(true);
         setError('');
         setShowAlert(false);
         setBloomsCount(response.data.blooms_count); // Update the state with Bloom's count

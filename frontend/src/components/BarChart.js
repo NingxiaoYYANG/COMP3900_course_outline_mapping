@@ -65,9 +65,7 @@ const BarChart = ({ data }) => {
   };
 
   return (
-    <div style={{ width: '100%', minHeight: '500px' }}>
-      <Bar data={chartData} options={options} />
-    </div>
+    <Bar data={chartData} options={options} />
   );
 };
 

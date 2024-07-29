@@ -5,40 +5,22 @@ import TextButton from "./TextButton";
 function EvaluateExam() {
   const location = useLocation();
   const navigate = useNavigate();
-  // const { bloomsCount } = location.state || {};
+  const { bloomsCount, examContents } = location.state || {};
 
-  const bloomsCount =  
-  {
-    "contrast": "Evaluate",
-    "describe": "Remember",
-    "explain": "Create",
-    "identify": "Analyse",
-    "includes": "Understand",
-    "ordering": "Analyse",
-    "sorts": "Understand",
-    "summarize": "Understand",
-    "using": "Apply"
-  }
+  console.log('Received Exam Bloom\'s Counts:', bloomsCount);
+  console.log('Exam Contents', examContents)
 
-  console.log('Received Bloom\'s Counts:', bloomsCount);
+  const questions = examContents.trim().split('\n');
+  console.log(questions)
 
   const bloomsColors = {
-    "Remember": "#800000", // Maroon
-    "Understand": "#000080", // Navy
-    "Apply": "#013220", // Dark Green
-    "Analyse": "#8B4513", // SaddleBrown
-    "Evaluate": "#FF4500", // OrangeRed
-    "Create": "#4B0082" // Indigo
+    "Remember": "#58745A",
+    "Understand": "#734474", 
+    "Apply": "#D33A22", 
+    "Analyse": "#3D54B8", 
+    "Evaluate": "#FFA10A", 
+    "Create": "#2FC6B0"
   };
-
-  const questions = [
-    "1. Explain the BFS algorithm and identify 1 usecase.",
-    "2. Explain how a binary search algorithm works and describe a scenario where it would be more efficient than a linear search.",
-    "3. Implement a function in C that sorts a list of integers using the quicksort algorithm.",
-    "4. Compare and contrast the time complexity of bubble sort and merge sort. Under what conditions would one be preferable over the other?",
-    "5. Design a database schema for a library management system that includes tables for books, authors, members, and borrow transactions.",
-    "6. Summarize the differences between TCP and UDP protocols in terms of reliability, ordering, and connection state."
-  ];
 
   const getColor = (word) => {
     const bloomLevel = bloomsCount[word.toLowerCase()];
@@ -85,21 +67,21 @@ function EvaluateExam() {
       <div className='exam-horizontalline'></div>
       <div className='exam-content'>
         <div className='exam-questions'>
+          <h4>Exam Questions</h4>
           {questions.map((question, index) => (
-            <div key={index}>
+            <div key={index} style={{ marginBottom: '8px'}}>
               <ColoredText text={question} />
-              <br />
             </div>
           ))}
         </div>
         <div className='exam-graph'>
             {count ? (
-              <BarChart data={count} />
+              <BarChart data={bloomsCount} />
             ) : (
               <p>No Bloom's Taxonomy counts available.</p>
             )}
         </div>
-        <div className='builddegree-button-container'>
+        <div className='exam-button-container'>
           <TextButton text='BACK' handleclick={handleClick} />
         </div>
       </div>

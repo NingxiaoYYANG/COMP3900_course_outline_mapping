@@ -161,7 +161,7 @@ p {
 
 
 /* Media query for smaller viewports */
-@media (max-height: 770px) {
+@media (max-height: 799px) {
   .upload-wrapper {
     align-items: flex-start;
     padding-top: 110px;

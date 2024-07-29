@@ -4,7 +4,6 @@
   align-items: center;
   min-height: 100vh;
   box-sizing: border-box;
-  align-items: flex-start;
   padding-top: 120px;
   padding-bottom: 110px;
 }
@@ -20,7 +19,7 @@
   width: 90%;
   box-sizing: border-box;
   min-height: 570px;
-  /* height: calc(85vh - 130px); */
+  height: calc(85vh - 130px);
   margin-top: -20px;
   overflow-x: hidden;
 }
@@ -44,8 +43,9 @@
   display: flex;
   flex-direction: column;
   align-items: left;
+  justify-content: space-between;
   width: 100%;
-  flex-grow: 1;
+  flex: 1;
 }
 
 .exam-questions {
@@ -55,10 +55,13 @@
 .exam-graph {
   width: 90%;
   margin-top: 20px;
-  flex-grow: 1; /* Allow the graph to grow and fill available space */
+  flex: 1; /* Allow the graph to grow and fill available space */
   min-height: 400px; /* Minimum height of the graph */
-  padding-bottom: 70px;
   align-self: center;
+}
+.exam-button-container {
+  align-self: flex-start;
+  margin-top: 20px;
 }
 
 /* Media query for smaller viewports */

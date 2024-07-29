@@ -5,8 +5,7 @@
   align-items: center;
   min-height: 100vh;
   box-sizing: border-box;
-  align-items: flex-start;
-  padding-top: 150px;
+  padding-top: 120px;
   padding-bottom: 110px;
 }
 
@@ -61,37 +60,40 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
-  flex-grow: 1; /*Allow this container to grow */
+  flex: 1;
 }
 
 .builddegree-clo {
   width: 100%;
+  
 }
 
 .builddegree-labels {
   margin-top: 10px;
+  overflow-wrap:normal;
 }
 
 .builddegree-graph {
   width: 90%;
   margin-top: 20px;
-  flex-grow: 1; /* Allow the graph to grow and fill available space */
+  flex: 1; /* Allow the graph to grow and fill available space */
   min-height: 400px; /* Minimum height of the graph */
-  padding-bottom: 70px;
   align-self: center;
 }
 
 .builddegree-button-container {
   align-self: flex-start;
+  margin-top: 20px;
 }
 
 /* Media query for smaller viewports */
 @media (max-height: 660px) {
   .builddegree-container {
     align-items: flex-start;
-    padding-top: 100px;
-    padding-bottom: 60px;
+    padding-top: 120px;
+    padding-bottom: 110px;
   }
 }
 

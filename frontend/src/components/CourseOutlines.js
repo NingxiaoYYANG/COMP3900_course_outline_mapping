@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Checkbox from '@mui/material/Checkbox';
 import './styles/courseoutlines.css'
 import TextButton from './TextButton';
-import { Button, IconButton, InputAdornment, Popover, TextField, Tooltip } from '@mui/material';
+import { Button, IconButton, InputAdornment, MenuItem, Popover, Select, TextField, Tooltip } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import SelectField from './SelectField';
@@ -23,11 +23,10 @@ function CourseOutlines() {
   const navigate = useNavigate()
   // pagination hooks
   const [currentPage, setCurrentPage] = useState(1); // Default to first page
-  const [itemsPerPage, ] = useState(10); // Set how many items you want per page
+  const [itemsPerPage, setItemsPerPage] = useState(10); // Set how many items you want per page
 
   // Initialize state to keep track of selected courses
   const [selectedCourses, setSelectedCourses] = useState({});
-
 
   const handleAddCourseCode = (e, code) => {
     const codePattern = /^[A-Za-z]{4}\d{4}$/;
@@ -182,6 +181,11 @@ function CourseOutlines() {
     setCurrentPage(prevPageNumber => prevPageNumber - 1);
   };
 
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(Number(e.target.value));
+    setCurrentPage(1); // Reset to first page when items per page changes
+  };
+
   return (
     <div className='courseoutline-wrapper'>
       <div className='courseoutline-container'>
@@ -272,9 +276,6 @@ function CourseOutlines() {
                     />
                   </div>
               </Popover>
-                
-              
-            
               <div className="search-bar" style={{justifySelf: 'flex-end'}}>
                 <StyledTextField
                   label="Search by code or name" 
@@ -308,62 +309,78 @@ function CourseOutlines() {
             <div style={{ textAlign: 'center', marginTop: '165px' }}>
               <i className="fa-solid fa-file"></i>
               <p>No course outlines available.</p>
-              <p><a href='http://localhost:3000/'>Upload</a> some!</p>
+              <p><Link to='/'>Upload</Link> some!</p>
             </div>
           ) : (
             <>
-            <div className='courseoutline-selection'>
-              {currentItems.map((detail, index) => (
-                <div className={`courseoutline-box`} key={index}>
-                  <div>
-                    <Checkbox 
-                      checked={courseCodes.includes(detail.course_code)} 
-                      onChange={(e) => handleAddCourseCode(e, detail.course_code)} 
-                      sx={{
-                        color: '#693E6A',
-                        '&.Mui-checked': {
+            <div className='courseoutline-selection-wrap'>
+              <div className='courseoutline-selection'>
+                {currentItems.map((detail, index) => (
+                  <div className={`courseoutline-box`} key={index}>
+                    <div>
+                      <Checkbox 
+                        checked={!!selectedCourses[detail.course_code]} 
+                        onChange={(e) => handleAddCourseCode(e, detail.course_code)} 
+                        sx={{
                           color: '#693E6A',
-                        },
-                      }}
-                    />
+                          '&.Mui-checked': {
+                            color: '#693E6A',
+                          },
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <strong>{detail.course_code}</strong><br />
+                      <strong>Course Name:</strong> {detail.course_name}<br />
+                      <strong>Level:</strong> {detail.course_level}<br />
+                      <strong>Semester:</strong> {detail.course_term}
+                    </div>
+                    <Tooltip title="Delete" placement='top'>
+                      <IconButton 
+                        aria-label='delete-course'
+                        onClick={() => handleDeleteCourse(detail.course_code)}
+                      >
+                        <ClearIcon />
+                      </IconButton>
+                    </Tooltip>            
                   </div>
-                  <div>
-                    <strong>{detail.course_code}</strong><br />
-                    <strong>Course Name:</strong> {detail.course_name}<br />
-                    <strong>Level:</strong> {detail.course_level}<br />
-                    <strong>Semester:</strong> {detail.course_term}
-                  </div>
-                  <Tooltip title="Delete" placement='top'>
-                    <IconButton 
-                      aria-label='delete-course'
-                      onClick={() => handleDeleteCourse(detail.course_code)}
-                    >
-                      <ClearIcon />
-                    </IconButton>
-                  </Tooltip>            
-                </div>
-              ))}
-            </div>
-            <div className="pagination">
-              <button className="pag-nav-button" onClick={prevPage} disabled={currentPage === 1}>
-                <ArrowBackIosNewIcon className='icon' fontSize="20px"/>
-              </button>
-              {pageNumbers.map(number => (
-                <button 
-                  className={`pagination-button ${currentPage === number ? 'active' : ''}`} 
-                  key={number} 
-                  onClick={() => setCurrentPage(number)}
-                >
-                  {number}
+                ))}
+              </div>
+              <div className="pagination">
+                <button className="pag-nav-button" onClick={prevPage} disabled={currentPage === 1}>
+                  <ArrowBackIosNewIcon className='icon' fontSize="20px"/>
                 </button>
-              ))}
-              <button className="pag-nav-button" onClick={nextPage} disabled={currentPage === pageNumbers.length}>
-                <ArrowForwardIosNewIcon className='icon' fontSize="20px"/>
-              </button>
+                {pageNumbers.map(number => (
+                  <button 
+                    className={`pagination-button ${currentPage === number ? 'active' : ''}`} 
+                    key={number} 
+                    onClick={() => setCurrentPage(number)}
+                  >
+                    {number}
+                  </button>
+                ))}
+                <button className="pag-nav-button" onClick={nextPage} disabled={currentPage === pageNumbers.length}>
+                  <ArrowForwardIosNewIcon className='icon' fontSize="20px"/>
+                </button>
+                <Select
+                  value={itemsPerPage}
+                  onChange={handleItemsPerPageChange}
+                  displayEmpty
+                  inputProps={{ 'aria-label': 'Items per page' }}
+                  sx={{ marginLeft: 2 }}
+                >
+                  {[4, 6, 8, 10, 12, 14, 16].map(count => (
+                    <MenuItem key={count} value={count}>
+                      {count} items
+                    </MenuItem>
+                  ))}
+                </Select>
+              </div>
             </div>
             </>
           )}
       </div>      
+
     </div>
   );
 }
