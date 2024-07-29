@@ -317,11 +317,21 @@ function CourseOutlines() {
               ))}
             </div>
             <div className="pagination">
-              <button className="pag-nav-button" onClick={prevPage} disabled={currentPage === 1}><ArrowBackIosNewIcon className='icon' fontSize="20px"/></button>
+              <button className="pag-nav-button" onClick={prevPage} disabled={currentPage === 1}>
+                <ArrowBackIosNewIcon className='icon' fontSize="20px"/>
+              </button>
               {pageNumbers.map(number => (
-                <button className={`pagination-button ${currentPage === number ? 'active' : ''}`} key={number} onClick={() => setCurrentPage(number)}>{number}</button>
+                <button 
+                  className={`pagination-button ${currentPage === number ? 'active' : ''}`} 
+                  key={number} 
+                  onClick={() => setCurrentPage(number)}
+                >
+                  {number}
+                </button>
               ))}
-              <button className="pag-nav-button" onClick={nextPage} disabled={currentPage === pageNumbers.length}><ArrowForwardIosNewIcon className='icon' fontSize="20px"/></button>
+              <button className="pag-nav-button" onClick={nextPage} disabled={currentPage === pageNumbers.length}>
+                <ArrowForwardIosNewIcon className='icon' fontSize="20px"/>
+              </button>
             </div>
             </>
           )}
