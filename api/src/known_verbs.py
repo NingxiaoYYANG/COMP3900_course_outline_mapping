@@ -2,6 +2,11 @@
 KNOWN_VERBS = {
     "construct": "VB",
     "analyze" : "VB",
+    "analyse" : "VB",
+    "remember" : "VB",
+    "evaluate" : "VB",
+    "understand" : "VB",
+    "apply" : "VB",
     "create" : "VB",
     "what" : "VB",
     "be" : "NULL",
