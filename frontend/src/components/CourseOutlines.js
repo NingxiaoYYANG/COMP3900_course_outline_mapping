@@ -161,7 +161,7 @@ function CourseOutlines() {
     const matchesDeliveryFormat = selectedDeliveryFormat === '' || detail.delivery_format=== selectedDeliveryFormat;
     const matchesLocation = selectedLocation === '' || detail.delivery_location === selectedLocation;
     const matchesFaculty = selectedFaculty === '' || detail.faculty === selectedFaculty;
-    const matchesStudyLevel = selectedStudyLevel === '' || detail.faculty === selectedStudyLevel;
+    const matchesStudyLevel = selectedStudyLevel === '' || detail.course_level === selectedStudyLevel;
     const matchesCampus = selectedCampus === '' || detail.campus === selectedCampus;
 
     return matchesSearchQuery && matchesTerm && matchesDeliveryMode && matchesDeliveryFormat && matchesLocation && matchesFaculty && matchesStudyLevel && matchesCampus;

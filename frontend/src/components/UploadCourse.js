@@ -381,11 +381,11 @@ function UploadCourse() {
           </>)}
 
           {selection === 'examPaper' && (<>
-            <div className="upload_form" style={{ minHeight: '430px' }}> 
+            <div className="upload_form" > 
               <h4>Input Text</h4>
               <StyledTextField
                 multiline 
-                rows={12} 
+                rows={14} 
                 fullWidth 
                 value={examContents} 
                 onChange={handleExamTextChange} 
