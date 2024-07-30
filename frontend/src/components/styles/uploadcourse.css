@@ -16,7 +16,7 @@
   max-width: 600px;
   width: 70%;
   box-sizing: border-box;
-  min-height: 570px;
+  min-height: 610px;
   transition: padding 0.3s ease; 
 }
 
@@ -150,11 +150,6 @@ p {
 
 .drop-zone:hover {
   background-color: #f5f5f5;
-}
-
-.alert-active {
-  margin-top: 0rem; /* Add more padding on top when alert is visible */
-  margin-bottom: 0.5rem;
 }
 
 

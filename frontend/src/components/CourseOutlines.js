@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Checkbox from '@mui/material/Checkbox';
 import './styles/courseoutlines.css'
 import TextButton from './TextButton';
-import { Button, IconButton, InputAdornment, MenuItem, Popover, Select, TextField, Tooltip } from '@mui/material';
+import { Alert, Button, IconButton, InputAdornment, MenuItem, Popover, Select, Snackbar, TextField, Tooltip } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import SelectField from './SelectField';
@@ -12,6 +12,7 @@ import StyledTextField from './StyledTextField';
 import ClearIcon from '@mui/icons-material/Clear';
 import ArrowForwardIosNewIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import DeleteDialog from './DeleteDialog';
 
 
 function CourseOutlines() {
@@ -20,6 +21,12 @@ function CourseOutlines() {
   const [classifyResults, setClassifyResults] = useState(null);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState('');
+  const [onConfirmAction, setOnConfirmAction] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('')
+  const [showSuccess, setShowSuccess] = useState(false);
+
   const navigate = useNavigate()
   // pagination hooks
   const [currentPage, setCurrentPage] = useState(1); // Default to first page
@@ -49,18 +56,26 @@ function CourseOutlines() {
   };
 
   const handleDeleteCourse = async (course_code) => {
-    try {
-      const response = await axios.delete('/api/delete_course', { data: { course_code } });
-      if (response.status === 200) {
-        alert('Course deleted successfully!');
-        // Remove the deleted course from the state
-        setCourseDetails(courseDetails.filter(course => course.course_code !== course_code));
+    setDialogMessage(`Are you sure you want to delete ${course_code}`);
+    setOnConfirmAction(() => async (confirm) => {
+      if (confirm) {  try {
+          const response = await axios.delete('/api/delete_course', { data: { course_code } });
+          if (response.status === 200) {
+            setSuccessMessage('Course code uploaded successfully!')
+            setShowSuccess(true)
+            // Remove the deleted course from the state
+            setCourseDetails(courseDetails.filter(course => course.course_code !== course_code));
+          } else {
+            setError('Failed to delete course.');
+          }
+        } catch (error) {
+          setError('Error deleting course. Please try again later.');
+        }
       } else {
-        setError('Failed to delete course.');
+        console.log('Course deletion cancelled');
       }
-    } catch (error) {
-      setError('Error deleting course. Please try again later.');
-    }
+    });
+    setDialogOpen(true);
   };
 
   const fetchCourseDetails = async () => {
@@ -113,11 +128,13 @@ function CourseOutlines() {
     setSearchQuery(e.target.value)
   }
 
-  const [isBoxVisible, setIsBoxVisible] = useState(false);
+  const handleSuccessClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
 
-  const handleFilterClick = () => {
-    setIsBoxVisible(!isBoxVisible);
-  }
+    setShowSuccess(false);
+  };
   
   const [selectedYear, setSelectedYear] = useState('');
   const [selectedTerm, setSelectedTerm] = useState('');
@@ -144,7 +161,7 @@ function CourseOutlines() {
     const matchesDeliveryFormat = selectedDeliveryFormat === '' || detail.delivery_format=== selectedDeliveryFormat;
     const matchesLocation = selectedLocation === '' || detail.delivery_location === selectedLocation;
     const matchesFaculty = selectedFaculty === '' || detail.faculty === selectedFaculty;
-    const matchesStudyLevel = selectedStudyLevel === '' || detail.faculty === selectedStudyLevel;
+    const matchesStudyLevel = selectedStudyLevel === '' || detail.course_level === selectedStudyLevel;
     const matchesCampus = selectedCampus === '' || detail.campus === selectedCampus;
 
     return matchesSearchQuery && matchesTerm && matchesDeliveryMode && matchesDeliveryFormat && matchesLocation && matchesFaculty && matchesStudyLevel && matchesCampus;
@@ -315,36 +332,37 @@ function CourseOutlines() {
             <>
             <div className='courseoutline-selection-wrap'>
               <div className='courseoutline-selection'>
-                {currentItems.map((detail, index) => (
-                  <div className={`courseoutline-box`} key={index}>
-                    <div>
-                      <Checkbox 
-                        checked={!!selectedCourses[detail.course_code]} 
-                        onChange={(e) => handleAddCourseCode(e, detail.course_code)} 
-                        sx={{
+              {currentItems.map((detail, index) => (
+                <div className='courseoutline-box' key={index}>
+                  <div className='course-content'>
+                    <Checkbox 
+                      checked={!!selectedCourses[detail.course_code]} 
+                      onChange={(e) => handleAddCourseCode(e, detail.course_code)} 
+                      sx={{
+                        color: '#693E6A',
+                        '&.Mui-checked': {
                           color: '#693E6A',
-                          '&.Mui-checked': {
-                            color: '#693E6A',
-                          },
-                        }}
-                      />
-                    </div>
-                    <div>
+                        },
+                      }}
+                    />
+                    <div className='course-details'>
                       <strong>{detail.course_code}</strong><br />
                       <strong>Course Name:</strong> {detail.course_name}<br />
                       <strong>Level:</strong> {detail.course_level}<br />
                       <strong>Semester:</strong> {detail.course_term}
                     </div>
-                    <Tooltip title="Delete" placement='top'>
-                      <IconButton 
-                        aria-label='delete-course'
-                        onClick={() => handleDeleteCourse(detail.course_code)}
-                      >
-                        <ClearIcon />
-                      </IconButton>
-                    </Tooltip>            
                   </div>
-                ))}
+                  <Tooltip title="Delete" placement='top'>
+                    <IconButton 
+                      aria-label='delete-course'
+                      className='delete-button'
+                      onClick={() => handleDeleteCourse(detail.course_code)}
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  </Tooltip>            
+                </div>
+              ))}
               </div>
               <div className="pagination">
                 <button className="pag-nav-button" onClick={prevPage} disabled={currentPage === 1}>
@@ -380,7 +398,24 @@ function CourseOutlines() {
             </>
           )}
       </div>      
-
+      <DeleteDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        onConfirm={onConfirmAction}
+        message={dialogMessage}
+      />
+      <Snackbar
+        open={showSuccess}
+        autoHideDuration={3000}
+        onClose={handleSuccessClose}
+        message={successMessage}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{marginTop: '80px'}}
+      >
+        <Alert severity="success" onClose={handleSuccessClose} variant="filled" >
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

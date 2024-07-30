@@ -57,16 +57,31 @@
   gap: 20px;
   margin-top: 20px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .courseoutline-box {
   display: flex;
   align-items: center;
-  padding: 5px;
+  justify-content: space-between; /* Space out items */
+  padding: 4px;
   border: 3px dashed #475e49;
   width: 95%;
-  /* min-height: 120px; */
-  height: 130px;
+  height: 150px;
+}
+
+.course-content {
+  display: flex;
+  align-items: center;
+  flex: 1; /* Take up available space */
+}
+
+.course-details {
+  margin-left: 10px; /* Space between checkbox and text content */
+}
+
+.delete-button {
+  margin-left: auto; /* Push delete button to the right */
 }
 
 .box {
@@ -151,7 +166,7 @@
 }
 
 /* Extra small devices (phones, 600px and down) */
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 660px) {
   .course-title-content {
     flex-direction: column;
     align-items: start;
@@ -173,7 +188,7 @@
   }
 }
 /* Small devices (portrait tablets and large phones, 600px and up) */
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 660px) {
   .course-title-content {
     flex-direction: row;
   }

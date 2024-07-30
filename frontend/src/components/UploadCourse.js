@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import './styles/uploadcourse.css';
-import { Alert, Button, FormControl, TextField } from '@mui/material';
+import { Alert, Button, FormControl, Snackbar, TextField } from '@mui/material';
 import BrowseFilesButton from './BrowseFilesButton';
 import UploadButton from './UploadButton';
 import Loader from './Loader';
 import { useNavigate } from 'react-router-dom';
 import StyledTextField from './StyledTextField';
+import ConfirmationDialog from './ConfirmationDialog';
 
 
 function UploadCourse() {
@@ -22,6 +23,9 @@ function UploadCourse() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState('false');
   const [successfulExamUpload, setSuccessfulExamUpload] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState('');
+  const [onConfirmAction, setOnConfirmAction] = useState(null);
 
   const navigate = useNavigate();
   const dropZoneRef = useRef(null);
@@ -88,33 +92,33 @@ function UploadCourse() {
     } catch (error) {
       console.error('Error uploading course code:', error);
       if (error.response && error.response.data.error) {
-        //alert(error.response.data.error);  // Display the custom error message in an alert
-        const userConfirmation = window.confirm(`Course code ${formData.get("course_code")} already exists. Do you want to replace it?`);
-        if (userConfirmation) {
+        setDialogMessage(`Course code ${formData.get("course_code")} already exists. Do you want to replace it?`);
+        setOnConfirmAction(() => async (confirm) => {
+          if (confirm) {
             try {
-                // Send DELETE request to remove the existing course code
-                await axios.delete(`/api/delete_course`, { data: { course_code: formData.get("course_code") } });
-                
-                // Attempt to add the new course details again
-                const retryResponse = await axios.post('/api/upload_course_code', formData);
-                if (retryResponse.status === 200) {
-                    alert('Course code replaced successfully!');
-                    // Clear form state...
-                } else {
-                    setError('Failed to replace course code.');
-                    setShowAlert(true);
-                }
-            } catch (deleteError) {
-                console.error('Error deleting course code:', deleteError);
-                setError('Failed to delete course code. Please try again later.');
+              await axios.delete(`/api/delete_course`, { data: { course_code: formData.get("course_code") } });
+              const retryResponse = await axios.post('/api/upload_course_code', formData);
+              if (retryResponse.status === 200) {
+                setShowAlert(false);
+                setSuccessMessage('Course code uploaded successfully!')
+                setShowSuccess(true)
+              } else {
+                setError('Failed to replace course code.');
                 setShowAlert(true);
+              }
+            } catch (deleteError) {
+              console.error('Error deleting course code:', deleteError);
+              setError('Failed to delete course code. Please try again later.');
+              setShowAlert(true);
             }
-        } else {
-            // User chose not to replace, handle accordingly
+          } else {
             setError('Course code upload cancelled.');
             setShowAlert(true);
-        }
-    } else {
+          }
+        });
+        setDialogOpen(true);
+      }
+      else {
         setError('Error uploading course code. Please try again later.');
         setShowAlert(true);
     }
@@ -157,37 +161,39 @@ function UploadCourse() {
     } catch (error) {
       console.error('Error uploading PDF:', error);
       if (error.response && error.response.data.error) {
-        //alert(error.response.data.error);  // Display the custom error message in an alert
-        const userConfirmation = window.confirm(`Course code ${error.response.data.course_code} already exists. Do you want to replace it?`);
-        if (userConfirmation) {
+        
+        setDialogMessage(`Course code ${error.response.data.course_code} already exists. Do you want to replace it?`);
+        setOnConfirmAction(() => async (confirm) => {
+          if (confirm) {
             try {
-                // Send DELETE request to remove the existing course code
-                const courseCodeToDelete = error.response.data.course_code;
-                await axios.delete(`/api/delete_course`, { data: { course_code: courseCodeToDelete } });
-                
-                // Attempt to add the new course details again
-                const retryResponse = await axios.post('/api/upload_pdf', formData, {
-                  headers: {
-                    'Content-Type': 'multipart/form-data'
-                  }
-                });
-                if (retryResponse.status === 200) {
-                    alert('Course code replaced successfully!');
-                    // Clear form state...
-                } else {
-                    setError('Failed to replace course code.');
-                    setShowAlert(true);
+              const courseCodeToDelete = error.response.data.course_code;
+              await axios.delete(`/api/delete_course`, { data: { course_code: courseCodeToDelete } });
+              const retryResponse = await axios.post('/api/upload_pdf', formData, {
+                headers: {
+                  'Content-Type': 'multipart/form-data'
                 }
-            } catch (deleteError) {
-                console.error('Error deleting course code:', deleteError);
-                setError('Failed to delete course code. Please try again later.');
+              });
+              if (retryResponse.status === 200) {
+                setSuccessMessage('Course code uploaded successfully!')
+                setShowSuccess(true)
+                setFile(null);
+                setError('');
+                setShowAlert(false);
+              } else {
+                setError('Failed to replace course code.');
                 setShowAlert(true);
+              }
+            } catch (deleteError) {
+              console.error('Error deleting course code:', deleteError);
+              setError('Failed to delete course code. Please try again later.');
+              setShowAlert(true);
             }
-        } else {
-            // User chose not to replace, handle accordingly
+          } else {
             setError('Course code upload cancelled.');
             setShowAlert(true);
-        }
+          }
+        });
+        setDialogOpen(true);
     } else {
         setError('Error uploading PDF. Please try again later.');
         setShowAlert(true);
@@ -252,19 +258,21 @@ function UploadCourse() {
     }
   }
 
+  const handleSuccessClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
 
-  const handleAlertClose = () => {
-    if (showAlert) {
-      setShowAlert(false);
-    }
-    if (showSuccess) {
-      setShowSuccess(false);
-    }
+    setShowSuccess(false);
   };
-  
-  const onFileChange = (files) => {
-    console.log(files);
-  }
+
+  const handleErrorClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setShowAlert(false);
+  };
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -320,12 +328,6 @@ function UploadCourse() {
           {selection === 'courseOutline' && (<>
             
             <div className="upload_form">
-              <Alert severity="error" onClose={handleAlertClose} style={{display: showAlert ? 'flex' : 'none'}} className='alert' >
-                {error}
-              </Alert>
-              <Alert severity="success" onClose={handleAlertClose} style={{marginBottom: '20px', marginTop: '-10px', display: showSuccess ? 'flex' : 'none',}} >
-                {successMessage}
-              </Alert>
               <div
                 ref={dropZoneRef}
                 className="drop-zone"
@@ -379,17 +381,11 @@ function UploadCourse() {
           </>)}
 
           {selection === 'examPaper' && (<>
-            <Alert severity="error" onClose={handleAlertClose} style={{display: showAlert ? 'flex' : 'none'}} className='alert' >
-                {error}
-              </Alert>
-              <Alert severity="success" onClose={handleAlertClose} style={{marginBottom: '20px', marginTop: '-10px', display: showSuccess ? 'flex' : 'none',}} >
-                {successMessage}
-              </Alert>
-            <div className="upload_form" style={{ minHeight: '430px' }}> 
+            <div className="upload_form" > 
               <h4>Input Text</h4>
               <StyledTextField
                 multiline 
-                rows={12} 
+                rows={14} 
                 fullWidth 
                 value={examContents} 
                 onChange={handleExamTextChange} 
@@ -403,21 +399,39 @@ function UploadCourse() {
               )}
 
             </div>
-            {/* <div className="upload_form">
-              {bloomsCount && (
-                <div className="blooms_count">
-                  <h3>Bloom's Taxonomy Count:</h3>
-                  <ul>
-                    {Object.entries(bloomsCount).map(([level, count]) => (
-                      <li key={level}>{`${level}: ${count}`}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div> */}
             </>
           )}
+          <Snackbar
+            open={showAlert}
+            autoHideDuration={3000}
+            onClose={handleErrorClose}
+            message={error}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            sx={{marginTop: '80px'}}
+          >
+            <Alert severity="error" onClose={handleErrorClose} variant="filled" className='alert' >
+              {error}
+            </Alert>
+          </Snackbar>
+          <Snackbar
+            open={showSuccess}
+            autoHideDuration={3000}
+            onClose={handleSuccessClose}
+            message={successMessage}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            sx={{marginTop: '80px'}}
+          >
+            <Alert severity="success" onClose={handleSuccessClose} variant="filled" >
+              {successMessage}
+            </Alert>
+          </Snackbar>
         </div>
+        <ConfirmationDialog
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+          onConfirm={onConfirmAction}
+          message={dialogMessage}
+        />
       </div>
     </div>
     
