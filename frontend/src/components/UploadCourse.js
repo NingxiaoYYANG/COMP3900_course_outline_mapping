@@ -1,10 +1,13 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import './styles/uploadcourse.css';
-import { Alert, Button, FormControl, TextField } from '@mui/material';
+import { Alert, Button, FormControl, Snackbar, TextField } from '@mui/material';
 import BrowseFilesButton from './BrowseFilesButton';
 import UploadButton from './UploadButton';
 import Loader from './Loader';
+import { useNavigate } from 'react-router-dom';
+import StyledTextField from './StyledTextField';
+import ConfirmationDialog from './ConfirmationDialog';
 
 
 function UploadCourse() {
@@ -13,11 +16,23 @@ function UploadCourse() {
   const [file, setFile] = useState(null);
   const [examContents, setExamContents] = useState('');
   const [error, setError] = useState('');
+<<<<<<< HEAD
   const [bloomsCount, setBloomsCount] = useState(null); // New state for Bloom's count
+=======
+  const [successMessage, setSuccessMessage] = useState('')
+  const [bloomsCount, setBloomsCount] = useState(null); 
+>>>>>>> f0ff48f7c5c77ce8b80d79b0f55b9b88b89816f1
   const [wordToBloom, setWordToBloom] = useState(null); 
   const [showAlert, setShowAlert] = useState(false);
-  const [isLoading, setIsLoading] = useState('false'); // New state for loading
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState('false');
+  const [successfulExamUpload, setSuccessfulExamUpload] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState('');
+  const [onConfirmAction, setOnConfirmAction] = useState(null);
 
+  const navigate = useNavigate();
+  const dropZoneRef = useRef(null);
 
   const handleSelectionChange = (selection) => {
     setSelection(selection);
@@ -49,7 +64,6 @@ function UploadCourse() {
     if (!courseCode) {
       setError('Please provide the course code.')
       setShowAlert(true)
-      // alert('Please provide the course code.')
       return;
     }
 
@@ -57,7 +71,6 @@ function UploadCourse() {
     if (!codePattern.test(courseCode)) {
       setError('Please enter course code in correct format (e.g., ABCD1234).');
       setShowAlert(true)
-      // alert('Please enter course code in correct format (e.g., ABCD1234).')
       return;
     }
 
@@ -70,19 +83,49 @@ function UploadCourse() {
     try {
       const response = await axios.post('/api/upload_course_code', formData);
       if (response.status === 200) {
-        alert('Course code uploaded successfully!');
+        setShowAlert(false);
+        setSuccessMessage('Course code uploaded successfully!')
+        setShowSuccess(true)
         // Clear form state
         setCourseCode('');
         setError('');
-        setShowAlert(false);
       } else {
         setError('Failed to upload course code.');
         setShowAlert(true);
       }
     } catch (error) {
       console.error('Error uploading course code:', error);
-      setError('Error uploading course code. Please try again later.');
-      setShowAlert(true)
+      if (error.response && error.response.data.error) {
+        setDialogMessage(`Course code ${formData.get("course_code")} already exists. Do you want to replace it?`);
+        setOnConfirmAction(() => async (confirm) => {
+          if (confirm) {
+            try {
+              await axios.delete(`/api/delete_course`, { data: { course_code: formData.get("course_code") } });
+              const retryResponse = await axios.post('/api/upload_course_code', formData);
+              if (retryResponse.status === 200) {
+                setShowAlert(false);
+                setSuccessMessage('Course code uploaded successfully!')
+                setShowSuccess(true)
+              } else {
+                setError('Failed to replace course code.');
+                setShowAlert(true);
+              }
+            } catch (deleteError) {
+              console.error('Error deleting course code:', deleteError);
+              setError('Failed to delete course code. Please try again later.');
+              setShowAlert(true);
+            }
+          } else {
+            setError('Course code upload cancelled.');
+            setShowAlert(true);
+          }
+        });
+        setDialogOpen(true);
+      }
+      else {
+        setError('Error uploading course code. Please try again later.');
+        setShowAlert(true);
+    }
     } finally {
       setIsLoading('false'); // End loading
     }
@@ -109,7 +152,8 @@ function UploadCourse() {
       });
 
       if (response.status === 200) {
-        alert('PDF file uploaded successfully!');
+        setSuccessMessage("PDF file uploaded successfully!")
+        setShowSuccess(true)
         // Clear form state
         setFile(null);
         setError('');
@@ -120,12 +164,58 @@ function UploadCourse() {
       }
     } catch (error) {
       console.error('Error uploading PDF:', error);
-      setError('Error uploading PDF. Please try again later.');
-      setShowAlert(true)
+      if (error.response && error.response.data.error) {
+        
+        setDialogMessage(`Course code ${error.response.data.course_code} already exists. Do you want to replace it?`);
+        setOnConfirmAction(() => async (confirm) => {
+          if (confirm) {
+            try {
+              const courseCodeToDelete = error.response.data.course_code;
+              await axios.delete(`/api/delete_course`, { data: { course_code: courseCodeToDelete } });
+              const retryResponse = await axios.post('/api/upload_pdf', formData, {
+                headers: {
+                  'Content-Type': 'multipart/form-data'
+                }
+              });
+              if (retryResponse.status === 200) {
+                setSuccessMessage('Course code uploaded successfully!')
+                setShowSuccess(true)
+                setFile(null);
+                setError('');
+                setShowAlert(false);
+              } else {
+                setError('Failed to replace course code.');
+                setShowAlert(true);
+              }
+            } catch (deleteError) {
+              console.error('Error deleting course code:', deleteError);
+              setError('Failed to delete course code. Please try again later.');
+              setShowAlert(true);
+            }
+          } else {
+            setError('Course code upload cancelled.');
+            setShowAlert(true);
+          }
+        });
+        setDialogOpen(true);
+    } else {
+        setError('Error uploading PDF. Please try again later.');
+        setShowAlert(true);
+    }
     } finally {
       setIsLoading(false); // End loading
     }
   };
+  
+  useEffect(() => {
+    if (bloomsCount !== null) { // Only navigate if bloomsCount is updated
+      setTimeout(() => {
+        console.log(examContents)
+        navigate('/buildexam', { state: { bloomsCount, examContents } }); // Pass data to the next page
+        setExamContents('');
+      }, 1500);
+    }
+  }, [bloomsCount, navigate]);
 
   const handleUploadExam = async () => {
     if (!examContents.trim()) {
@@ -153,9 +243,8 @@ function UploadCourse() {
     try {
       const response = await axios.post('/api/upload_exam', formData);
       if (response.status === 200) {
-        alert('Exam questions uploaded successfully!');
-        // Clear form state
-        setExamContents('');
+        setSuccessMessage('Exam questions uploaded successfully!');
+        setShowSuccess(true);
         setError('');
         setShowAlert(false);
         setBloomsCount(response.data.blooms_count); // Update the state with Bloom's count
@@ -168,113 +257,191 @@ function UploadCourse() {
       console.error('Error uploading exam questions:', error);
       setError('Error uploading exam questions. Please try again later.');
     } finally {
-      setIsLoading('false'); // End loading
+      setIsLoading('false');
+      setIsLoading('false');
     }
   }
-  const handleAlertClose = () => {
+
+  const handleSuccessClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setShowSuccess(false);
+  };
+
+  const handleErrorClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
     setShowAlert(false);
   };
-  
-  const onFileChange = (files) => {
-    console.log(files);
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleUploadCourseCode();
+    }
   }
 
+<<<<<<< HEAD
+=======
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const droppedFiles = e.dataTransfer.files;
+    if (droppedFiles.length > 0) {
+      handleFileChange({ target: { files: droppedFiles } });
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+>>>>>>> f0ff48f7c5c77ce8b80d79b0f55b9b88b89816f1
   return (
-    <div className="container">
-      <div className="container_inner">
-        <div style={{ display: 'flex', alignItems:'center', marginTop: '-15px'}}>
-          <h1 >Upload</h1>
-          <div className="button_group">
-            <button 
-              id="button_outline" 
-              className={selection === 'courseOutline' ? 'active' : ''}
-              onClick={() => handleSelectionChange('courseOutline')}
-            >
-              <b>Course Outline</b>
-            </button>
-            <button 
-              id="button_exam" 
-              className={selection === 'examPaper' ? 'active' : ''}
-              onClick={() => handleSelectionChange('examPaper')}
-            >
-              <b>Exam Paper</b>
-            </button>
-          </div>
-        </div>
-
-
-        {selection === 'courseOutline' && (<>
+    <div className={`upload-wrapper ${showAlert || showSuccess ? 'alert-active' : ''}`}>
+      <div className='container'>
+        <div className="container_inner">
           
-          <div className="upload_form">
-            <Alert severity="error" onClose={handleAlertClose} style={{marginBottom: '20px', marginTop: '-10px', display: showAlert ? 'flex' : 'none'}} >
+          <div style={{ display: 'flex', alignItems:'center', marginTop: '-15px'}}>
+            <h1 >Upload</h1>
+            <div className="button_group">
+              <button 
+                id="button_outline" 
+                className={selection === 'courseOutline' ? 'active' : ''}
+                onClick={() => handleSelectionChange('courseOutline')}
+              >
+                <b>Course Outline</b>
+              </button>
+              <button 
+                id="button_exam" 
+                className={selection === 'examPaper' ? 'active' : ''}
+                onClick={() => handleSelectionChange('examPaper')}
+              >
+                <b>Exam Paper</b>
+              </button>
+            </div>
+          </div>
+
+
+          {selection === 'courseOutline' && (<>
+            
+            <div className="upload_form">
+              <div
+                ref={dropZoneRef}
+                className="drop-zone"
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onDragEnter={handleDragEnter}
+              >
+                <i className="fas fa-cloud-upload-alt"></i>
+              </div>
+              <p>Drop file to upload</p>
+              <p>or</p>
+              <div>
+                <BrowseFilesButton handleChange={handleFileChange}/>
+                {file === null ? 'No file chosen' : <div>{file.name.length > 30 ? file.name.substring(0, 30) + '...' : file.name}</div>}
+
+              </div>
+              <br />
+
+              {isLoading === 'uploadingPDF' ? (
+                <Loader />
+              ) : (
+                <UploadButton text="Upload PDF" onclick={handleUpload} width='160px'/>
+              )}
+
+              <p className='max_size_label'>Max file size: 10MB</p>
+              <p className='supported_file_label'>Supported file types: PDF</p>
+              <br/>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          
+              </div>
+              
+            </div>
+            <div className="upload_form" style={{ display: 'flex', justifyContent: 'center' }}>
+              <StyledTextField 
+                type='text' 
+                variant="standard" 
+                label="Input course code" 
+                size='small' 
+                onChange={handleTextChange} 
+                onKeyDown={handleKeyPress} 
+                style={{ width: '140px', marginRight: '30px' }}
+              />
+                <br/>
+              {isLoading === 'uploadingCode' ? (
+                <Loader />
+              ) : (
+                <UploadButton text="Upload course code" onclick={handleUploadCourseCode} />
+              )}
+                
+            </div>
+          </>)}
+
+          {selection === 'examPaper' && (<>
+            <div className="upload_form" > 
+              <h4>Input Text</h4>
+              <StyledTextField
+                multiline 
+                rows={14} 
+                fullWidth 
+                value={examContents} 
+                onChange={handleExamTextChange} 
+                sx={{ marginBottom: '20px'}}
+              />
+
+              {isLoading === 'uploadingExam' ? (
+                <Loader />
+              ) : (
+                <UploadButton text="Upload Exam Questions" onclick={handleUploadExam} />
+              )}
+
+            </div>
+            </>
+          )}
+          <Snackbar
+            open={showAlert}
+            autoHideDuration={3000}
+            onClose={handleErrorClose}
+            message={error}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            sx={{marginTop: '80px'}}
+          >
+            <Alert severity="error" onClose={handleErrorClose} variant="filled" className='alert' >
               {error}
             </Alert>
-            <i className="fas fa-cloud-upload-alt"></i>
-            <p>Drop file to upload</p>
-            <p>or</p>
-            <div>
-              <BrowseFilesButton handleChange={handleFileChange}/>
-              {file === null ? 'No file chosen' : <div >{file.name}</div>}
-            </div>
-            <br />
-
-            {isLoading === 'uploadingPDF' ? (
-              <Loader />
-            ) : (
-              <UploadButton text="Upload PDF" onclick={handleUpload} width='160px'/>
-            )}
-
-            <p className='max_size_label'>Max file size: 10MB</p>
-            <p className='supported_file_label'>Supported file types: PDF</p>
-            <br/>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        
-            </div>
-            
-          </div>
-          <div className="upload_form" style={{ display: 'flex', justifyContent: 'center' }}>
-            <TextField type='text' variant="standard" label="Input course code" size='small' onChange={handleTextChange} style={{ width: '140px', marginRight: '30px' }}/>
-              <br/>
-            {isLoading === 'uploadingCode' ? (
-              <Loader />
-            ) : (
-              <UploadButton text="Upload course code" onclick={handleUploadCourseCode} />
-            )}
-              
-          </div>
-        </>)}
-
-        {selection === 'examPaper' && (<>
-          <Alert severity="error" onClose={handleAlertClose} style={{marginBottom: '20px', marginTop: '-10px', display: showAlert ? 'flex' : 'none'}} >
-            {error}
-          </Alert>
-          <div className="upload_form">
-            <p>Input Text</p>
-            <TextField multiline rows={5} maxRows={5} fullWidth value={examContents} onChange={handleExamTextChange} sx={{ marginBottom: '20px'}} />
-
-            {isLoading === 'uploadingExam' ? (
-              <Loader />
-            ) : (
-              <UploadButton text="Upload Exam Questions" onclick={handleUploadExam} />
-            )}
-
-          </div>
-          <div className="upload_form">
-            {bloomsCount && (
-              <div className="blooms_count">
-                <h3>Bloom's Taxonomy Count:</h3>
-                <ul>
-                  {Object.entries(bloomsCount).map(([level, count]) => (
-                    <li key={level}>{`${level}: ${count}`}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-          </>
-        )}
+          </Snackbar>
+          <Snackbar
+            open={showSuccess}
+            autoHideDuration={3000}
+            onClose={handleSuccessClose}
+            message={successMessage}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            sx={{marginTop: '80px'}}
+          >
+            <Alert severity="success" onClose={handleSuccessClose} variant="filled" >
+              {successMessage}
+            </Alert>
+          </Snackbar>
+        </div>
+        <ConfirmationDialog
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+          onConfirm={onConfirmAction}
+          message={dialogMessage}
+        />
       </div>
     </div>
+    
   )
 }
 

@@ -1,8 +1,64 @@
+/* App.css */
 .app-container {
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
+  position: relative;
 }
 
 .app-content {
   flex: 1;
+}
+
+.bottom-center-container {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: -1;
+  
+}
+
+.bottom-center-image-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.bottom-center-image-container::before,
+.bottom-center-image-container::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 1px; /* Line height */
+  background-color: #475e49; /* Line color */
+  opacity: 50%;
+}
+
+.bottom-center-image-container::before {
+  left: 0;
+  right: calc(50% - 30px); /* Adjust based on image width divided by 2 */
+  width: calc(50% - 30px); /* Extend to just before the image */
+}
+
+.bottom-center-image-container::after {
+  left: calc(50% + 30px); /* Adjust based on image width divided by 2 */
+  right: 0;
+  width: calc(50% - 30px); /* Extend to just after the image */
+}
+
+.bottom-center-image {
+  width: 70px; /* Adjust the size as needed */
+  height: auto; /* Maintain aspect ratio */
+}
+
+
+@media (min-height: 700px) {
+  .bottom-center-container {
+    margin-top: -100px;
+  }
 }

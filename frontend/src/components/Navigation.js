@@ -3,6 +3,7 @@ import './styles/navigation.css'
 import React from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Button, IconButton, Menu, MenuItem } from '@mui/material';
+import logo from './images/logo.png'
 
 function Navigation() {
   const location = useLocation().pathname;
@@ -18,7 +19,9 @@ function Navigation() {
   return (
     <div className='navigation-container'>
       <div className='navigation-text-container'>
-        <div className='navigation-title'>CourseMapper</div>
+        <div className='navigation-title'>
+          CourseMapper
+        </div>
         <div className='vertical-line'></div>
         <div className='burger-navigation'>
           <IconButton
@@ -45,8 +48,8 @@ function Navigation() {
           </Menu>
         </div>
         <div className='navigation-list-items'>
-          <div className='nav-list-item-container'><Link to='/' className='nav-list-item'  style={location === '/' ? {borderBottom: '2px solid #FCD3CA'} : {}}>HOME</Link></div>
-          <div className='nav-list-item-container'><Link to='/courseoutlines' className='nav-list-item' style={location === '/courseoutlines' ? {borderBottom: '2px solid #FCD3CA'} : {}}>COURSE OUTLINES</Link></div>
+          <div className='nav-list-item-container'><Link to='/' className='nav-list-item'  style={location === '/' ? {borderBottom: '2px solid #F4F7F3'} : {}}>HOME</Link></div>
+          <div className='nav-list-item-container'><Link to='/courseoutlines' className='nav-list-item' style={location === '/courseoutlines' ? {borderBottom: '2px solid #F4F7F3'} : {}}>COURSE OUTLINES</Link></div>
         </div>
       </div>
     </div>

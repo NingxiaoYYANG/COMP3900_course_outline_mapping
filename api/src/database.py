@@ -109,30 +109,25 @@ def get_blooms_taxonomy():
 
 
 def add_clos(course_code, blooms_count):
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
         
-        cursor.execute("CREATE TABLE IF NOT EXISTS clos (course_code VARCHAR(8) PRIMARY KEY, remember INT, understand INT, apply INT, analyse INT, evaluate INT, `create` INT)")
-        conn.commit()
+    cursor.execute("CREATE TABLE IF NOT EXISTS clos (course_code VARCHAR(8) PRIMARY KEY, remember INT, understand INT, apply INT, analyse INT, evaluate INT, `create` INT)")
+    conn.commit()
 
-        cursor.execute("SELECT course_code FROM clos WHERE course_code = %s", (course_code,))
-        existing_course = cursor.fetchone()
+    cursor.execute("SELECT course_code FROM clos WHERE course_code = %s", (course_code,))
+    existing_course = cursor.fetchone()
 
-        if existing_course:
-            print(f"Course code {course_code} already exists.")
-            return False
+    if existing_course:
+        raise Exception(f"Course code {course_code} already exists.")
 
-        statement = "INSERT INTO clos (course_code, remember, understand, apply, analyse, evaluate, `create`) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-        values = (course_code, blooms_count["Remember"], blooms_count["Understand"], blooms_count["Apply"], blooms_count["Analyse"], blooms_count["Evaluate"], blooms_count["Create"])
-        cursor.execute(statement, values)
-        conn.commit()
+    statement = "INSERT INTO clos (course_code, remember, understand, apply, analyse, evaluate, `create`) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    values = (course_code, blooms_count["Remember"], blooms_count["Understand"], blooms_count["Apply"], blooms_count["Analyse"], blooms_count["Evaluate"], blooms_count["Create"])
+    cursor.execute(statement, values)
+    conn.commit()
 
-        return True
-    
-    except Exception as e:
-        print(e)
-        return False
+    return True
     
 
 def get_clos(course_code):

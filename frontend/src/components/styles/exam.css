@@ -1,5 +1,4 @@
-/* builddegree.css */
-.builddegree-container {
+.exam-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -9,22 +8,7 @@
   padding-bottom: 110px;
 }
 
-.builddegree-container {
-  animation: fadeInAnimation ease 0.5s;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
-}
-
-@keyframes fadeInAnimation {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.builddegree-content {
+.exam-container {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -40,15 +24,14 @@
   overflow-x: hidden;
 }
 
-.builddegree-title {
-  margin-bottom: 10px;
-  padding-top: 20px;
+.exam-title {
   font-size: 25pt;
   font-weight: 700;
   color: #010B14;
+  text-wrap: nowrap;
 }
 
-.builddegree-horizontalline {
+.exam-horizontalline {
   border-bottom: 2px solid #475e49;
   width: calc(100% + 3rem);
   margin: 0 -1.5rem;
@@ -56,41 +39,34 @@
   padding-top: 10px;
 }
 
-.builddegree-maintext {
+.exam-content {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: left;
   justify-content: space-between;
   width: 100%;
   flex: 1;
 }
 
-.builddegree-clo {
+.exam-questions {
   width: 100%;
-  
 }
 
-.builddegree-labels {
-  margin-top: 10px;
-  overflow-wrap:normal;
-}
-
-.builddegree-graph {
+.exam-graph {
   width: 90%;
   margin-top: 20px;
   flex: 1; /* Allow the graph to grow and fill available space */
   min-height: 400px; /* Minimum height of the graph */
   align-self: center;
 }
-
-.builddegree-button-container {
+.exam-button-container {
   align-self: flex-start;
   margin-top: 20px;
 }
 
 /* Media query for smaller viewports */
 @media (max-height: 660px) {
-  .builddegree-container {
+  .exam-wrapper {
     align-items: flex-start;
     padding-top: 120px;
     padding-bottom: 110px;
@@ -99,31 +75,31 @@
 
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 600px) {
-  .builddegree-content {
+  .exam-container {
     width: 85%;
   }
 }
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
-  .builddegree-content {
+  .exam-container {
     width: 90%;
   }
 }
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) {
-  .builddegree-content {
+  .exam-container {
     width: 85%;
   }
 }
 /* Large devices (laptops/desktops, 992px and up) */
 @media only screen and (min-width: 992px) {
-  .builddegree-content {
+  .exam-container {
     width: 80%;
   }
 }
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1200px) {
-  .builddegree-content {
+  .exam-container {
     width: 70%;
   }
 }
