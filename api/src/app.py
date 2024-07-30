@@ -48,7 +48,7 @@ def upload_course_outline_by_code():
         # print(course_details)
         try:
             if add_clos(course_details["course_code"], blooms_count) and add_course_detail(course_details):
-                return jsonify({'message': 'Success!'}), 200
+                return jsonify({'course_details': course_details}), 200
             else:
                 return jsonify({'message': 'Database Error!'}), 400
         except Exception as e:
@@ -79,7 +79,7 @@ def upload_course_outline_pdf():
 
     try:
         if add_clos(course_details["course_code"], blooms_count) and add_course_detail(course_details):
-                return jsonify({'message': 'Success!'}), 200
+            return jsonify({'course_details': course_details}), 200
         else:
             return jsonify({'message': 'Database Error!'}), 400
     except Exception as e:
