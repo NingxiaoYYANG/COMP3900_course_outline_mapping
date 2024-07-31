@@ -292,18 +292,3 @@ def course_details_from_coID(coID):
     }
     
     return course_details
-
-
-if __name__ == "__main__":
-    # Can replace with any pdf file for testing
-    course_outline = "C:\\Users\\mbmas\\Desktop\\COMP3900\\capstone-project-3900f11adroptablestudents\\api\\src\\tests\\testFiles\\ACCT2511-2024T1.pdf"
-    # course_outline = "C:/Users/20991/Downloads/CO_COMP6771_1_2024_Term2_T2_Multimodal_Standard_Kensington.pdf"
-
-    with open(course_outline, "rb") as f:
-        print(course_details_from_pdf(f))
-    
-    psyc5001 = get_coID_from_code("psyc5001")
-    print(psyc5001)
-    
-    print(extract_clos_from_coID(psyc5001))
-    print(course_details_from_coID(psyc5001))

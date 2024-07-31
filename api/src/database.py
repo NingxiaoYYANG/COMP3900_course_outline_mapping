@@ -187,7 +187,6 @@ def add_course_detail(course_details):
 
         statement = "INSERT INTO course_details (course_code, course_name, course_level, course_term, faculty, delivery_mode, delivery_format, delivery_location, campus, course_clos, word_to_blooms) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
         values = (course_code, course_name, course_level, course_term, faculty, delivery_mode, delivery_format, delivery_location, campus, course_clos, word_to_blooms)
-        # print(values)
         cursor.execute(statement, values)
         conn.commit()
 
