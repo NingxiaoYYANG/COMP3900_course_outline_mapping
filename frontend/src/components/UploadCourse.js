@@ -16,7 +16,7 @@ function UploadCourse() {
   const [file, setFile] = useState(null);
   const [examContents, setExamContents] = useState('');
   const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('')
+  const [successMessage, setSuccessMessage] = useState('');
   const [bloomsCount, setBloomsCount] = useState(null); 
   const [wordToBloom, setWordToBloom] = useState(null); 
   const [showAlert, setShowAlert] = useState(false);
@@ -26,6 +26,9 @@ function UploadCourse() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
   const [onConfirmAction, setOnConfirmAction] = useState(null);
+  const [showSideScreen, setShowSideScreen] = useState(false);
+  const [courseOutlineInfo, setCourseOutlineInfo] = useState('');
+
 
   const navigate = useNavigate();
   const dropZoneRef = useRef(null);
@@ -82,6 +85,9 @@ function UploadCourse() {
         setShowAlert(false);
         setSuccessMessage('Course code uploaded successfully!')
         setShowSuccess(true)
+        console.log(response)
+        setCourseOutlineInfo(response.data.course_details);
+        setShowSideScreen(true);
         // Clear form state
         setCourseCode('');
         setError('');
@@ -426,6 +432,11 @@ function UploadCourse() {
             </Alert>
           </Snackbar>
         </div>
+        {/* Side Screen for course outline */}
+      <div className="side-screen" style={{display: showSideScreen ? 'block' : 'none'}}>
+        <h2>Course Outline Preview</h2>
+        <div>{courseOutlineInfo}</div>
+      </div>
         <ConfirmationDialog
           open={dialogOpen}
           onClose={() => setDialogOpen(false)}
