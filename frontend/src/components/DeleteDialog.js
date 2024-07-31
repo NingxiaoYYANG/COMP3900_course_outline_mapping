@@ -47,7 +47,7 @@ const DeleteDialog = ({ open, onClose, onConfirm, message }) => {
             label="Enter Course Code" 
             variant='outlined' 
             type='text'
-            value={entered}
+            value={entered.toUpperCase()}
             onChange={(e) => setEntered(e.target.value)}
             style={{ marginRight: '20px',}}
             size='small'

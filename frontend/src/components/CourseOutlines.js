@@ -24,7 +24,8 @@ function CourseOutlines() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
   const [onConfirmAction, setOnConfirmAction] = useState(null);
-  const [successMessage, setSuccessMessage] = useState('')
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
 
@@ -70,10 +71,11 @@ function CourseOutlines() {
             setError('Failed to delete course.');
           }
         } catch (error) {
-          setError('Error deleting course. Please try again later.');
+          setErrorMessage('Error deleting course. Please try again later.');
         }
       } else if (message === 'wrong code') {
-        setError('Entered incorrect course code. Failed to delete course.')
+        setErrorMessage('Entered incorrect course code. Failed to delete course.')
+        setShowError(true)
       } else {
         console.log('Course deletion cancelled');
       }
@@ -431,12 +433,12 @@ function CourseOutlines() {
         open={showError}
         autoHideDuration={3000}
         onClose={handleErrorClose}
-        message={error}
+        message={errorMessage}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         sx={{marginTop: '80px'}}
       >
-        <Alert severity="success" onClose={handleErrorClose} variant="filled" >
-          {error}
+        <Alert severity="error" onClose={handleErrorClose} variant="filled" >
+          {errorMessage}
         </Alert>
       </Snackbar>
     </div>
