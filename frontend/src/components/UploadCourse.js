@@ -407,7 +407,7 @@ function UploadCourse() {
               <h4>Input Text</h4>
               <StyledTextField
                 multiline 
-                rows={14} 
+                rows={13} 
                 fullWidth 
                 value={examContents} 
                 onChange={handleExamTextChange} 
