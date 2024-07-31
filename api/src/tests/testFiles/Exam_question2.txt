@@ -25,6 +25,7 @@ Knowledge
 24.	Recall four facts from the story
 25.	What do you recall ...?
 26.	What is the definition of the following terms…
+
 Comprehension
 1.	Can you explain what is happening . . . what is meant . . .? 
 2.	Class Facility is an abstract class. Explain what this means
