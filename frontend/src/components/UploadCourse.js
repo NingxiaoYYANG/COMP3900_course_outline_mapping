@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import './styles/uploadcourse.css';
-import { Alert, Button, FormControl, Paper, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
+import { Alert, Button, Collapse, FormControl, IconButton, Paper, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from '@mui/material';
 import BrowseFilesButton from './BrowseFilesButton';
 import UploadButton from './UploadButton';
 import Loader from './Loader';
@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import StyledTextField from './StyledTextField';
 import ConfirmationDialog from './ConfirmationDialog';
 import CoursePreview from './CoursePreview';
-
+import ClearIcon from '@mui/icons-material/Clear';
 
 function UploadCourse() {
   const [selection, setSelection] = useState('courseOutline');
@@ -29,7 +29,16 @@ function UploadCourse() {
   const [onConfirmAction, setOnConfirmAction] = useState(null);
   const [showSideScreen, setShowSideScreen] = useState(false);
   const [courseOutlineInfo, setCourseOutlineInfo] = useState('');
-
+  const [isVisible, setIsVisible] = useState(showSideScreen);
+  
+  useEffect(() => {
+    if (showSideScreen) {
+      const timer = setTimeout(() => setIsVisible(true), 500); // Adjust timeout to match CSS transition duration
+      return () => clearTimeout(timer);
+    } else {
+      setIsVisible(false);
+    }
+  }, [showSideScreen]);
 
   const navigate = useNavigate();
   const dropZoneRef = useRef(null);
@@ -448,14 +457,23 @@ function UploadCourse() {
       />
 
       {/* Side Screen for course outline */}
-      <div 
-        className="side-screen" 
-        style={{display: showSideScreen ? 'block' : 'none'}}
-      >
-        <div>
-          <CoursePreview course_details={courseOutlineInfo}/>
+      <Collapse in={showSideScreen} orientation="horizontal">
+        <div className={`side-screen ${isVisible ? 'visible' : 'hidden'}`}>
+          <div style={{ display: 'flex', alignItems: 'flex-start' }} className={`preview-content ${isVisible ? 'visible' : 'hidden'}`}>
+            <CoursePreview course_details={courseOutlineInfo} />
+            <Tooltip title="Close" placement='top' sx={{ marginTop: '20px' }}>
+              <IconButton
+                aria-label='close-preview'
+                className='close-button'
+                onClick={() => setShowSideScreen(false)}
+              >
+                <ClearIcon />
+              </IconButton>
+            </Tooltip>
+          </div>
         </div>
-      </div>
+      </Collapse>
+      
     </div>
     
   )
