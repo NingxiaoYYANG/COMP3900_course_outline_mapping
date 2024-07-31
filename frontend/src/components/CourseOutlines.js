@@ -13,6 +13,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import ArrowForwardIosNewIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import DeleteDialog from './DeleteDialog';
+import Loader from './Loader';
 
 
 function CourseOutlines() {
@@ -28,6 +29,8 @@ function CourseOutlines() {
   const [errorMessage, setErrorMessage] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
+  const [loading, setLoading] = useState(true);
+
 
   const navigate = useNavigate()
   // pagination hooks
@@ -91,6 +94,7 @@ function CourseOutlines() {
       const response = await axios.get('/api/courses');
       console.log(response)
       setCourseDetails(response.data.course_details);
+      setLoading(false);
     } catch (err) {
       setError('Error fetching course details. Please try again.');
       setClassifyResults(null);
@@ -337,12 +341,17 @@ function CourseOutlines() {
             {error || `Selected ${courseCodes.length} outlines...`}
           </div>
           <div className='course-horizontalline'></div>
+          {loading ? (
+            <div style={{textAlign: 'center', paddingTop: '100px'}}>
+              <Loader />
+            </div>
+          ) : (<>
 
           {courseDetails.length === 0 ? (
             <div style={{ textAlign: 'center', marginTop: '165px' }}>
               <i className="fa-solid fa-file"></i>
               <p>No course outlines available.</p>
-              <p><Link to='/'>Upload</Link> some!</p>
+              <p><Link to='/' style={{ color: '#693E6A', }}><strong>Upload</strong></Link> some!</p>
             </div>
           ) : (
             <>
@@ -413,6 +422,7 @@ function CourseOutlines() {
             </div>
             </>
           )}
+        </>)}
       </div>      
       <DeleteDialog
         open={dialogOpen}
