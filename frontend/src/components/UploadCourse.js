@@ -109,7 +109,6 @@ function UploadCourse() {
                 setShowAlert(false);
                 setSuccessMessage('Course code uploaded successfully!')
                 setShowSuccess(true)
-                console.log(retryResponse.data.course_details)
                 setCourseOutlineInfo(retryResponse.data.course_details);
                 setShowSideScreen(true);
               } else {
@@ -160,6 +159,8 @@ function UploadCourse() {
       if (response.status === 200) {
         setSuccessMessage("PDF file uploaded successfully!")
         setShowSuccess(true)
+        setCourseOutlineInfo(response.data.course_details);
+        setShowSideScreen(true);
         // Clear form state
         setFile(null);
         setError('');
@@ -189,6 +190,8 @@ function UploadCourse() {
                 setFile(null);
                 setError('');
                 setShowAlert(false);
+                setCourseOutlineInfo(retryResponse.data.course_details);
+                setShowSideScreen(true);  
               } else {
                 setError('Failed to replace course code.');
                 setShowAlert(true);
