@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Checkbox from '@mui/material/Checkbox';
 import './styles/courseoutlines.css'
 import TextButton from './TextButton';
-import { Alert, Button, IconButton, InputAdornment, MenuItem, Popover, Select, Snackbar, TextField, Tooltip } from '@mui/material';
+import { Alert, Button, IconButton, InputAdornment, MenuItem, Popover, Select, Snackbar, Tooltip } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import SelectField from './SelectField';
@@ -26,6 +26,7 @@ function CourseOutlines() {
   const [onConfirmAction, setOnConfirmAction] = useState(null);
   const [successMessage, setSuccessMessage] = useState('')
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   const navigate = useNavigate()
   // pagination hooks
@@ -57,7 +58,7 @@ function CourseOutlines() {
 
   const handleDeleteCourse = async (course_code) => {
     setDialogMessage(`Are you sure you want to delete ${course_code}`);
-    setOnConfirmAction(() => async (confirm) => {
+    setOnConfirmAction(() => async (confirm, message) => {
       if (confirm) {  try {
           const response = await axios.delete('/api/delete_course', { data: { course_code } });
           if (response.status === 200) {
@@ -71,6 +72,8 @@ function CourseOutlines() {
         } catch (error) {
           setError('Error deleting course. Please try again later.');
         }
+      } else if (message === 'wrong code') {
+        setError('Entered incorrect course code. Failed to delete course.')
       } else {
         console.log('Course deletion cancelled');
       }
@@ -134,6 +137,14 @@ function CourseOutlines() {
     }
 
     setShowSuccess(false);
+  };
+
+  const handleErrorClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setShowError(false);
   };
   
   const [selectedYear, setSelectedYear] = useState('');
@@ -414,6 +425,18 @@ function CourseOutlines() {
       >
         <Alert severity="success" onClose={handleSuccessClose} variant="filled" >
           {successMessage}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={showError}
+        autoHideDuration={3000}
+        onClose={handleErrorClose}
+        message={error}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{marginTop: '80px'}}
+      >
+        <Alert severity="success" onClose={handleErrorClose} variant="filled" >
+          {error}
         </Alert>
       </Snackbar>
     </div>

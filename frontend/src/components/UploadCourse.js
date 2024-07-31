@@ -211,7 +211,7 @@ function UploadCourse() {
         setExamContents('');
       }, 1500);
     }
-  }, [bloomsCount, navigate]);
+  }, [bloomsCount, examContents, navigate]);
 
   const handleUploadExam = async () => {
     if (!examContents.trim()) {

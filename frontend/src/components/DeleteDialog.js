@@ -10,17 +10,17 @@ const DeleteDialog = ({ open, onClose, onConfirm, message }) => {
   const handleConfirm = () => {
     if (entered.trim() === courseCode) {
       setEntered('')
-      onConfirm(true);
+      onConfirm(true, '');
     } else {
       setEntered('')
-      onConfirm(false);
+      onConfirm(false, 'wrong code');
     }
     onClose();
   };
 
   const handleCancel = () => {
     setEntered('')
-    onConfirm(false);
+    onConfirm(false, '');
     onClose();
   };
 
