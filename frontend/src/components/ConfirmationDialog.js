@@ -19,9 +19,6 @@ const ConfirmationDialog = ({ open, onClose, onConfirm, message }) => {
       primary: {
         main: '#693E6A',
       },
-      secondary: {
-        main: '#FCD3CA'
-      }
     }
   })
 

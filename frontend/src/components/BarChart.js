@@ -1,7 +1,15 @@
 // BarChart.js
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { 
+  Chart as ChartJS, 
+  CategoryScale, 
+  LinearScale, 
+  BarElement, 
+  Title, 
+  Tooltip, 
+  Legend 
+} from 'chart.js';
 
 ChartJS.register(
   CategoryScale,
@@ -38,10 +46,10 @@ const BarChart = ({ data }) => {
   const options = {
     indexAxis: 'x',
     responsive: true,
-    maintainAspectRatio: false, // Allow the chart to stretch to the container's aspect ratio
+    maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false // Hide legend
+        display: false
       },
       title: {
         display: true,
@@ -52,13 +60,13 @@ const BarChart = ({ data }) => {
       x: {
         beginAtZero: true,
         ticks: {
-          display: true // Ensure x-axis ticks are displayed
+          display: true
         }
       },
       y: {
         beginAtZero: true,
         ticks: {
-          display: true // Ensure y-axis ticks are displayed
+          display: true
         }
       }
     }

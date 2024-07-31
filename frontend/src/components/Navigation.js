@@ -2,16 +2,17 @@ import { Link, useLocation } from 'react-router-dom';
 import './styles/navigation.css'
 import React from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Button, IconButton, Menu, MenuItem } from '@mui/material';
-import logo from './images/logo.png'
+import { IconButton, Menu, MenuItem } from '@mui/material';
 
 function Navigation() {
   const location = useLocation().pathname;
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -43,13 +44,47 @@ function Navigation() {
               'aria-labelledby': 'basic-button',
             }}
           >
-            <Link to='/' className='burger-navigation-list-item' ><MenuItem className='burger-navigation-list-item-menu' style={location === '/' ? {borderBottom: '2px solid #070F2B'} : {}}>HOME</MenuItem></Link>
-            <Link to='/courseoutlines' className='burger-navigation-list-item' ><MenuItem className='burger-navigation-list-item-menu' style={location === '/courseoutlines' ? {borderBottom: '2px solid #070F2B'} : {}}>COURSE OUTLINES</MenuItem></Link>
+            <Link to='/' className='burger-navigation-list-item' >
+              <MenuItem 
+                className='burger-navigation-list-item-menu' 
+                style={location === '/' ? {borderBottom: '2px solid #070F2B'} : {}}
+              >
+                HOME
+              </MenuItem>
+            </Link>
+            <Link to='/courseoutlines' className='burger-navigation-list-item' >
+              <MenuItem 
+                className='burger-navigation-list-item-menu' 
+                style={location === '/courseoutlines' ? {borderBottom: '2px solid #070F2B'} : {}}
+              >
+                COURSE OUTLINES
+              </MenuItem>
+            </Link>
           </Menu>
         </div>
         <div className='navigation-list-items'>
-          <div className='nav-list-item-container'><Link to='/' className='nav-list-item'  style={location === '/' ? {borderBottom: '2px solid #F4F7F3'} : {}}>HOME</Link></div>
-          <div className='nav-list-item-container'><Link to='/courseoutlines' className='nav-list-item' style={location === '/courseoutlines' ? {borderBottom: '2px solid #F4F7F3'} : {}}>COURSE OUTLINES</Link></div>
+          <div className='nav-list-item-container'>
+            <Link 
+              to='/' 
+              className='nav-list-item'  
+              style={
+                location === '/' ? {borderBottom: '2px solid #F4F7F3'} : {}
+              }
+            >
+              HOME
+            </Link>
+          </div>
+          <div className='nav-list-item-container'>
+            <Link 
+              to='/courseoutlines' 
+              className='nav-list-item' 
+              style={
+                location === '/courseoutlines' ? {borderBottom: '2px solid #F4F7F3'} : {}
+              }
+            >
+              COURSE OUTLINES
+            </Link>
+          </div>
         </div>
       </div>
     </div>

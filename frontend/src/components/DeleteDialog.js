@@ -1,12 +1,21 @@
 // DeleteDialog.js
 import React, { useState } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogTitle, Button, Typography, createTheme } from '@mui/material';
+import { 
+  Dialog, 
+  DialogActions, 
+  DialogContent, 
+  DialogTitle, 
+  Button, 
+  Typography, 
+  createTheme
+} from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 import StyledTextField from './StyledTextField';
 
 const DeleteDialog = ({ open, onClose, onConfirm, message }) => {
   const courseCode = message.slice(-8); 
   const [entered, setEntered] = useState('')
+  
   const handleConfirm = () => {
     if (entered.trim() === courseCode) {
       setEntered('')
@@ -29,9 +38,6 @@ const DeleteDialog = ({ open, onClose, onConfirm, message }) => {
       primary: {
         main: '#693E6A',
       },
-      secondary: {
-        main: '#FCD3CA'
-      }
     }
   })
 

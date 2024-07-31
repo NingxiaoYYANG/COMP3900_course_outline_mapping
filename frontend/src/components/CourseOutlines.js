@@ -4,7 +4,17 @@ import { Link, useNavigate } from 'react-router-dom';
 import Checkbox from '@mui/material/Checkbox';
 import './styles/courseoutlines.css'
 import TextButton from './TextButton';
-import { Alert, Button, IconButton, InputAdornment, MenuItem, Popover, Select, Snackbar, Tooltip } from '@mui/material';
+import { 
+  Alert, 
+  Button, 
+  IconButton, 
+  InputAdornment, 
+  MenuItem, 
+  Popover, 
+  Select, 
+  Snackbar, 
+  Tooltip 
+} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import SelectField from './SelectField';
@@ -19,7 +29,6 @@ import Loader from './Loader';
 function CourseOutlines() {
   const [courseCodes, setCourseCodes] = useState([]);
   const [courseDetails, setCourseDetails] = useState([]);
-  const [classifyResults, setClassifyResults] = useState(null);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -30,15 +39,12 @@ function CourseOutlines() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [loading, setLoading] = useState(true);
-
-
-  const navigate = useNavigate()
+  const [selectedCourses, setSelectedCourses] = useState({});
   // pagination hooks
   const [currentPage, setCurrentPage] = useState(1); // Default to first page
   const [itemsPerPage, setItemsPerPage] = useState(10); // Set how many items you want per page
-
-  // Initialize state to keep track of selected courses
-  const [selectedCourses, setSelectedCourses] = useState({});
+  
+  const navigate = useNavigate()
 
   const handleAddCourseCode = (e, code) => {
     const codePattern = /^[A-Za-z]{4}\d{4}$/;
@@ -48,7 +54,6 @@ function CourseOutlines() {
       [code]: checked, // Toggle the selected state for this specific course code
     }));
     if (!codePattern.test(code)) {
-      console.log(code)
       setError('Please enter course code in correct format (e.g., ABCD1234).');
       return;
     }
@@ -82,8 +87,6 @@ function CourseOutlines() {
       } else if (message === 'wrong code') {
         setErrorMessage('Entered incorrect course code. Failed to delete course.')
         setShowError(true)
-      } else {
-        console.log('Course deletion cancelled');
       }
     });
     setDialogOpen(true);
@@ -92,12 +95,10 @@ function CourseOutlines() {
   const fetchCourseDetails = async () => {
     try {
       const response = await axios.get('/api/courses');
-      console.log(response)
       setCourseDetails(response.data.course_details);
       setLoading(false);
     } catch (err) {
       setError('Error fetching course details. Please try again.');
-      setClassifyResults(null);
     }
   }
 
@@ -112,13 +113,10 @@ function CourseOutlines() {
       formData.append('course_codes', JSON.stringify(courseCodes));
 
       const response = await axios.post('/api/classify_clos', formData);
-      // console.log(response)
-      setClassifyResults(response.data.classify_results);
       setError('');
       return response.data.classify_results;
     } catch (err) {
       setError('Error fetching Bloom\'s taxonomy counts. Please try again.');
-      setClassifyResults(null);
       return null
     }
   };
@@ -129,9 +127,7 @@ function CourseOutlines() {
 
   const handleClick = async () => {
     const classifyResults = await handleFetchClassifyResults();
-    console.log('classifyResults before navigating:', classifyResults);
     if (classifyResults) {
-      console.log('here')
       navigate('/courseoutlines/builddegree', { state: { classifyResults: classifyResults,  } });  // Pass data to the next page
     }
   };
@@ -156,7 +152,6 @@ function CourseOutlines() {
     setShowError(false);
   };
   
-  const [selectedYear, setSelectedYear] = useState('');
   const [selectedTerm, setSelectedTerm] = useState('');
   const [selectedDeliveryMode, setSelectedDeliveryMode] = useState('');
   const [selectedDeliveryFormat, setSelectedDeliveryFormat] = useState('');
@@ -226,94 +221,30 @@ function CourseOutlines() {
   return (
     <div className='courseoutline-wrapper'>
       <div className='courseoutline-container'>
-          <div className='course-title-content'>
-            <div className='course-title'>Course Outlines</div>
-            <div className='filter-button-container'>
-            <Button variant="text" aria-describedby={id} onClick={handlePopClick} sx={{ color: 'grey', borderRadius: '30%', }}>
-              <FilterListIcon />
-              </Button>
-              <Popover
-                id={id}
-                open={open}
-                anchorEl={anchorEl}
-                onClose={handleClose}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left',
-                }}
-              >
-                <div className='box'>
-                  <h5 className="search-bar-filter">Search</h5>
-                  <div className="search-bar-filter">
-                    <StyledTextField
-                      label="Search by code or name" 
-                      variant='outlined' 
-                      type='text'
-                      value={searchQuery}
-                      onChange={handleSearchQueryChange}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <SearchIcon />
-                          </InputAdornment>
-                        ),
-                      }}
-                      fullWidth
-                    />
-                  </div>
-                  <h5>Filter</h5>
-                    <SelectField
-                      label="Term"
-                      id="term-select"
-                      value={selectedTerm}
-                      onChange={(e) => setSelectedTerm(e.target.value)}
-                      options={uniqueTerms}
-                    />
-                    <SelectField
-                      label="Delivery Mode"
-                      id="deliveryMode-select"
-                      value={selectedDeliveryMode}
-                      onChange={(e) => setSelectedDeliveryMode(e.target.value)}
-                      options={uniqueDeliveryMode}
-                    />
-                    <SelectField
-                      label="Delivery Format"
-                      id="deliveryFormat-select"
-                      value={selectedDeliveryFormat}
-                      onChange={(e) => setSelectedDeliveryFormat(e.target.value)}
-                      options={uniqueDeliveryFormat}
-                    />
-                    <SelectField
-                      label="Location"
-                      id="location-select"
-                      value={selectedLocation}
-                      onChange={(e) => setSelectedLocation(e.target.value)}
-                      options={uniqueLocation}
-                    />
-                    <SelectField
-                      label="Faculty"
-                      id="faculty-select"
-                      value={selectedFaculty}
-                      onChange={(e) => setSelectedFaculty(e.target.value)}
-                      options={uniqueFaculty}
-                    />
-                    <SelectField
-                      label="Study Level"
-                      id="studyLevel-select"
-                      value={selectedStudyLevel}
-                      onChange={(e) => setSelectedStudyLevel(e.target.value)}
-                      options={uniqueStudyLevel}
-                    />
-                    <SelectField
-                      label="Campus"
-                      id="campus-select"
-                      value={selectedCampus}
-                      onChange={(e) => setSelectedCampus(e.target.value)}
-                      options={uniqueCampus}
-                    />
-                  </div>
-              </Popover>
-              <div className="search-bar" style={{justifySelf: 'flex-end'}}>
+        <div className='course-title-content'>
+          <div className='course-title'>Course Outlines</div>
+          <div className='filter-button-container'>
+          <Button 
+            variant="text" 
+            aria-describedby={id} 
+            onClick={handlePopClick} 
+            sx={{ color: 'grey', borderRadius: '30%', }}
+          >
+            <FilterListIcon />
+          </Button>
+          <Popover
+            id={id}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+          >
+            <div className='box'>
+              <h5 className="search-bar-filter">Search</h5>
+              <div className="search-bar-filter">
                 <StyledTextField
                   label="Search by code or name" 
                   variant='outlined' 
@@ -327,36 +258,111 @@ function CourseOutlines() {
                       </InputAdornment>
                     ),
                   }}
-                  style={{ marginRight: '20px',}}
-                  size='small'
-                  sx={{
-                    color: '#693E6A',
-                  }}
+                  fullWidth
                 />
               </div>
-              <TextButton text='NEXT' handleclick={handleClick}/>
+              <h5>Filter</h5>
+              <SelectField
+                label="Term"
+                id="term-select"
+                value={selectedTerm}
+                onChange={(e) => setSelectedTerm(e.target.value)}
+                options={uniqueTerms}
+              />
+              <SelectField
+                label="Delivery Mode"
+                id="deliveryMode-select"
+                value={selectedDeliveryMode}
+                onChange={(e) => setSelectedDeliveryMode(e.target.value)}
+                options={uniqueDeliveryMode}
+              />
+              <SelectField
+                label="Delivery Format"
+                id="deliveryFormat-select"
+                value={selectedDeliveryFormat}
+                onChange={(e) => setSelectedDeliveryFormat(e.target.value)}
+                options={uniqueDeliveryFormat}
+              />
+              <SelectField
+                label="Location"
+                id="location-select"
+                value={selectedLocation}
+                onChange={(e) => setSelectedLocation(e.target.value)}
+                options={uniqueLocation}
+              />
+              <SelectField
+                label="Faculty"
+                id="faculty-select"
+                value={selectedFaculty}
+                onChange={(e) => setSelectedFaculty(e.target.value)}
+                options={uniqueFaculty}
+              />
+              <SelectField
+                label="Study Level"
+                id="studyLevel-select"
+                value={selectedStudyLevel}
+                onChange={(e) => setSelectedStudyLevel(e.target.value)}
+                options={uniqueStudyLevel}
+              />
+              <SelectField
+                label="Campus"
+                id="campus-select"
+                value={selectedCampus}
+                onChange={(e) => setSelectedCampus(e.target.value)}
+                options={uniqueCampus}
+              />
             </div>
+          </Popover>
+          <div className="search-bar" style={{justifySelf: 'flex-end'}}>
+            <StyledTextField
+              label="Search by code or name" 
+              variant='outlined' 
+              type='text'
+              value={searchQuery}
+              onChange={handleSearchQueryChange}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+              style={{ marginRight: '20px',}}
+              size='small'
+              sx={{
+                color: '#693E6A',
+              }}
+            />
           </div>
-          <div style={{fontSize: '10pt', color: error ? 'red' : courseCodes.length === 0 ? '#fff' : '#693E6A'}}>
-            {error || `Selected ${courseCodes.length} outlines...`}
-          </div>
-          <div className='course-horizontalline'></div>
-          {loading ? (
-            <div style={{textAlign: 'center', paddingTop: '100px'}}>
-              <Loader />
-            </div>
-          ) : (<>
+          <TextButton text='NEXT' handleclick={handleClick}/>
+        </div>
+      </div>
+      <div 
+        style={{
+          fontSize: '10pt', 
+          color: error ? 'red' : courseCodes.length === 0 ? '#fff' : '#693E6A'}}
+      >
+        {error || `Selected ${courseCodes.length} outlines...`}
+      </div>
+      <div className='course-horizontalline'></div>
+      
+      {loading ? (
+        <div style={{textAlign: 'center', paddingTop: '100px'}}>
+          <Loader />
+        </div>
+      ) : (<>
 
-          {courseDetails.length === 0 ? (
-            <div style={{ textAlign: 'center', marginTop: '165px' }}>
-              <i className="fa-solid fa-file"></i>
-              <p>No course outlines available.</p>
-              <p><Link to='/' style={{ color: '#693E6A', }}><strong>Upload</strong></Link> some!</p>
-            </div>
-          ) : (
-            <>
-            <div className='courseoutline-selection-wrap'>
-              <div className='courseoutline-selection'>
+        {courseDetails.length === 0 ? (
+          <div style={{ textAlign: 'center', marginTop: '165px' }}>
+            <i className="fa-solid fa-file"></i>
+            <p>No course outlines available.</p>
+            <p>
+              <Link to='/' style={{ color: '#693E6A', }}><strong>Upload</strong></Link> some!
+            </p>
+          </div>
+        ) : (<>
+          <div className='courseoutline-selection-wrap'>
+            <div className='courseoutline-selection'>
               {currentItems.map((detail, index) => (
                 <div className='courseoutline-box' key={index}>
                   <div className='course-content'>
@@ -388,73 +394,72 @@ function CourseOutlines() {
                   </Tooltip>            
                 </div>
               ))}
-              </div>
-              <div className="pagination">
-                <button className="pag-nav-button" onClick={prevPage} disabled={currentPage === 1}>
-                  <ArrowBackIosNewIcon className='icon' fontSize="20px"/>
-                </button>
-                {pageNumbers.map(number => (
-                  <button 
-                    className={`pagination-button ${currentPage === number ? 'active' : ''}`} 
-                    key={number} 
-                    onClick={() => setCurrentPage(number)}
-                  >
-                    {number}
-                  </button>
-                ))}
-                <button className="pag-nav-button" onClick={nextPage} disabled={currentPage === pageNumbers.length}>
-                  <ArrowForwardIosNewIcon className='icon' fontSize="20px"/>
-                </button>
-                <Select
-                  value={itemsPerPage}
-                  onChange={handleItemsPerPageChange}
-                  displayEmpty
-                  inputProps={{ 'aria-label': 'Items per page' }}
-                  sx={{ marginLeft: 2 }}
-                >
-                  {[4, 6, 8, 10, 12, 14, 16].map(count => (
-                    <MenuItem key={count} value={count}>
-                      {count} items
-                    </MenuItem>
-                  ))}
-                </Select>
-              </div>
             </div>
-            </>
-          )}
+            <div className="pagination">
+              <button className="pag-nav-button" onClick={prevPage} disabled={currentPage === 1}>
+                <ArrowBackIosNewIcon className='icon' fontSize="20px"/>
+              </button>
+              {pageNumbers.map(number => (
+                <button 
+                  className={`pagination-button ${currentPage === number ? 'active' : ''}`} 
+                  key={number} 
+                  onClick={() => setCurrentPage(number)}
+                >
+                  {number}
+                </button>
+              ))}
+              <button className="pag-nav-button" onClick={nextPage} disabled={currentPage === pageNumbers.length}>
+                <ArrowForwardIosNewIcon className='icon' fontSize="20px"/>
+              </button>
+              <Select
+                value={itemsPerPage}
+                onChange={handleItemsPerPageChange}
+                displayEmpty
+                inputProps={{ 'aria-label': 'Items per page' }}
+                sx={{ marginLeft: 2 }}
+              >
+                {[4, 6, 8, 10, 12, 14, 16].map(count => (
+                  <MenuItem key={count} value={count}>
+                    {count} items
+                  </MenuItem>
+                ))}
+              </Select>
+            </div>
+          </div>
         </>)}
-      </div>      
-      <DeleteDialog
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        onConfirm={onConfirmAction}
-        message={dialogMessage}
-      />
-      <Snackbar
-        open={showSuccess}
-        autoHideDuration={3000}
-        onClose={handleSuccessClose}
-        message={successMessage}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        sx={{marginTop: '80px'}}
-      >
-        <Alert severity="success" onClose={handleSuccessClose} variant="filled" >
-          {successMessage}
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={showError}
-        autoHideDuration={3000}
-        onClose={handleErrorClose}
-        message={errorMessage}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        sx={{marginTop: '80px'}}
-      >
-        <Alert severity="error" onClose={handleErrorClose} variant="filled" >
-          {errorMessage}
-        </Alert>
-      </Snackbar>
-    </div>
+      </>)}
+    </div>      
+    <DeleteDialog
+      open={dialogOpen}
+      onClose={() => setDialogOpen(false)}
+      onConfirm={onConfirmAction}
+      message={dialogMessage}
+    />
+    <Snackbar
+      open={showSuccess}
+      autoHideDuration={3000}
+      onClose={handleSuccessClose}
+      message={successMessage}
+      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      sx={{marginTop: '80px'}}
+    >
+      <Alert severity="success" onClose={handleSuccessClose} variant="filled" >
+        {successMessage}
+      </Alert>
+    </Snackbar>
+    <Snackbar
+      open={showError}
+      autoHideDuration={3000}
+      onClose={handleErrorClose}
+      message={errorMessage}
+      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      sx={{marginTop: '80px'}}
+    >
+      <Alert severity="error" onClose={handleErrorClose} variant="filled" >
+        {errorMessage}
+      </Alert>
+    </Snackbar>
+  </div>
   );
 }
 

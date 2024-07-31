@@ -55,8 +55,8 @@
 .exam-graph {
   width: 90%;
   margin-top: 20px;
-  flex: 1; /* Allow the graph to grow and fill available space */
-  min-height: 400px; /* Minimum height of the graph */
+  flex: 1; 
+  min-height: 400px; 
   align-self: center;
 }
 .exam-button-container {

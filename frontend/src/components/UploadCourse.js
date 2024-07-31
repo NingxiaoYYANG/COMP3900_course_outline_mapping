@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import './styles/uploadcourse.css';
-import { Alert, Button, Collapse, FormControl, IconButton, Paper, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from '@mui/material';
+import { Alert, Collapse, IconButton, Snackbar, Tooltip } from '@mui/material';
 import BrowseFilesButton from './BrowseFilesButton';
 import UploadButton from './UploadButton';
 import Loader from './Loader';
@@ -19,11 +19,9 @@ function UploadCourse() {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [bloomsCount, setBloomsCount] = useState(null); 
-  const [wordToBloom, setWordToBloom] = useState(null); 
   const [showAlert, setShowAlert] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState('false');
-  const [successfulExamUpload, setSuccessfulExamUpload] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
   const [onConfirmAction, setOnConfirmAction] = useState(null);
@@ -31,17 +29,9 @@ function UploadCourse() {
   const [courseOutlineInfo, setCourseOutlineInfo] = useState('');
   const [isVisible, setIsVisible] = useState(showSideScreen);
   
-  useEffect(() => {
-    if (showSideScreen) {
-      const timer = setTimeout(() => setIsVisible(true), 500); // Adjust timeout to match CSS transition duration
-      return () => clearTimeout(timer);
-    } else {
-      setIsVisible(false);
-    }
-  }, [showSideScreen]);
-
   const navigate = useNavigate();
   const dropZoneRef = useRef(null);
+
 
   const handleSelectionChange = (selection) => {
     setSelection(selection);
@@ -69,6 +59,47 @@ function UploadCourse() {
     setExamContents(e.target.value);
   }
 
+  const handleSuccessClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setShowSuccess(false);
+  };
+
+  const handleErrorClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setShowAlert(false);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleUploadCourseCode();
+    }
+  }
+
+  // Handles For Dropping a File
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const droppedFiles = e.dataTransfer.files;
+    if (droppedFiles.length > 0) {
+      handleFileChange({ target: { files: droppedFiles } });
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  // Handles for API
   const handleUploadCourseCode = async () => {
     if (!courseCode) {
       setError('Please provide the course code.')
@@ -93,14 +124,13 @@ function UploadCourse() {
       const response = await axios.post('/api/upload_course_code', formData);
       if (response.status === 200) {
         setShowAlert(false);
+        setError('');
         setSuccessMessage('Course code uploaded successfully!')
         setShowSuccess(true)
-        console.log(response.data.course_details)
         setCourseOutlineInfo(response.data.course_details);
         setShowSideScreen(true);
         // Clear form state
         setCourseCode('');
-        setError('');
       } else {
         setError('Failed to upload course code.');
         setShowAlert(true);
@@ -125,7 +155,6 @@ function UploadCourse() {
                 setShowAlert(true);
               }
             } catch (deleteError) {
-              console.error('Error deleting course code:', deleteError);
               setError('Failed to delete course code. Please try again later.');
               setShowAlert(true);
             }
@@ -225,16 +254,6 @@ function UploadCourse() {
     }
   };
   
-  useEffect(() => {
-    if (bloomsCount !== null) { // Only navigate if bloomsCount is updated
-      setTimeout(() => {
-        console.log(examContents)
-        navigate('/buildexam', { state: { bloomsCount, examContents } }); // Pass data to the next page
-        setExamContents('');
-      }, 1500);
-    }
-  }, [bloomsCount, examContents, navigate]);
-
   const handleUploadExam = async () => {
     if (!examContents.trim()) {
       setError('Please provide the exam questions.');
@@ -266,68 +285,50 @@ function UploadCourse() {
         setError('');
         setShowAlert(false);
         setBloomsCount(response.data.blooms_count); // Update the state with Bloom's count
-        setWordToBloom(response.data.word_to_blooms)
-        console.log(response.data.word_to_blooms)
       } else {
         setError('Failed to upload exam questions.');
       }
     } catch (error) {
-      console.error('Error uploading exam questions:', error);
       setError('Error uploading exam questions. Please try again later.');
     } finally {
       setIsLoading('false');
-      setIsLoading('false');
     }
   }
 
-  const handleSuccessClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
+  // Delay Navigation for Success Message
+  useEffect(() => {
+    if (bloomsCount !== null) { // Only navigate if bloomsCount is updated
+      setTimeout(() => {
+        console.log(examContents)
+        navigate('/buildexam', { state: { bloomsCount, examContents } }); // Pass data to the next page
+        setExamContents('');
+      }, 1500);
     }
+  }, [bloomsCount, examContents, navigate]);
 
-    setShowSuccess(false);
-  };
-
-  const handleErrorClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
+  // Delay showing Preview text till it's opened
+  useEffect(() => {
+    if (showSideScreen) {
+      const timer = setTimeout(() => setIsVisible(true), 500);
+      return () => clearTimeout(timer);
+    } else {
+      setIsVisible(false);
     }
-
-    setShowAlert(false);
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleUploadCourseCode();
-    }
-  }
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const droppedFiles = e.dataTransfer.files;
-    if (droppedFiles.length > 0) {
-      handleFileChange({ target: { files: droppedFiles } });
-    }
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
-  const handleDragEnter = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
+  }, [showSideScreen]);
 
   return (
-    <div className={`upload-wrapper ${showAlert || showSuccess ? 'alert-active' : ''}`}>
+    <div 
+      className={`upload-wrapper ${showAlert || showSuccess ? 'alert-active' : ''}`}
+    >
       <div className='container'>
         <div className="container_inner">
-          
-          <div style={{ display: 'flex', alignItems:'center', marginTop: '-15px'}}>
-            <h1 >Upload</h1>
+          <div 
+            style={{ 
+              display: 'flex', 
+              alignItems:'center', 
+              marginTop: '-15px'
+          }}>
+            <h1>Upload</h1>
             <div className="button_group">
               <button 
                 id="button_outline" 
@@ -346,9 +347,7 @@ function UploadCourse() {
             </div>
           </div>
 
-
           {selection === 'courseOutline' && (<>
-            
             <div className="upload_form">
               <div
                 ref={dropZoneRef}
@@ -363,8 +362,11 @@ function UploadCourse() {
               <p>or</p>
               <div>
                 <BrowseFilesButton handleChange={handleFileChange}/>
-                {file === null ? 'No file chosen' : <div>{file.name.length > 30 ? file.name.substring(0, 30) + '...' : file.name}</div>}
-
+                {file === null 
+                  ? 'No file chosen' 
+                  : <div>{file.name.length > 30 ? file.name.substring(0, 30) + '...' 
+                  : file.name}</div>
+                }
               </div>
               <br />
 
@@ -375,14 +377,12 @@ function UploadCourse() {
               )}
 
               <p className='max_size_label'>Max file size: 10MB</p>
-              <p className='supported_file_label'>Supported file types: PDF</p>
-              <br/>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          
-              </div>
-              
+              <p className='supported_file_label'>Supported file types: PDF</p>              
             </div>
-            <div className="upload_form" style={{ display: 'flex', justifyContent: 'center' }}>
+            <div 
+              className="upload_form" 
+              style={{ display: 'flex', justifyContent: 'center' }}
+            >
               <StyledTextField 
                 type='text' 
                 variant="standard" 
@@ -392,13 +392,13 @@ function UploadCourse() {
                 onKeyDown={handleKeyPress} 
                 style={{ width: '140px', marginRight: '30px' }}
               />
-                <br/>
+              <br/>
+
               {isLoading === 'uploadingCode' ? (
                 <Loader />
               ) : (
                 <UploadButton text="Upload course code" onclick={handleUploadCourseCode} />
               )}
-                
             </div>
           </>)}
 
@@ -419,7 +419,6 @@ function UploadCourse() {
               ) : (
                 <UploadButton text="Upload Exam Questions" onclick={handleUploadExam} />
               )}
-
             </div>
             </>
           )}
@@ -431,7 +430,12 @@ function UploadCourse() {
             anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
             sx={{marginTop: '80px'}}
           >
-            <Alert severity="error" onClose={handleErrorClose} variant="filled" className='alert' >
+            <Alert 
+              severity="error" 
+              onClose={handleErrorClose} 
+              variant="filled" 
+              className='alert'
+            >
               {error}
             </Alert>
           </Snackbar>
@@ -473,11 +477,8 @@ function UploadCourse() {
           </div>
         </div>
       </Collapse>
-      
     </div>
-    
   )
 }
-
 
 export default UploadCourse;
