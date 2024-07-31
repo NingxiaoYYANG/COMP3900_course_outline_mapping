@@ -16,12 +16,8 @@ function UploadCourse() {
   const [file, setFile] = useState(null);
   const [examContents, setExamContents] = useState('');
   const [error, setError] = useState('');
-<<<<<<< HEAD
-  const [bloomsCount, setBloomsCount] = useState(null); // New state for Bloom's count
-=======
   const [successMessage, setSuccessMessage] = useState('')
   const [bloomsCount, setBloomsCount] = useState(null); 
->>>>>>> f0ff48f7c5c77ce8b80d79b0f55b9b88b89816f1
   const [wordToBloom, setWordToBloom] = useState(null); 
   const [showAlert, setShowAlert] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -284,8 +280,6 @@ function UploadCourse() {
     }
   }
 
-<<<<<<< HEAD
-=======
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -305,7 +299,6 @@ function UploadCourse() {
     e.stopPropagation();
   };
 
->>>>>>> f0ff48f7c5c77ce8b80d79b0f55b9b88b89816f1
   return (
     <div className={`upload-wrapper ${showAlert || showSuccess ? 'alert-active' : ''}`}>
       <div className='container'>

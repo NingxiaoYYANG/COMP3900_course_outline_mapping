@@ -56,20 +56,6 @@ function CourseOutlines() {
   };
 
   const handleDeleteCourse = async (course_code) => {
-<<<<<<< HEAD
-    try {
-      const response = await axios.delete('/api/delete_course', { data: { course_code } });
-      if (response.status === 200) {
-        alert('Course deleted successfully!');
-        // Remove the deleted course from the state
-        setCourseDetails(courseDetails.filter(course => course.course_code !== course_code));
-      } else {
-        setError('Failed to delete course.');
-      }
-    } catch (error) {
-      setError('Error deleting course. Please try again later.');
-    }
-=======
     setDialogMessage(`Are you sure you want to delete ${course_code}`);
     setOnConfirmAction(() => async (confirm) => {
       if (confirm) {  try {
@@ -90,7 +76,6 @@ function CourseOutlines() {
       }
     });
     setDialogOpen(true);
->>>>>>> f0ff48f7c5c77ce8b80d79b0f55b9b88b89816f1
   };
 
   const fetchCourseDetails = async () => {
@@ -336,31 +321,6 @@ function CourseOutlines() {
             {error || `Selected ${courseCodes.length} outlines...`}
           </div>
           <div className='course-horizontalline'></div>
-<<<<<<< HEAD
-          <div className='courseoutline-selection'>
-            {filteredCourseDetails.map((detail, index) => (
-              <div className={`courseoutline-box`} key={index}>
-                <div><Checkbox onChange={(e) => handleAddCourseCode(e, detail.course_code)} /></div>
-                <div>
-                  <strong>{detail.course_code}</strong><br />
-                  <strong>Course Name:</strong> {detail.course_name}<br />
-                  <strong>Level:</strong> {detail.course_level}<br />
-                  <strong>Semester:</strong> {detail.course_term}
-                  <button
-                    style={{
-                      backgroundColor: 'red',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '3px',
-                      cursor: 'pointer',
-                      padding: '5px',
-                      marginLeft: '10px'
-                    }}
-                    onClick={() => handleDeleteCourse(detail.course_code)}
-                  >
-                    X
-                  </button>
-=======
 
           {courseDetails.length === 0 ? (
             <div style={{ textAlign: 'center', marginTop: '165px' }}>
@@ -401,7 +361,6 @@ function CourseOutlines() {
                       <ClearIcon />
                     </IconButton>
                   </Tooltip>            
->>>>>>> f0ff48f7c5c77ce8b80d79b0f55b9b88b89816f1
                 </div>
               ))}
               </div>
