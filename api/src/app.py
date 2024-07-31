@@ -167,7 +167,7 @@ def get_courses():
 def delete_course_api():
     data = request.get_json()
     course_code = data.get('course_code')
-    print(course_code)
+    # print(course_code)
 
     if not course_code or not check_code_format(course_code):
         return jsonify({'error': 'Invalid course code format'}), 400

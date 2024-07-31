@@ -28,18 +28,24 @@ function BuildDegree() {
 
   // Function to highlight words in CLOs with tooltips
   const highlightWords = (clo, wordToBlooms) => {
-    const words = clo.split(' ');
+    // Regular expression to split by any non-word character while retaining punctuation
+    const words = clo.split(/(\W+)/).filter(Boolean);
+    
     return words.map((word, index) => {
       const bloomLevel = wordToBlooms[word.toLowerCase()];
       const tooltipId = `tooltip-${index}-${word}`;
+      
+      // Check if the word is only punctuation
+      const isPunctuation = word.match(/^\W+$/);
+  
       return (
         <span
           key={index}
           style={{ color: bloomLevel ? bloomsColors[bloomLevel] : 'black', fontWeight: bloomLevel ? 'bold' : 'normal' }}
-          data-tooltip-id={bloomLevel ? tooltipId : null}
+          data-tooltip-id={bloomLevel && !isPunctuation ? tooltipId : null}
         >
           {word}{' '}
-          {bloomLevel && (
+          {bloomLevel && !isPunctuation && (
             <Tooltip id={tooltipId} place="top" effect="solid">
               {bloomLevel}
             </Tooltip>
@@ -48,6 +54,7 @@ function BuildDegree() {
       );
     });
   };
+  
 
   return (
     <div className='builddegree-container'>
@@ -63,6 +70,7 @@ function BuildDegree() {
                 <ul>
                   {info.clos.map((clo, index) => (
                     <li key={index}>
+                      {console.log(info.word_to_blooms)}
                       {highlightWords(clo, info.word_to_blooms)}
                     </li>
                   ))}

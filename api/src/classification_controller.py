@@ -58,7 +58,7 @@ def match_clos(clos):
 
     # Define the Bloom's taxonomy levels
     bloom_levels = list(get_blooms_taxonomy().keys())
-    print(f'Bloom levels: {bloom_levels}')
+    # print(f'Bloom levels: {bloom_levels}')
     blooms_count = {level: 0 for level in bloom_levels}
     word_to_blooms = {}  # Initialize dictionary to store word to Bloom's level mapping
     new_entries = {level: [] for level in bloom_levels}  # To store new words for updating BLOOMS_TAXONOMY
@@ -67,11 +67,13 @@ def match_clos(clos):
         verb_set = set()  # Initialize a set to store unique verbs for the current CLO
         tokens = word_tokenize(clo)
         tagged = pos_tag(tokens)
+        print(clo)
         for word, tag in tagged:
             is_verb = check_is_verb(word.lower(), tag)
+            # print(word.lower(), is_verb)
             if is_verb:  # Checks if the word is a verb
                 verb_set.add(word.lower())  # Add the verb to the set
-
+        print(verb_set)
         for word in verb_set:
             # Check each Bloom's level
             matched_by_dict = False
@@ -79,6 +81,7 @@ def match_clos(clos):
                 if word in keywords:  # match by dict
                     blooms_count[level] += 1
                     word_to_blooms[word] = level  # Add to word_to_blooms
+                    print(word, level)
                     matched_by_dict = True
                     break
 
@@ -92,7 +95,7 @@ def match_clos(clos):
 
     # Update BLOOMS_TAXONOMY with new entries
     update_blooms_taxonomy_db(new_entries)
-
+    print(word_to_blooms)
     return blooms_count, word_to_blooms
 
 
