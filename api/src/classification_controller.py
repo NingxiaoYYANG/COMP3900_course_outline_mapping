@@ -68,7 +68,7 @@ def match_clos(clos):
         tokens = word_tokenize(clo)
         tagged = pos_tag(tokens)
         for word, tag in tagged:
-            is_verb = check_is_verb(word, tag)
+            is_verb = check_is_verb(word.lower(), tag)
             if is_verb:  # Checks if the word is a verb
                 verb_set.add(word.lower())  # Add the verb to the set
 

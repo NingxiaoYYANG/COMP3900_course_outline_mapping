@@ -262,7 +262,6 @@ def get_all_course_details():
         print(e)
         return []
 
-
 def delete_course(course_code):
     try:
         conn = get_db_connection()
