@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import './styles/uploadcourse.css';
-import { Alert, Button, FormControl, Snackbar, TextField } from '@mui/material';
+import { Alert, Button, Collapse, FormControl, IconButton, Paper, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Tooltip } from '@mui/material';
 import BrowseFilesButton from './BrowseFilesButton';
 import UploadButton from './UploadButton';
 import Loader from './Loader';
 import { useNavigate } from 'react-router-dom';
 import StyledTextField from './StyledTextField';
 import ConfirmationDialog from './ConfirmationDialog';
-
+import CoursePreview from './CoursePreview';
+import ClearIcon from '@mui/icons-material/Clear';
 
 function UploadCourse() {
   const [selection, setSelection] = useState('courseOutline');
@@ -16,7 +17,7 @@ function UploadCourse() {
   const [file, setFile] = useState(null);
   const [examContents, setExamContents] = useState('');
   const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('')
+  const [successMessage, setSuccessMessage] = useState('');
   const [bloomsCount, setBloomsCount] = useState(null); 
   const [wordToBloom, setWordToBloom] = useState(null); 
   const [showAlert, setShowAlert] = useState(false);
@@ -26,6 +27,18 @@ function UploadCourse() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
   const [onConfirmAction, setOnConfirmAction] = useState(null);
+  const [showSideScreen, setShowSideScreen] = useState(false);
+  const [courseOutlineInfo, setCourseOutlineInfo] = useState('');
+  const [isVisible, setIsVisible] = useState(showSideScreen);
+  
+  useEffect(() => {
+    if (showSideScreen) {
+      const timer = setTimeout(() => setIsVisible(true), 500); // Adjust timeout to match CSS transition duration
+      return () => clearTimeout(timer);
+    } else {
+      setIsVisible(false);
+    }
+  }, [showSideScreen]);
 
   const navigate = useNavigate();
   const dropZoneRef = useRef(null);
@@ -82,6 +95,9 @@ function UploadCourse() {
         setShowAlert(false);
         setSuccessMessage('Course code uploaded successfully!')
         setShowSuccess(true)
+        console.log(response.data.course_details)
+        setCourseOutlineInfo(response.data.course_details);
+        setShowSideScreen(true);
         // Clear form state
         setCourseCode('');
         setError('');
@@ -102,6 +118,8 @@ function UploadCourse() {
                 setShowAlert(false);
                 setSuccessMessage('Course code uploaded successfully!')
                 setShowSuccess(true)
+                setCourseOutlineInfo(retryResponse.data.course_details);
+                setShowSideScreen(true);
               } else {
                 setError('Failed to replace course code.');
                 setShowAlert(true);
@@ -150,6 +168,8 @@ function UploadCourse() {
       if (response.status === 200) {
         setSuccessMessage("PDF file uploaded successfully!")
         setShowSuccess(true)
+        setCourseOutlineInfo(response.data.course_details);
+        setShowSideScreen(true);
         // Clear form state
         setFile(null);
         setError('');
@@ -179,6 +199,8 @@ function UploadCourse() {
                 setFile(null);
                 setError('');
                 setShowAlert(false);
+                setCourseOutlineInfo(retryResponse.data.course_details);
+                setShowSideScreen(true);  
               } else {
                 setError('Failed to replace course code.');
                 setShowAlert(true);
@@ -211,7 +233,7 @@ function UploadCourse() {
         setExamContents('');
       }, 1500);
     }
-  }, [bloomsCount, navigate]);
+  }, [bloomsCount, examContents, navigate]);
 
   const handleUploadExam = async () => {
     if (!examContents.trim()) {
@@ -426,13 +448,32 @@ function UploadCourse() {
             </Alert>
           </Snackbar>
         </div>
-        <ConfirmationDialog
-          open={dialogOpen}
-          onClose={() => setDialogOpen(false)}
-          onConfirm={onConfirmAction}
-          message={dialogMessage}
-        />
       </div>
+      <ConfirmationDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        onConfirm={onConfirmAction}
+        message={dialogMessage}
+      />
+
+      {/* Side Screen for course outline */}
+      <Collapse in={showSideScreen} orientation="horizontal">
+        <div className={`side-screen ${isVisible ? 'visible' : 'hidden'}`}>
+          <div style={{ display: 'flex', alignItems: 'flex-start' }} className={`preview-content ${isVisible ? 'visible' : 'hidden'}`}>
+            <CoursePreview course_details={courseOutlineInfo} />
+            <Tooltip title="Close" placement='top' sx={{ marginTop: '20px' }}>
+              <IconButton
+                aria-label='close-preview'
+                className='close-button'
+                onClick={() => setShowSideScreen(false)}
+              >
+                <ClearIcon />
+              </IconButton>
+            </Tooltip>
+          </div>
+        </div>
+      </Collapse>
+      
     </div>
     
   )

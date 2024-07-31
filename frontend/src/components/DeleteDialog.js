@@ -10,17 +10,17 @@ const DeleteDialog = ({ open, onClose, onConfirm, message }) => {
   const handleConfirm = () => {
     if (entered.trim() === courseCode) {
       setEntered('')
-      onConfirm(true);
+      onConfirm(true, '');
     } else {
       setEntered('')
-      onConfirm(false);
+      onConfirm(false, 'wrong code');
     }
     onClose();
   };
 
   const handleCancel = () => {
     setEntered('')
-    onConfirm(false);
+    onConfirm(false, '');
     onClose();
   };
 
@@ -47,7 +47,7 @@ const DeleteDialog = ({ open, onClose, onConfirm, message }) => {
             label="Enter Course Code" 
             variant='outlined' 
             type='text'
-            value={entered}
+            value={entered.toUpperCase()}
             onChange={(e) => setEntered(e.target.value)}
             style={{ marginRight: '20px',}}
             size='small'

@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Checkbox from '@mui/material/Checkbox';
 import './styles/courseoutlines.css'
 import TextButton from './TextButton';
-import { Alert, Button, IconButton, InputAdornment, MenuItem, Popover, Select, Snackbar, TextField, Tooltip } from '@mui/material';
+import { Alert, Button, IconButton, InputAdornment, MenuItem, Popover, Select, Snackbar, Tooltip } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import SelectField from './SelectField';
@@ -13,6 +13,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import ArrowForwardIosNewIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import DeleteDialog from './DeleteDialog';
+import Loader from './Loader';
 
 
 function CourseOutlines() {
@@ -24,8 +25,12 @@ function CourseOutlines() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
   const [onConfirmAction, setOnConfirmAction] = useState(null);
-  const [successMessage, setSuccessMessage] = useState('')
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [loading, setLoading] = useState(true);
+
 
   const navigate = useNavigate()
   // pagination hooks
@@ -57,20 +62,26 @@ function CourseOutlines() {
 
   const handleDeleteCourse = async (course_code) => {
     setDialogMessage(`Are you sure you want to delete ${course_code}`);
-    setOnConfirmAction(() => async (confirm) => {
-      if (confirm) {  try {
+    setOnConfirmAction(() => async (confirm, message) => {
+      if (confirm) {  
+        try {
           const response = await axios.delete('/api/delete_course', { data: { course_code } });
           if (response.status === 200) {
-            setSuccessMessage('Course code uploaded successfully!')
+            setSuccessMessage('Course code deleted successfully!')
             setShowSuccess(true)
             // Remove the deleted course from the state
             setCourseDetails(courseDetails.filter(course => course.course_code !== course_code));
           } else {
             setError('Failed to delete course.');
+            setShowError(true)
           }
         } catch (error) {
-          setError('Error deleting course. Please try again later.');
+          setErrorMessage('Error deleting course. Please try again later.');
+          setShowError(true)
         }
+      } else if (message === 'wrong code') {
+        setErrorMessage('Entered incorrect course code. Failed to delete course.')
+        setShowError(true)
       } else {
         console.log('Course deletion cancelled');
       }
@@ -83,6 +94,7 @@ function CourseOutlines() {
       const response = await axios.get('/api/courses');
       console.log(response)
       setCourseDetails(response.data.course_details);
+      setLoading(false);
     } catch (err) {
       setError('Error fetching course details. Please try again.');
       setClassifyResults(null);
@@ -134,6 +146,14 @@ function CourseOutlines() {
     }
 
     setShowSuccess(false);
+  };
+
+  const handleErrorClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setShowError(false);
   };
   
   const [selectedYear, setSelectedYear] = useState('');
@@ -321,12 +341,17 @@ function CourseOutlines() {
             {error || `Selected ${courseCodes.length} outlines...`}
           </div>
           <div className='course-horizontalline'></div>
+          {loading ? (
+            <div style={{textAlign: 'center', paddingTop: '100px'}}>
+              <Loader />
+            </div>
+          ) : (<>
 
           {courseDetails.length === 0 ? (
             <div style={{ textAlign: 'center', marginTop: '165px' }}>
               <i className="fa-solid fa-file"></i>
               <p>No course outlines available.</p>
-              <p><Link to='/'>Upload</Link> some!</p>
+              <p><Link to='/' style={{ color: '#693E6A', }}><strong>Upload</strong></Link> some!</p>
             </div>
           ) : (
             <>
@@ -397,6 +422,7 @@ function CourseOutlines() {
             </div>
             </>
           )}
+        </>)}
       </div>      
       <DeleteDialog
         open={dialogOpen}
@@ -414,6 +440,18 @@ function CourseOutlines() {
       >
         <Alert severity="success" onClose={handleSuccessClose} variant="filled" >
           {successMessage}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={showError}
+        autoHideDuration={3000}
+        onClose={handleErrorClose}
+        message={errorMessage}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{marginTop: '80px'}}
+      >
+        <Alert severity="error" onClose={handleErrorClose} variant="filled" >
+          {errorMessage}
         </Alert>
       </Snackbar>
     </div>
