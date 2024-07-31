@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import './styles/uploadcourse.css';
-import { Alert, Button, FormControl, Snackbar, TextField } from '@mui/material';
+import { Alert, Button, FormControl, Paper, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 import BrowseFilesButton from './BrowseFilesButton';
 import UploadButton from './UploadButton';
 import Loader from './Loader';
 import { useNavigate } from 'react-router-dom';
 import StyledTextField from './StyledTextField';
 import ConfirmationDialog from './ConfirmationDialog';
+import CoursePreview from './CoursePreview';
 
 
 function UploadCourse() {
@@ -85,7 +86,7 @@ function UploadCourse() {
         setShowAlert(false);
         setSuccessMessage('Course code uploaded successfully!')
         setShowSuccess(true)
-        console.log(response)
+        console.log(response.data.course_details)
         setCourseOutlineInfo(response.data.course_details);
         setShowSideScreen(true);
         // Clear form state
@@ -108,6 +109,9 @@ function UploadCourse() {
                 setShowAlert(false);
                 setSuccessMessage('Course code uploaded successfully!')
                 setShowSuccess(true)
+                console.log(retryResponse.data.course_details)
+                setCourseOutlineInfo(retryResponse.data.course_details);
+                setShowSideScreen(true);
               } else {
                 setError('Failed to replace course code.');
                 setShowAlert(true);
@@ -432,17 +436,22 @@ function UploadCourse() {
             </Alert>
           </Snackbar>
         </div>
-        {/* Side Screen for course outline */}
-      <div className="side-screen" style={{display: showSideScreen ? 'block' : 'none'}}>
-        <h2>Course Outline Preview</h2>
-        <div>{courseOutlineInfo}</div>
       </div>
-        <ConfirmationDialog
-          open={dialogOpen}
-          onClose={() => setDialogOpen(false)}
-          onConfirm={onConfirmAction}
-          message={dialogMessage}
-        />
+      <ConfirmationDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        onConfirm={onConfirmAction}
+        message={dialogMessage}
+      />
+
+      {/* Side Screen for course outline */}
+      <div 
+        className="side-screen" 
+        style={{display: showSideScreen ? 'block' : 'none'}}
+      >
+        <div>
+          <CoursePreview course_details={courseOutlineInfo}/>
+        </div>
       </div>
     </div>
     

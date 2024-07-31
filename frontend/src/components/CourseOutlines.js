@@ -60,18 +60,21 @@ function CourseOutlines() {
   const handleDeleteCourse = async (course_code) => {
     setDialogMessage(`Are you sure you want to delete ${course_code}`);
     setOnConfirmAction(() => async (confirm, message) => {
-      if (confirm) {  try {
+      if (confirm) {  
+        try {
           const response = await axios.delete('/api/delete_course', { data: { course_code } });
           if (response.status === 200) {
-            setSuccessMessage('Course code uploaded successfully!')
+            setSuccessMessage('Course code deleted successfully!')
             setShowSuccess(true)
             // Remove the deleted course from the state
             setCourseDetails(courseDetails.filter(course => course.course_code !== course_code));
           } else {
             setError('Failed to delete course.');
+            setShowError(true)
           }
         } catch (error) {
           setErrorMessage('Error deleting course. Please try again later.');
+          setShowError(true)
         }
       } else if (message === 'wrong code') {
         setErrorMessage('Entered incorrect course code. Failed to delete course.')
