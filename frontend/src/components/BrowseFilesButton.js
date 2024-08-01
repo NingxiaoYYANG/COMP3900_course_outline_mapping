@@ -1,7 +1,6 @@
 import { useRef } from 'react';
 
 function BrowseFilesButton (props) {
-
   const fileInputRef=useRef();
 
   return (

@@ -78,8 +78,8 @@
 .builddegree-graph {
   width: 90%;
   margin-top: 20px;
-  flex: 1; /* Allow the graph to grow and fill available space */
-  min-height: 400px; /* Minimum height of the graph */
+  flex: 1; 
+  min-height: 400px; 
   align-self: center;
 }
 
@@ -103,24 +103,28 @@
     width: 85%;
   }
 }
+
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
   .builddegree-content {
     width: 90%;
   }
 }
+
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) {
   .builddegree-content {
     width: 85%;
   }
 }
+
 /* Large devices (laptops/desktops, 992px and up) */
 @media only screen and (min-width: 992px) {
   .builddegree-content {
     width: 80%;
   }
 }
+
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1200px) {
   .builddegree-content {

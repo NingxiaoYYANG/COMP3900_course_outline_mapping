@@ -10,9 +10,6 @@ function BuildDegree() {
   const { classifyResults } = location.state || {};
   const navigate = useNavigate();
 
-  console.log('Received Bloom\'s Counts:', classifyResults);
-
-  // Define darker colors for Bloom's levels
   const bloomsColors = {
     "Remember": "#58745A",
     "Understand": "#734474", 

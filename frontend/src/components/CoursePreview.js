@@ -1,5 +1,7 @@
 import './styles/uploadcourse.css'
+
 export default function CoursePreview({ course_details }) {
+
   const { 
     course_code, 
     course_name, 
@@ -12,7 +14,7 @@ export default function CoursePreview({ course_details }) {
     faculty,
     course_clos,
   } = course_details;
-  console.log(course_code)
+
   return(<>
     <div style={{ padding: '20px'}}>
       <h2 style={{margin: '0', padding: '0 0 10px 0'}}>Course Outline Preview</h2>

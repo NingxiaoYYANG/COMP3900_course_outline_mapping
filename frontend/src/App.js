@@ -34,7 +34,7 @@ function App() {
         </div>
         <div className="bottom-center-container">
           <div className="bottom-center-image-container">
-            <img src={bottomImage} alt="Description of the image" className="bottom-center-image" />
+            <img src={bottomImage} alt="figure on a chair sketch" className="bottom-center-image" />
           </div>
         </div>
       </div>

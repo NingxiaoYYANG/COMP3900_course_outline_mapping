@@ -2,16 +2,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import './styles/exam.css';
 import BarChart from "./BarChart";
 import TextButton from "./TextButton";
+
+
 function EvaluateExam() {
   const location = useLocation();
   const navigate = useNavigate();
   const { bloomsCount, examContents } = location.state || {};
-
-  console.log('Received Exam Bloom\'s Counts:', bloomsCount);
-  console.log('Exam Contents', examContents)
-
   const questions = examContents.trim().split('\n');
-  console.log(questions)
 
   const bloomsColors = {
     "Remember": "#58745A",
@@ -24,15 +21,20 @@ function EvaluateExam() {
 
   const getColor = (word) => {
     const bloomLevel = bloomsCount[word.toLowerCase()];
-    return bloomsColors[bloomLevel] || 'black'; // Default color if not found
+    return bloomsColors[bloomLevel] || 'black';
   };
 
   const ColoredText = ({ text }) => {
-    // Split the text into words and color each word based on Bloom's taxonomy
     const coloredText = text.split(' ').map((word, index) => {
-      const color = getColor(word.replace(/[.,?!]/g, '')); // Remove punctuation
+      const color = getColor(word.replace(/[.,?!]/g, ''));
       return (
-        <span key={index} style={{ color: color, fontWeight: color !== 'black' ? '700' : 'normal' }}>
+        <span 
+          key={index} 
+          style={{ 
+            color: color, 
+            fontWeight: color !== 'black' ? '700' : 'normal' 
+          }}
+        >
           {word}{' '}
         </span>
       );
@@ -60,44 +62,35 @@ function EvaluateExam() {
     navigate('/');  
   };
   
-  return (<>
-  <div className="exam-wrapper">
-    <div className="exam-container">
-      <div className="exam-title">Evaluate Exam Paper</div>
-      <div className='exam-horizontalline'></div>
-      <div className='exam-content'>
-        <div className='exam-questions'>
-          <h4>Exam Questions</h4>
-          {questions.map((question, index) => (
-            <div key={index} style={{ marginBottom: '8px'}}>
-              <ColoredText text={question} />
-            </div>
-          ))}
-        </div>
-        <div className='exam-graph'>
-            {count ? (
-              <BarChart data={bloomsCount} />
-            ) : (
-              <p>No Bloom's Taxonomy counts available.</p>
-            )}
-        </div>
-        <div className='exam-button-container'>
-          <TextButton text='BACK' handleclick={handleClick} />
+  return (
+    <div className="exam-wrapper">
+      <div className="exam-container">
+        <div className="exam-title">Evaluate Exam Paper</div>
+        <div className='exam-horizontalline'></div>
+        <div className='exam-content'>
+          <div className='exam-questions'>
+            <h4>Exam Questions</h4>
+            {questions.map((question, index) => (
+              <div key={index} style={{ marginBottom: '8px'}}>
+                <ColoredText text={question} />
+              </div>
+            ))}
+          </div>
+          <div className='exam-graph'>
+              {count ? (
+                <BarChart data={bloomsCount} />
+              ) : (
+                <p>No Bloom's Taxonomy counts available.</p>
+              )}
+          </div>
+          <div className='exam-button-container'>
+            <TextButton text='BACK' handleclick={handleClick} />
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  
-  
-
-</>)
+  )
 }
 
-// 1. Explain the BFS algorithm and identify 1 usecase.
-// 2. Explain how a binary search algorithm works and describe a scenario where it would be more efficient than a linear search.
-// 3. Implement a function in C that sorts a list of integers using the quicksort algorithm.
-// 4. Compare and contrast the time complexity of bubble sort and merge sort. Under what conditions would one be preferable over the other?
-// 5. Design a database schema for a library management system that includes tables for books, authors, members, and borrow transactions.
-// 6. Summarize the differences between TCP and UDP protocols in terms of reliability, ordering, and connection state.
 
 export default EvaluateExam;
