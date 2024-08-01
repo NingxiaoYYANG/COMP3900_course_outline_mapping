@@ -48,9 +48,9 @@ class TestMatchCLOsByDict:
     def test_can_match_clos_by_dict(self):
         expected_clos = extract_test_clos()
         for i in range(len(CLOS_FILES)):
-            classification = classifier.match_clos_by_dict(expected_clos[i])
+            classification = classifier.match_clos(expected_clos[i])
             
             # We can't be for sure what the correct classification is.
             # Just check that the classification is valid and not empty.
-            assert set(classification.keys()) == set(BLOOMS_LEVELS)
-            assert any(classification.values())
+            assert set(classification[0].keys()) == set(BLOOMS_LEVELS)
+            assert any(classification[0].values())

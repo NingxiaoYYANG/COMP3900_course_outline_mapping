@@ -37,16 +37,16 @@ def get_db_connection():
         connection.commit()
         cursor.execute("CREATE TABLE IF NOT EXISTS course_details (course_code VARCHAR(8) PRIMARY KEY, course_name VARCHAR(255), course_level VARCHAR(5), course_term VARCHAR(4), faculty VARCHAR(255), delivery_mode VARCHAR(255), delivery_format VARCHAR(255), delivery_location VARCHAR(255), campus VARCHAR(255), course_clos TEXT, word_to_blooms TEXT)")
         connection.commit()
-        initialize_blooms_taxonomy()
+        initialize_blooms_taxonomy(connection)
 
         cursor.close()
         db_initialised = True
 
     return connection
 
-def initialize_blooms_taxonomy():
+def initialize_blooms_taxonomy(connection):
     try:
-        conn = get_db_connection()
+        conn = connection
         cursor = conn.cursor()
         
         # Create the blooms_taxonomy table
@@ -187,7 +187,6 @@ def add_course_detail(course_details):
 
         statement = "INSERT INTO course_details (course_code, course_name, course_level, course_term, faculty, delivery_mode, delivery_format, delivery_location, campus, course_clos, word_to_blooms) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
         values = (course_code, course_name, course_level, course_term, faculty, delivery_mode, delivery_format, delivery_location, campus, course_clos, word_to_blooms)
-        print(values)
         cursor.execute(statement, values)
         conn.commit()
 

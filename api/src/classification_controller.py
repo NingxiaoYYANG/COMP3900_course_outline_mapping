@@ -58,7 +58,6 @@ def match_clos(clos):
 
     # Define the Bloom's taxonomy levels
     bloom_levels = list(get_blooms_taxonomy().keys())
-    print(f'Bloom levels: {bloom_levels}')
     blooms_count = {level: 0 for level in bloom_levels}
     word_to_blooms = {}  # Initialize dictionary to store word to Bloom's level mapping
     new_entries = {level: [] for level in bloom_levels}  # To store new words for updating BLOOMS_TAXONOMY
@@ -71,7 +70,6 @@ def match_clos(clos):
             is_verb = check_is_verb(word.lower(), tag)
             if is_verb:  # Checks if the word is a verb
                 verb_set.add(word.lower())  # Add the verb to the set
-
         for word in verb_set:
             # Check each Bloom's level
             matched_by_dict = False
@@ -92,36 +90,7 @@ def match_clos(clos):
 
     # Update BLOOMS_TAXONOMY with new entries
     update_blooms_taxonomy_db(new_entries)
-
     return blooms_count, word_to_blooms
-
-
-# legacy version, use as backup in case match_clos fails
-def match_clos_by_dict(clos):
-    '''
-    Matches extracted verbs to Bloom's Taxonomy levels.
-
-    Inputs
-    ------
-    verbs : list of strings representing the extracted verbs.
-
-    Outputs
-    -------
-    blooms_count : dictionary where keys are Bloom's levels and values are counts of matched verbs.
-    '''
-    # Initialise a dictionary to count matches for each Bloom's level
-    blooms_count = {level: 0 for level in get_blooms_taxonomy().keys()}
-
-    # Iterate through the clos
-    for clo in clos:
-        words = extract_words_from_clo(clo)
-        for word in words:
-            # Check each Bloom's level
-            for level, keywords in get_blooms_taxonomy().items():
-                if word in keywords:
-                    blooms_count[level] += 1
-        
-    return blooms_count
 
 def check_is_verb(word, tag):
     # Correct the POS tag if the word is in the known verbs list
