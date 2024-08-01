@@ -15,8 +15,6 @@ class TestClassifyCLOsFromPdf:
             # Just check that the classification is valid and not empty.
             assert set(blooms_count.keys()) == set(BLOOMS_LEVELS)
             assert any(blooms_count.values())
-
-            # Can imporve test logic here with exact clos from each PDF
             assert any(extracted_clos)
             assert any(word_to_blooms)
 
@@ -25,12 +23,13 @@ class TestMatchCLOs:
     def test_can_match_clos(self):
         expected_clos = extract_test_clos()
         for i in range(len(CLOS_FILES)):
-            classification = classifier.match_clos(expected_clos[i])
+            blooms_count, word_to_blooms = classifier.match_clos(expected_clos[i])
             
             # We can't be for sure what the correct classification is.
             # Just check that the classification is valid and not empty.
-            assert set(classification.keys()) == set(BLOOMS_LEVELS)
-            assert any(classification.values())
+            assert set(blooms_count.keys()) == set(BLOOMS_LEVELS)
+            assert any(blooms_count.values())
+            assert any(word_to_blooms)
 
 
 class TestCheckVerbs:
