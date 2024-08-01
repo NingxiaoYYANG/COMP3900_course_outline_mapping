@@ -1,8 +1,63 @@
+/* App.css */
 .app-container {
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
+  position: relative;
 }
 
 .app-content {
   flex: 1;
+}
+
+.bottom-center-container {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  z-index: -1;
+  
+}
+
+.bottom-center-image-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.bottom-center-image-container::before,
+.bottom-center-image-container::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 1px; 
+  background-color: #475e49;
+  opacity: 50%;
+}
+
+.bottom-center-image-container::before {
+  left: 0;
+  right: calc(50% - 30px);
+  width: calc(50% - 30px);
+}
+
+.bottom-center-image-container::after {
+  left: calc(50% + 30px);
+  right: 0;
+  width: calc(50% - 30px);
+}
+
+.bottom-center-image {
+  width: 70px;
+  height: auto;
+}
+
+@media (min-height: 700px) {
+  .bottom-center-container {
+    margin-top: -100px;
+  }
 }

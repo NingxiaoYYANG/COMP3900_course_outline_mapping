@@ -1,7 +1,15 @@
 // BarChart.js
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { 
+  Chart as ChartJS, 
+  CategoryScale, 
+  LinearScale, 
+  BarElement, 
+  Title, 
+  Tooltip, 
+  Legend 
+} from 'chart.js';
 
 ChartJS.register(
   CategoryScale,
@@ -13,8 +21,10 @@ ChartJS.register(
 );
 
 const BarChart = ({ data }) => {
+
+  const taxonomyOrder = ['Remember', 'Understand', 'Apply', 'Analyse', 'Evaluate', 'Create'];
   // Convert data object to array and sort it in descending order
-  const sortedData = Object.entries(data).sort(([, a], [, b]) => b - a);
+  const sortedData = taxonomyOrder.map(level => [level, data[level] || 0]);
   
   // Extract sorted labels and values
   const labels = sortedData.map(([key]) => key);
@@ -25,10 +35,10 @@ const BarChart = ({ data }) => {
     datasets: [
       {
         data: values,
-        backgroundColor: 'rgba(171, 23, 82, 0.2)',
-        borderColor: 'rgba(171, 23, 82, 1)',
+        backgroundColor: 'rgba(105, 62, 106, 0.2)',
+        borderColor: 'rgba(105, 62, 106, 1)',
         borderWidth: 1,
-        label: false // Remove the label here
+        label: false
       }
     ]
   };
@@ -36,10 +46,10 @@ const BarChart = ({ data }) => {
   const options = {
     indexAxis: 'x',
     responsive: true,
-    maintainAspectRatio: false, // Allow the chart to stretch to the container's aspect ratio
+    maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false // Hide legend
+        display: false
       },
       title: {
         display: true,
@@ -50,22 +60,20 @@ const BarChart = ({ data }) => {
       x: {
         beginAtZero: true,
         ticks: {
-          display: true // Ensure x-axis ticks are displayed
+          display: true
         }
       },
       y: {
         beginAtZero: true,
         ticks: {
-          display: true // Ensure y-axis ticks are displayed
+          display: true
         }
       }
     }
   };
 
   return (
-    <div style={{ width: '100%', height: '100%' }}>
-      <Bar data={chartData} options={options} />
-    </div>
+    <Bar data={chartData} options={options} />
   );
 };
 

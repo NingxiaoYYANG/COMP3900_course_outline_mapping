@@ -71,7 +71,6 @@ class TestExtractWordsFromCLO:
         assert classifier.extract_words_from_clo(clo2) == clo2_expected
         assert classifier.extract_words_from_clo(clo3) == clo3_expected
 
-
 class TestMergeBloomsCount:
     def test_can_merge_blooms_count(self):
         count1 = {"Analyse": 1, "Apply": 2, "Create": 4, "Evaluate": 3, "Remember": 3, "Understand": 6}

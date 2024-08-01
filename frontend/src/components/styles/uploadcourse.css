@@ -1,26 +1,31 @@
-.container {
-  margin-top: 6rem;
+.upload-wrapper {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-bottom: 20px;
-  height: 80vh;
   justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding-top: 20px;
+  box-sizing: border-box;
+  z-index: 0;
+  position: relative;
+}
+
+.container {
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 1.5rem;
+  max-width: 600px;
+  width: 70%;
+  box-sizing: border-box;
+  height: 590px;
+  transition: padding 0.3s ease;
+  z-index: 2;
 }
 
 .container_inner {
-  background-color: #FFFFFF;
-  border-radius: 10px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); 
-  min-width: 200px;
-  width: 60vw;
-  max-width: 600px;
-  min-height: 570px; /* Fixed height */
-  max-height: 1000px;
   display: flex;
   flex-direction: column;
-  overflow: auto; /* Ensure content is scrollable if it overflows */
+  align-items: center;
 }
 
 h1 {
@@ -28,6 +33,7 @@ h1 {
   font-size: 1.5rem;
   line-height: 2rem; 
   font-weight: 700; 
+  color: #010B14;
 }
 
 .button_group {
@@ -56,13 +62,13 @@ h1 {
 }
 
 .button_group button.active {
-  background-color: #AB1748;
+  background-color: #693E6A;
   color: #FFFFFF; 
 }
 
 .button_group button {
   background-color: #E5E7EB;
-  color: #AB1748;
+  color: #693E6A;
   border: 0;
 }
 
@@ -71,7 +77,7 @@ h1 {
   border-radius: 0.5rem; 
   border: 2px dashed #D1D5DB;
   text-align: center; 
-  max-width: 100%;
+  width: 95%;
   margin-top: 2px;
   flex-grow: 1;
 }
@@ -80,7 +86,7 @@ i {
   margin-bottom: 1rem; 
   font-size: 2.25rem;
   line-height: 2.5rem; 
-  color: #AB1748; 
+  color: #693E6A; 
 }
 
 p {
@@ -88,9 +94,9 @@ p {
 }
 
 .max_size_label {
-  /* margin-top: 1rem;  */
-  font-size: 0.875rem;
-  /* line-height: 1.25rem;  */
+  margin-top: 1rem; 
+  font-size: 0.875rem; 
+  line-height: 1.25rem; 
   color: #6B7280; 
   margin-bottom: 0;
 }
@@ -105,11 +111,12 @@ p {
 .fa-cloud-upload-alt {
   padding-top: 10px;
 }
+
 .drop-file-input {
   position: relative;
   width: 100%;
-  height: 100px;
-  /* border: 2px dashed #D1D5DB; */
+  height: 100px; 
+  border: 2px dashed #D1D5DB;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -129,10 +136,80 @@ p {
 .drop-file-input__label i {
   font-size: 2.25rem;
   line-height: 2.5rem;
-  color: #AB1748;
+  color: #693E6A;
 }
 
 .drop-file-input__label p {
   margin-top: 0.5rem;
   color: #6B7280;
+}
+
+.drop-zone {
+  border-radius: 0.5rem;
+  padding: 20px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.drop-zone:hover {
+  background-color: #f5f5f5;
+}
+
+.side-screen {
+  z-index: 0;
+  border-radius: 8px;
+  width: fit-content;
+  background-color: #ffffff;
+  height: 100%;
+  min-height: 550px;
+  max-height: 590px;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  max-width: 360px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.side-screen.visible {
+  overflow-y: auto;
+}
+
+.preview-content {
+  display: none; 
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.preview-content.visible {
+  display: block; 
+  overflow-y: auto;
+  opacity: 1;
+}
+
+.preview-content.hidden {
+  display: none;
+  opacity: 0;
+}
+
+.preview-item {
+  line-height: 1.5;
+  margin-bottom: 2px;
+}
+
+@media (max-height: 799px) {
+  .upload-wrapper {
+    align-items: flex-start;
+    align-items: center;
+    padding-top: 110px;
+    padding-bottom: 130px;
+  }
+}
+
+@media (max-width: 790px) {
+  .container {
+    height: 610px;
+  }
+  .side-screen {
+    min-height: 550px;
+    max-height: 610px;
+  }
 }
