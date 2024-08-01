@@ -19,24 +19,13 @@ class TestClassifyCLOsFromPdf:
             # Can imporve test logic here with exact clos from each PDF
             assert any(extracted_clos)
             assert any(word_to_blooms)
-    
-    # TODO: Add test logic
-    def test_can_classify_exam_questions(self):
-        questions = get_exam_questions()
-        assert(questions)
 
 
-# TODO: Add test cases
-class TestMatchVerbsByAI:
-    def test_match_verbs_by_ai(self):
-        pass
-
-
-class TestMatchCLOsByDict:
-    def test_can_match_clos_by_dict(self):
+class TestMatchCLOs:
+    def test_can_match_clos(self):
         expected_clos = extract_test_clos()
         for i in range(len(CLOS_FILES)):
-            classification = classifier.match_clos_by_dict(expected_clos[i])
+            classification = classifier.match_clos(expected_clos[i])
             
             # We can't be for sure what the correct classification is.
             # Just check that the classification is valid and not empty.
@@ -70,6 +59,7 @@ class TestExtractWordsFromCLO:
         assert classifier.extract_words_from_clo(clo1) == clo1_expected
         assert classifier.extract_words_from_clo(clo2) == clo2_expected
         assert classifier.extract_words_from_clo(clo3) == clo3_expected
+
 
 class TestMergeBloomsCount:
     def test_can_merge_blooms_count(self):
