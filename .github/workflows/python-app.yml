@@ -16,6 +16,8 @@ jobs:
   test_backend:
   # TK: self-host
     runs-on: ubuntu-latest
+    env:
+      MARIADB_HOST: localhost
     defaults:
       run:
         working-directory: ./api

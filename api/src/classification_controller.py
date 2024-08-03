@@ -54,8 +54,6 @@ def classify_clos_from_pdf(file):
     return blooms_count, extracted_clos, word_to_blooms
 
 def match_clos(clos):
-    initialize_classifier()  # Ensure the classifier is initialized
-
     # Define the Bloom's taxonomy levels
     bloom_levels = list(get_blooms_taxonomy().keys())
     blooms_count = {level: 0 for level in bloom_levels}
@@ -82,6 +80,12 @@ def match_clos(clos):
 
             if not matched_by_dict:
                 # match by AI
+                if classifier is None:
+                    initialize_classifier()
+                if bloom_levels is None:
+                    raise Exception('Bloom levels not initialized')
+                if word is None:
+                    raise Exception('Word is None')
                 result = classifier(word, bloom_levels)
                 best_match = result['labels'][0]
                 blooms_count[best_match] += 1

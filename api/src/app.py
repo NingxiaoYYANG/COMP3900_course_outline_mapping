@@ -37,7 +37,6 @@ def upload_course_outline_by_code():
         coID = get_coID_from_code(code)
 
         clos = extract_clos_from_coID(coID)
-
         blooms_count, word_to_blooms = match_clos(clos)
 
         course_details = course_details_from_coID(coID)

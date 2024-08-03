@@ -10,7 +10,8 @@ load_dotenv()
 
 username = os.getenv('MARIADB_USER', 'backend')
 password = os.getenv('MARIADB_PASSWORD', 'bb11a381f2c1bd26e64a1ba76c32b4ea')
-host = os.getenv('MARIADB_HOST', 'localhost')
+# Assumes you're running in docker if no DB host is provided
+host = os.getenv('MARIADB_HOST', 'f11a-p16-database')
 database_name = os.getenv('MARIADB_DATABASE', 'f11ap16')
 
 db_initialised = False
