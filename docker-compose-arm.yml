@@ -13,6 +13,7 @@ services:
   api:
     container_name: f11a-p16-api
     image: f11adts/coursemapper-api-arm:latest
+    build: ./api
     depends_on:
       - database
     networks:
@@ -22,6 +23,7 @@ services:
   frontend:
     container_name: f11a-p16-frontend
     image: f11adts/coursemapper-frontend-arm:latest
+    build: ./frontend
     ports:
       - 3000:3000
     depends_on:
