@@ -1,0 +1,34 @@
+services:
+  database:
+    container_name: f11a-p16-database
+    image: mariadb:11
+    env_file:
+      - .env
+    volumes:
+      - ./database:/var/lib/mysql
+    networks:
+      - f11a-p16-network
+    restart: unless-stopped
+
+  api:
+    container_name: f11a-p16-api
+    image: f11adts/coursemapper-api-arm:latest
+    depends_on:
+      - database
+    networks:
+      - f11a-p16-network
+    restart: unless-stopped
+
+  frontend:
+    container_name: f11a-p16-frontend
+    image: f11adts/coursemapper-frontend-arm:latest
+    ports:
+      - 3000:3000
+    depends_on:
+      - api
+    networks:
+      - f11a-p16-network
+    restart: unless-stopped
+networks:
+  f11a-p16-network:
+    driver: bridge
