@@ -116,12 +116,20 @@ function UploadCourse() {
 
     const formData = new FormData();
     formData.append('course_code', courseCode);
-    console.log('Uploading course code:', formData);
+    // Log FormData contents properly
+    console.log('Uploading course code:', courseCode);
+    console.log('FormData contents:', Object.fromEntries(formData.entries()));
 
     setIsLoading('uploadingCode'); // Start loading
 
     try {
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/675aae17-c67f-4c78-979f-548b53acfe67',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'UploadCourse.js:123',message:'Before API call upload_course_code',data:{courseCode,url:'/api/upload_course_code'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
       const response = await axios.post('/api/upload_course_code', formData);
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/675aae17-c67f-4c78-979f-548b53acfe67',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'UploadCourse.js:125',message:'After API call upload_course_code',data:{status:response?.status,hasData:!!response?.data},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
       if (response.status === 200) {
         setShowAlert(false);
         setError('');
@@ -137,7 +145,11 @@ function UploadCourse() {
       }
     } catch (error) {
       console.error('Error uploading course code:', error);
-      if (error.response && error.response.data.error) {
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/675aae17-c67f-4c78-979f-548b53acfe67',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'UploadCourse.js:138',message:'Error in upload_course_code',data:{errorMessage:error?.message,errorCode:error?.code,hasResponse:!!error?.response,responseStatus:error?.response?.status,responseData:error?.response?.data},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
+      // Only show "already exists" dialog for 409 Conflict status, not for 500 errors
+      if (error.response && error.response.status === 409 && error.response.data.error) {
         setDialogMessage(`Course code ${formData.get("course_code")} already exists. Do you want to replace it?`);
         setOnConfirmAction(() => async (confirm) => {
           if (confirm) {
@@ -183,16 +195,24 @@ function UploadCourse() {
 
     const formData = new FormData();
     formData.append('file', file);
-    console.log('Uploading PDF:', formData);
+    // Log FormData contents properly
+    console.log('Uploading PDF:', file?.name, 'Size:', file?.size);
+    console.log('FormData contents:', Object.fromEntries(formData.entries()));
 
     setIsLoading('uploadingPDF'); // Start loading
 
     try {
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/675aae17-c67f-4c78-979f-548b53acfe67',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'UploadCourse.js:190',message:'Before API call upload_pdf',data:{fileName:file?.name,fileSize:file?.size,url:'/api/upload_pdf'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
       const response = await axios.post('/api/upload_pdf', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/675aae17-c67f-4c78-979f-548b53acfe67',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'UploadCourse.js:196',message:'After API call upload_pdf',data:{status:response?.status,hasData:!!response?.data},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
 
       if (response.status === 200) {
         setSuccessMessage("PDF file uploaded successfully!")
@@ -209,7 +229,11 @@ function UploadCourse() {
       }
     } catch (error) {
       console.error('Error uploading PDF:', error);
-      if (error.response && error.response.data.error) {
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/675aae17-c67f-4c78-979f-548b53acfe67',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'UploadCourse.js:210',message:'Error in upload_pdf',data:{errorMessage:error?.message,errorCode:error?.code,hasResponse:!!error?.response,responseStatus:error?.response?.status,responseData:error?.response?.data},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
+      // Only show "already exists" dialog for 409 Conflict status, not for 500 errors
+      if (error.response && error.response.status === 409 && error.response.data.error) {
         
         setDialogMessage(`Course code ${error.response.data.course_code} already exists. Do you want to replace it?`);
         setOnConfirmAction(() => async (confirm) => {

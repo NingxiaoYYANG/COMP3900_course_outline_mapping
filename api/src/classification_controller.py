@@ -54,13 +54,49 @@ def classify_clos_from_pdf(file):
     return blooms_count, extracted_clos, word_to_blooms
 
 def match_clos(clos):
+    # #region agent log
+    import json as json_lib
+    log_data = {'location': 'classification_controller.py:56', 'message': 'match_clos called', 'data': {'closCount': len(clos) if clos else 0, 'closIsEmpty': not clos or len(clos) == 0}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'C'}
+    with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+    # #endregion
+    # Handle empty CLOs list
+    if not clos or len(clos) == 0:
+        # #region agent log
+        log_data = {'location': 'classification_controller.py:59', 'message': 'Empty CLOs list', 'data': {}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'C'}
+        with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+        # #endregion
+        taxonomy_dict = get_blooms_taxonomy()
+        if not taxonomy_dict or len(taxonomy_dict) == 0:
+            from blooms_levels import BLOOMS_TAXONOMY
+            taxonomy_dict = BLOOMS_TAXONOMY
+        bloom_levels = list(taxonomy_dict.keys())
+        blooms_count = {level: 0 for level in bloom_levels}
+        return blooms_count, {}
+    
     # Define the Bloom's taxonomy levels
-    bloom_levels = list(get_blooms_taxonomy().keys())
+    blooms_taxonomy_dict = get_blooms_taxonomy()
+    # #region agent log
+    log_data = {'location': 'classification_controller.py:72', 'message': 'get_blooms_taxonomy result', 'data': {'taxonomyKeysCount': len(blooms_taxonomy_dict.keys()) if blooms_taxonomy_dict else 0, 'taxonomyIsEmpty': not blooms_taxonomy_dict or len(blooms_taxonomy_dict) == 0, 'keys': list(blooms_taxonomy_dict.keys()) if blooms_taxonomy_dict else []}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'C'}
+    with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+    # #endregion
+    if not blooms_taxonomy_dict or len(blooms_taxonomy_dict) == 0:
+        # #region agent log
+        log_data = {'location': 'classification_controller.py:76', 'message': 'Blooms taxonomy is empty, using fallback', 'data': {}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'C'}
+        with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+        # #endregion
+        # Fallback to default Bloom's taxonomy levels if database is empty
+        from blooms_levels import BLOOMS_TAXONOMY
+        blooms_taxonomy_dict = BLOOMS_TAXONOMY
+    bloom_levels = list(blooms_taxonomy_dict.keys())
+    if not bloom_levels or len(bloom_levels) == 0:
+        raise Exception('Bloom levels not initialized or empty')
     blooms_count = {level: 0 for level in bloom_levels}
     word_to_blooms = {}  # Initialize dictionary to store word to Bloom's level mapping
     new_entries = {level: [] for level in bloom_levels}  # To store new words for updating BLOOMS_TAXONOMY
 
     for clo in clos:
+        if not clo or not clo.strip():  # Skip empty CLOs
+            continue
         verb_set = set()  # Initialize a set to store unique verbs for the current CLO
         tokens = word_tokenize(clo)
         tagged = pos_tag(tokens)
@@ -69,9 +105,15 @@ def match_clos(clos):
             if is_verb:  # Checks if the word is a verb
                 verb_set.add(word.lower())  # Add the verb to the set
         for word in verb_set:
+            if not word or not word.strip():  # Skip empty words
+                continue
             # Check each Bloom's level
             matched_by_dict = False
-            for level, keywords in get_blooms_taxonomy().items():
+            taxonomy_dict = get_blooms_taxonomy()
+            if not taxonomy_dict or len(taxonomy_dict) == 0:
+                from blooms_levels import BLOOMS_TAXONOMY
+                taxonomy_dict = BLOOMS_TAXONOMY
+            for level, keywords in taxonomy_dict.items():
                 if word in keywords:  # match by dict
                     blooms_count[level] += 1
                     word_to_blooms[word] = level  # Add to word_to_blooms
@@ -82,15 +124,24 @@ def match_clos(clos):
                 # match by AI
                 if classifier is None:
                     initialize_classifier()
-                if bloom_levels is None:
-                    raise Exception('Bloom levels not initialized')
-                if word is None:
-                    raise Exception('Word is None')
-                result = classifier(word, bloom_levels)
-                best_match = result['labels'][0]
-                blooms_count[best_match] += 1
-                word_to_blooms[word] = best_match  # Add to word_to_blooms
-                new_entries[best_match].append(word)  # Collect new entries
+                if word is None or not word.strip():
+                    # #region agent log
+                    log_data = {'location': 'classification_controller.py:95', 'message': 'Skipping empty word', 'data': {'word': word}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'C'}
+                    with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+                    # #endregion
+                    continue
+                try:
+                    result = classifier(word, bloom_levels)
+                    best_match = result['labels'][0]
+                    blooms_count[best_match] += 1
+                    word_to_blooms[word] = best_match  # Add to word_to_blooms
+                    new_entries[best_match].append(word)  # Collect new entries
+                except Exception as e:
+                    # #region agent log
+                    log_data = {'location': 'classification_controller.py:104', 'message': 'Classifier error', 'data': {'error': str(e), 'word': word, 'bloomLevelsCount': len(bloom_levels)}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'C'}
+                    with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+                    # #endregion
+                    raise Exception(f'Error classifying word "{word}": {str(e)}')
 
     # Update BLOOMS_TAXONOMY with new entries
     update_blooms_taxonomy_db(new_entries)

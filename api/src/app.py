@@ -29,37 +29,98 @@ def index():
 
 @app.route('/api/upload_course_code', methods=["POST"])
 def upload_course_outline_by_code():
-    code = request.form['course_code']
+    # #region agent log
+    import json as json_lib
+    log_data = {'location': 'app.py:30', 'message': 'upload_course_code endpoint called', 'data': {'hasForm': 'form' in dir(request), 'formKeys': list(request.form.keys()) if 'form' in dir(request) else []}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'A'}
+    with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+    # #endregion
+    try:
+        code = request.form['course_code']
+        # #region agent log
+        log_data = {'location': 'app.py:33', 'message': 'course_code extracted', 'data': {'code': code}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'A'}
+        with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+        # #endregion
+    except KeyError as e:
+        # #region agent log
+        log_data = {'location': 'app.py:35', 'message': 'KeyError getting course_code', 'data': {'error': str(e)}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'A'}
+        with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+        # #endregion
+        return jsonify({'error': 'course_code not found in request'}), 400
 
     if not check_code_format(code):
         return "Invalid course code format", 400
     else:
-        coID = get_coID_from_code(code)
-
-        clos = extract_clos_from_coID(coID)
-        blooms_count, word_to_blooms = match_clos(clos)
-
-        course_details = course_details_from_coID(coID)
-
-        # Add extracted_clos and word_to_blooms to course_details
-        course_details["course_clos"] = clos
-        course_details["word_to_blooms"] = word_to_blooms
-
         try:
-            if add_clos(course_details["course_code"], blooms_count) and add_course_detail(course_details):
-                return jsonify({'course_details': course_details}), 200
-            else:
-                return jsonify({'message': 'Database Error!'}), 400
+            coID = get_coID_from_code(code)
+            # #region agent log
+            log_data = {'location': 'app.py:40', 'message': 'coID retrieved', 'data': {'coID': coID}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'A'}
+            with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+            # #endregion
+
+            clos = extract_clos_from_coID(coID)
+            # #region agent log
+            log_data = {'location': 'app.py:60', 'message': 'CLOs extracted from coID', 'data': {'coID': coID, 'closCount': len(clos) if clos else 0, 'closIsEmpty': not clos or len(clos) == 0}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'A'}
+            with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+            # #endregion
+            blooms_count, word_to_blooms = match_clos(clos)
+            # #region agent log
+            log_data = {'location': 'app.py:64', 'message': 'match_clos completed', 'data': {'bloomsCount': blooms_count, 'wordToBloomsCount': len(word_to_blooms)}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'A'}
+            with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+            # #endregion
+
+            course_details = course_details_from_coID(coID)
+
+            # Add extracted_clos and word_to_blooms to course_details
+            course_details["course_clos"] = clos
+            course_details["word_to_blooms"] = word_to_blooms
+
+            try:
+                if add_clos(course_details["course_code"], blooms_count) and add_course_detail(course_details):
+                    # #region agent log
+                    log_data = {'location': 'app.py:52', 'message': 'Successfully added course', 'data': {'course_code': course_details["course_code"]}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'A'}
+                    with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+                    # #endregion
+                    return jsonify({'course_details': course_details}), 200
+                else:
+                    # #region agent log
+                    log_data = {'location': 'app.py:55', 'message': 'Database Error', 'data': {}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'A'}
+                    with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+                    # #endregion
+                    return jsonify({'message': 'Database Error!'}), 400
+            except Exception as e:
+                # #region agent log
+                log_data = {'location': 'app.py:58', 'message': 'Exception in database operation', 'data': {'error': str(e), 'errorType': type(e).__name__}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'A'}
+                with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+                # #endregion
+                print(e)
+                return jsonify({'error': str(e)}), 409
         except Exception as e:
+            # #region agent log
+            log_data = {'location': 'app.py:62', 'message': 'Exception in processing course code', 'data': {'error': str(e), 'errorType': type(e).__name__}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'A'}
+            with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+            # #endregion
             print(e)
-            return jsonify({'error': str(e)}), 409 
+            return jsonify({'error': str(e)}), 500 
     
 
 @app.route('/api/upload_pdf', methods=["POST"])
 def upload_course_outline_pdf():
+    # #region agent log
+    import json as json_lib
+    log_data = {'location': 'app.py:58', 'message': 'upload_pdf endpoint called', 'data': {'hasFiles': 'files' in dir(request), 'fileKeys': list(request.files.keys()) if 'files' in dir(request) else []}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'B'}
+    with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+    # #endregion
     if 'file' not in request.files:
+        # #region agent log
+        log_data = {'location': 'app.py:60', 'message': 'No file in request', 'data': {}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'B'}
+        with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+        # #endregion
         return jsonify({'error': 'No file or url provided'}), 400
     file = request.files['file']
+    # #region agent log
+    log_data = {'location': 'app.py:63', 'message': 'File extracted', 'data': {'filename': file.filename if file else None}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'B'}
+    with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+    # #endregion
 
     # check if selected
     if file.filename == '':
@@ -69,21 +130,41 @@ def upload_course_outline_pdf():
     if not (file and file.filename.endswith('.pdf')):
         return jsonify({'error': 'Invalid file format'}), 400
     
-    blooms_count, extracted_clos, word_to_blooms = classify_clos_from_pdf(file)
-    course_details = course_details_from_pdf(file)
-
-    # Add extracted_clos and word_to_blooms to course_details
-    course_details["course_clos"] = extracted_clos
-    course_details["word_to_blooms"] = word_to_blooms
-
     try:
-        if add_clos(course_details["course_code"], blooms_count) and add_course_detail(course_details):
-            return jsonify({'course_details': course_details}), 200
-        else:
-            return jsonify({'message': 'Database Error!'}), 400
+        blooms_count, extracted_clos, word_to_blooms = classify_clos_from_pdf(file)
+        course_details = course_details_from_pdf(file)
+
+        # Add extracted_clos and word_to_blooms to course_details
+        course_details["course_clos"] = extracted_clos
+        course_details["word_to_blooms"] = word_to_blooms
+
+        try:
+            if add_clos(course_details["course_code"], blooms_count) and add_course_detail(course_details):
+                # #region agent log
+                log_data = {'location': 'app.py:81', 'message': 'Successfully added course from PDF', 'data': {'course_code': course_details.get("course_code")}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'B'}
+                with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+                # #endregion
+                return jsonify({'course_details': course_details}), 200
+            else:
+                # #region agent log
+                log_data = {'location': 'app.py:84', 'message': 'Database Error in PDF upload', 'data': {}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'B'}
+                with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+                # #endregion
+                return jsonify({'message': 'Database Error!'}), 400
+        except Exception as e:
+            # #region agent log
+            log_data = {'location': 'app.py:87', 'message': 'Exception in database operation PDF', 'data': {'error': str(e), 'errorType': type(e).__name__}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'B'}
+            with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+            # #endregion
+            print(e)
+            return jsonify({'error': str(e), 'course_code': course_details.get("course_code")}), 409
     except Exception as e:
+        # #region agent log
+        log_data = {'location': 'app.py:90', 'message': 'Exception in PDF processing', 'data': {'error': str(e), 'errorType': type(e).__name__}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'runId': 'run1', 'hypothesisId': 'B'}
+        with open(r'x:\Uni\COMP3900\capstone-project-3900f11adroptablestudents\.cursor\debug.log', 'a', encoding='utf-8') as f: f.write(json_lib.dumps(log_data) + '\n')
+        # #endregion
         print(e)
-        return jsonify({'error': str(e), 'course_code': course_details.get("course_code")}), 409 
+        return jsonify({'error': str(e)}), 500 
 
 @app.route('/api/upload_exam', methods=['POST'])
 def upload_exam():
@@ -178,4 +259,4 @@ def delete_course_api():
     
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5001, debug=True)

@@ -237,7 +237,7 @@ def extract_clos_from_coID(coID):
     r = requests.get(url)
     data = json.loads(r.text)["integrat_CO_LearningOutcome"]
 
-    clos = [clo["integrat_description"] for clo in data]
+    clos = [clo["integrat_description"] for clo in data if clo.get("integrat_description") and clo["integrat_description"].strip()]
     
     return clos
  
