@@ -3,22 +3,18 @@ FROM python:3.12-bookworm
 WORKDIR /app
 
 # Copy setup files
-COPY setup.sh /app
+COPY requirements.txt /app/requirements.txt
+COPY download_model.py /app/download_model.py
 
-RUN chmod +x setup.sh
-
-COPY requirements.txt /app
-
-COPY download_model.py /app
-
-# Run the setup script
-RUN ./setup.sh
+# Install dependencies and download model
+RUN pip install -r requirements.txt && \
+    python download_model.py
 
 # Copy the rest of the application files
 COPY src /app
 
 # Cleanup the files that are not needed
-RUN rm -rf /app/tests /app/setup.sh /app/requirements.txt
+RUN rm -rf /app/tests /app/requirements.txt || true
 
 HEALTHCHECK --interval=60s --start-period=60s --timeout=5s CMD curl -f http://localhost:5000/ || exit 1
 

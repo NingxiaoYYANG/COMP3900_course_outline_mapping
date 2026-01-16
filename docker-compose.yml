@@ -16,6 +16,9 @@ services:
     container_name: f11a-p16-api
     image: f11adts/coursemapper-api:latest
     build: ./api
+    environment:
+      - PORT=5000
+      - MARIADB_HOST=f11a-p16-database
     ports:
       - 5000:5000
     depends_on:
@@ -28,6 +31,9 @@ services:
     container_name: f11a-p16-frontend
     image: f11adts/coursemapper-frontend:latest
     build: ./frontend
+    environment:
+      - REACT_APP_API_URL=http://f11a-p16-api:5000
+      - WATCHPACK_POLLING=true
     ports:
       - 3000:3000
     depends_on:
